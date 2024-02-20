@@ -33,8 +33,11 @@ jobs:
         with:
           version: 8
 
+      - name: Install step
+        run: "pnpm install" # 📝 Update the build command(s) if necessary
+      
       - name: Build step
-        run: "pnpm install && pnpm run build" # 📝 Update the build command(s) if necessary
+        run: "pnpm build" # 📝 Update the build command(s) if necessary
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
