@@ -1,0 +1,45 @@
+{
+  "name": "deno",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "remix build",
+    "deploy": "deployctl deploy --prod --include=build,public --project=elusive ./build/index.js",
+    "dev": "npm-run-all build --parallel \"dev:*\"",
+    "dev:deno": "cross-env NODE_ENV=development deno run --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
+    "dev:remix": "remix watch",
+    "format": "deno fmt --ignore=node_modules,build,public/build",
+    "lint": "deno lint --ignore=node_modules,build,public/build",
+    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
+    "typecheck": "deno check"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@remix-run/css-bundle": "^2.5.1",
+    "@remix-run/deno": "^2.5.1",
+    "@remix-run/react": "^2.5.1",
+    "autoprefixer": "^10.4.17",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "isbot": "^4.1.0",
+    "lucide-react": "^0.312.0",
+    "pkode": "^1.5.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "react-spring": "^9.7.3",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.5.1",
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "tailwindcss": "^3.4.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
