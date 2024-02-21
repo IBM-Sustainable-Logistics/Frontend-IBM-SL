@@ -35,7 +35,7 @@ jobs:
 
       - name: Install step
         run: "pnpm install" # 📝 Update the build command(s) if necessary
-      
+
       - name: Build step
         run: "pnpm build" # 📝 Update the build command(s) if necessary
 
@@ -43,5 +43,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "ibm-sl"
-          entrypoint: "index.js" # 📝 Update the entrypoint if necessary
+          entrypoint: "./build/index.js" # 📝 Update the entrypoint if necessary
           root: "build" # 📝 Update the root if necessary
