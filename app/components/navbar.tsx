@@ -8,13 +8,8 @@ export default function NavBar() {
   return (
     <>
       <header className="px-4 lg:px-6 h-16 flex items-center">
-        <Link className="flex items-center justify-center " to="/"></Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Popover>
-            <PopoverTrigger>Open</PopoverTrigger>
-            <PopoverContent>Place content for the popover here.</PopoverContent>
-          </Popover>
-        </nav>
+        <img />
+        <nav className="ml-auto flex gap-4 sm:gap-6"></nav>
       </header>
     </>
   );
