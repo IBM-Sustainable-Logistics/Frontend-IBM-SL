@@ -13,10 +13,12 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <div className=" flex flex-col justify-center items-center h-screen gap-6">
-      <h1 className=" text-4xl font-bold">Coming Soon</h1>
+    <div className=" flex flex-col justify-center items-center h-screen gap-6 bg-background font-mono">
+      <h1 className="text-5xl lg:text-6xl font-bold">Coming Soon</h1>
       <Link to="https://github.com/IBM-Sustainable-Logistics">
-        <Button className="flex gap-2">{GitHub()} View on Github</Button>{" "}
+        <Button variant={"ibm_blue"} className="flex gap-2">
+          {GitHub()} View on Github
+        </Button>{" "}
       </Link>
     </div>
   );
