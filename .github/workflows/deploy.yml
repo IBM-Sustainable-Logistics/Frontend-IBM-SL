@@ -50,6 +50,6 @@ jobs:
           include: |
               "build"
               "public"
-          root: "Frontend-IBM-SL"
+          root: "build"
 
 
