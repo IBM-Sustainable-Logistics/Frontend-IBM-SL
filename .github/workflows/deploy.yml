@@ -50,4 +50,4 @@ jobs:
           include:  |
             "build"
             "public"
-          root: "./" # 📝 Update the root if necessary
+          root: "" # 📝 Update the root if necessary
