@@ -53,4 +53,3 @@ jobs:
           include:  |
             "build"
             "public"
-          root: "Frontend-IBM-SL" # 📝 Update the root if necessary
