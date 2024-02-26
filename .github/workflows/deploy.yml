@@ -47,9 +47,7 @@ jobs:
         with:
           project: "ibm-sl"
           entrypoint: "index.js" # 📝 Update the entrypoint if necessary
-          include: |
-              "build"
-              "public"
+          include: build,public
           root: "build"
 
 
