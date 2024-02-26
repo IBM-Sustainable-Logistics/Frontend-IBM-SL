@@ -46,9 +46,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "ibm-sl"
-          entrypoint: /build/index.js # 📝 Update the entrypoint if necessary
-          include:  |
-            build
-            public
-          exclude: **/node_modules
-           
+          entrypoint: "/build/index.js" # 📝 Update the entrypoint if necessary
+
