@@ -39,12 +39,17 @@ jobs:
       - name: Build step
         run: "pnpm build" # 📝 Update the build command(s) if necessary
 
-      - name: show dir
+      - name: show structure
         run: pwd
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "ibm-sl"
-          entrypoint: "" # 📝 Update the entrypoint if necessary
+          entrypoint: "/build/index.js" # 📝 Update the entrypoint if necessary
+          include: |
+              "build"
+              "public"
+          root: "Frontend-IBM-SL"
+
 
