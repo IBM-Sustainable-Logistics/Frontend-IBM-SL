@@ -49,7 +49,7 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "ibm-sl"
-          entrypoint: "index.js" # 📝 Update the entrypoint if necessary
+          entrypoint: "/build/index.js" # 📝 Update the entrypoint if necessary
           include:  |
             "build"
             "public"
