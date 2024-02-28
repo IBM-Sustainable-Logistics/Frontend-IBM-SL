@@ -73,20 +73,18 @@ const Calculator = () => {
   };
 
   return (
-    <div className="flex flex-col gap-20 ">
+    <div className="flex flex-col gap-4">
       <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
       <form onSubmit={handleSubmit}>
-        <div className=" flex flex-col gap-4">
-          <div className="flex flex-col ">
-            <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Transport Method:
-            </Label>
-            <Combobox
-              options={transportMethod}
-              onChangeTransport={handleSelectChange}
-              type="transportMethod"
-            />
-          </div>
+        <div className=" flex flex-col gap-4 ">
+          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Transport Method:
+          </Label>
+          <Combobox
+            options={transportMethod}
+            onChangeTransport={handleSelectChange}
+            type="transportMethod"
+          />
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Distance (km):
           </Label>
@@ -100,18 +98,18 @@ const Calculator = () => {
           <Button className="w-full" variant={"ibm_blue"} type="submit">
             Calculate
           </Button>
-          {showMessage && (
-            <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
-              {message}
-            </div>
-          )}
-          {showError && (
-            <div className="bg-red-200 p-3 mb-3 rounded-md text-red-800 mt-6">
-              {errorMessage}
-            </div>
-          )}
         </div>
       </form>
+      {showMessage && (
+        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px]">
+          {message}
+        </div>
+      )}
+      {showError && (
+        <div className="bg-red-200 p-3 mb-3 rounded-md text-red-800 mt-6 w-[330px]">
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 };
