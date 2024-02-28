@@ -26,6 +26,7 @@
     "autoprefixer": "^10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^0.2.1",
     "isbot": "^4.1.0",
     "lucide-react": "^0.312.0",
     "pkode": "^1.5.1",

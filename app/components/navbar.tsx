@@ -12,8 +12,8 @@ import {
 export default function NavBar() {
   return (
     <>
-      <header className='px-4 lg:px-6 h-16 flex items-center'>
-        <NavigationMenu>
+      <header >
+        <NavigationMenu className='px-4 lg:px-6 h-16 flex '>
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuLink as="a" href="/calculate-emissions" className={navigationMenuTriggerStyle()}>
