@@ -12,9 +12,10 @@ interface FormState {
 
 const Calculator = () => {
   const transportMethod = [
-    { value: "boat", label: "Boat" },
-    { value: "truck", label: "Truck" },
-    { value: "ship", label: "Ship" },
+    { value: "container-vessel", label: "Container Vessel" },
+    { value: "road", label: "Road" },
+    { value: "rail", label: "Rail" },
+    { value: "air", label: "Air" },
   ];
 
   const initialFormState: FormState = {
