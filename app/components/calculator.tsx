@@ -51,15 +51,31 @@ const Calculator = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let calculatedEmissions = 0;
+    const distance = Number(formData.distance);
+    
+    const emissionFactorTruck = 2.68;
+    const emissionFactorShip = 3.2;
+    const emissionFactorAircraft = 2.52;
     console.log(formData);
-    // We just log the values for now
-    setMessage(
-      `Calculating emissions for ${formData.distance} km using ${formData.transportMethod}`
-    );
     setShowMessage(true);
     setShowError(false);
-    // This is a placeholder for emissions calculation
-    const calculatedEmissions = formData.distance * 0.2;
+    // Calculate the emissions based on the transport method
+    switch (formData.transportMethod) {
+      case "truck":
+        calculatedEmissions = distance * emissionFactorTruck;
+        break;
+      case "ship":
+        calculatedEmissions = distance * emissionFactorShip;
+        break;
+      case "aircraft":
+        calculatedEmissions = distance * emissionFactorAircraft;
+        break;
+      default:
+        setErrorMessage("Invalid transport method");
+        setShowError(true);
+        return;
+    }
 
     formData.emissions = calculatedEmissions;
 
