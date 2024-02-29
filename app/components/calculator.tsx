@@ -92,6 +92,11 @@ const Calculator = () => {
                     150; // Assuming 150 seats for simplicity
                 break;
             case "train":
+                calculatedEmissions =
+                    formData.distance *
+                    fuelEfficiency.train *
+                    emissionFactors.train;
+                break;
             default:
                 setErrorMessage("Invalid transportation method selected.");
                 setShowError(true);
