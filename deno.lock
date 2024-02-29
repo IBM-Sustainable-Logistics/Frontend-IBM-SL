@@ -18,6 +18,7 @@
       "npm:class-variance-authority@^0.7.0": "npm:class-variance-authority@0.7.0",
       "npm:clsx@^2.1.0": "npm:clsx@2.1.0",
       "npm:cmdk@^0.2.1": "npm:cmdk@0.2.1_react@18.2.0_react-dom@18.2.0__react@18.2.0_@types+react@18.2.60",
+      "npm:cross-env@7.0.3": "npm:cross-env@7.0.3",
       "npm:cross-env@^7.0.3": "npm:cross-env@7.0.3",
       "npm:isbot@^4.1.0": "npm:isbot@4.4.0",
       "npm:lucide-react@^0.312.0": "npm:lucide-react@0.312.0_react@18.2.0",

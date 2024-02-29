@@ -1,0 +1,63 @@
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
+
+
+const backendUrl = "https://ibm-sl-api.deno.dev/";
+
+
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs) => {
+    if (request.method !== "GET") {
+        return new Response("Invalid method", { status: 405 });
+      }
+    
+      const url = new URL(`${backendUrl}api/estimate`);
+   
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+    
+      if (!res.ok) {
+        return new Response("Error fetching articles", { status: res.status });
+      }
+    
+      const data = await res.json();
+      return new Response(JSON.stringify(data), { status: 200 });
+};
+
+
+export const action = async ({
+  request, body
+}: ActionFunctionArgs) => {
+  switch (request.method) {
+    case "POST": {
+      const body = await request.json();
+
+      const url = new URL(`${backendUrl}api/estimate`);
+
+      body.list = body.list.map(item  => {
+        return {
+            ...item,
+            distance_km: parseInt(item.distance_km)
+        };
+    });
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+  
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+       
+      return res.json();
+    }
+  }
+};
+
+
+

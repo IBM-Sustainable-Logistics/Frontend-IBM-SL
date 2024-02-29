@@ -12,14 +12,14 @@ interface FormState {
 
 const Calculator = () => {
   const transportMethod = [
-    { value: "container-vessel", label: "Container Vessel" },
-    { value: "road", label: "Road" },
-    { value: "rail", label: "Rail" },
-    { value: "air", label: "Air" },
+    { value: "cargoship", label: "Cargoship" },
+    { value: "aircraft", label: "Aircraft" },
+    { value: "train", label: "Train" },
+    { value: "truck", label: "Truck" },
   ];
 
   const initialFormState: FormState = {
-    transportMethod: "car",
+    transportMethod: "",
     distance: 0,
     emissions: null,
   };
@@ -52,22 +52,36 @@ const Calculator = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch("http://localhost:8000", {
+      const response = await fetch("/api/estimate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+
+        body: JSON.stringify({
+          list: [
+            {
+              transport_form: formData.transportMethod,
+              distance_km: formData.distance,
+            },
+          ],
+        }),
       });
 
       if (!response.ok) {
+        setShowError(true);
+        setShowMessage(false);
+        setErrorMessage("Error! Please try again");
         throw new Error("Error! Got response: " + response.status);
       }
 
       const responseData = await response.json();
-      setFormData({ ...formData, emissions: responseData.emissions });
+      setFormData({ ...formData, emissions: responseData });
+      setShowMessage(true);
+      setShowError(false);
+      setMessage(
+        `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData} kg`
+      );
     } catch (error) {
       console.error("Error:", error);
     }
