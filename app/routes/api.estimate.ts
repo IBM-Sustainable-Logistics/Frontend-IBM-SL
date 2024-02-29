@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/deno"; 
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
 
 
 const backendUrl = "https://ibm-sl-api.deno.dev/";
@@ -28,19 +28,27 @@ export const loader = async ({
 
 
 export const action = async ({
-  request,
+  request, body
 }: ActionFunctionArgs) => {
   switch (request.method) {
     case "POST": {
-      const { list } = await request.json();
+      const body = await request.json();
 
       const url = new URL(`${backendUrl}api/estimate`);
-      
+
+      body.list = body.list.map(item  => {
+        return {
+            ...item,
+            distance_km: parseInt(item.distance_km)
+        };
+    });
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({"list": list}),
+        body: JSON.stringify(body),
       });
+
   
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
