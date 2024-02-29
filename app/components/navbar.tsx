@@ -1,44 +1,45 @@
-import { SheetTrigger, SheetContent, Sheet } from "./ui/sheet.tsx";
-import { Button } from "./ui/button.tsx";
-import { Link } from "@remix-run/react";
-import React from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover.tsx";
+import * as React from 'react';
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
+  NavigationMenuContent,
   navigationMenuTriggerStyle,
-} from "./ui/navigation-menu.tsx";
+} from './ui/navigation-menu.tsx';
 
 export default function NavBar() {
   return (
     <>
-      <header className='px-4 lg:px-6 h-16 flex items-center'>
-        <NavigationMenu>
+      <header >
+        <NavigationMenu className='px-4 lg:px-6 h-16 flex '>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <NavigationMenuLink as="a" href="/calculate-emissions" className={navigationMenuTriggerStyle()}>
                 Calculate Emissions
               </NavigationMenuLink>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink as="a" href="/transportation" className={navigationMenuTriggerStyle()}>
                 Transportation
               </NavigationMenuLink>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink as="a" href="/data-visualization" className={navigationMenuTriggerStyle()}>
                 Data Visualization
               </NavigationMenuLink>
-              <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>Item One</NavigationMenuTrigger>
               <NavigationMenuContent>
-                <NavigationMenuLink>Link</NavigationMenuLink>
+                <NavigationMenuLink as="a" href="/link1">Link One</NavigationMenuLink>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
-        </NavigationMenu>{" "}
+        </NavigationMenu>
       </header>
     </>
   );
 }
+
