@@ -30,7 +30,7 @@ const Calculator = () => {
   const [showError, setShowError] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -53,26 +53,40 @@ const Calculator = () => {
     e.preventDefault();
     let calculatedEmissions = 0;
     const distance = Number(formData.distance);
-    
-    const emissionFactorTruck = 2.68;
-    const emissionFactorShip = 3.2;
-    const emissionFactorAircraft = 2.52;
+
+    const emissionFactors = {
+      truck: 2.68, // kg CO2e per km
+      ship: 3.2, // kg CO2e per km
+      aircraft: 2.52, // kg CO2e per km
+    };
+    const fuelEfficiency = {
+      truck: 0.2, // L/km
+      ship: 0.02, // tonnes/km
+      aircraft: 0.15, // L/km per seat (assuming full occupancy for simplification)
+    };
     console.log(formData);
     setShowMessage(true);
     setShowError(false);
     // Calculate the emissions based on the transport method
     switch (formData.transportMethod) {
       case "truck":
-        calculatedEmissions = distance * emissionFactorTruck;
+        calculatedEmissions = formData.distance *
+          fuelEfficiency.truck *
+          emissionFactors.truck;
         break;
       case "ship":
-        calculatedEmissions = distance * emissionFactorShip;
+        calculatedEmissions = formData.distance *
+          fuelEfficiency.ship *
+          emissionFactors.ship;
         break;
       case "aircraft":
-        calculatedEmissions = distance * emissionFactorAircraft;
+        calculatedEmissions = formData.distance *
+          fuelEfficiency.aircraft *
+          emissionFactors.aircraft *
+          150; // Assuming 150 seats for simplicity
         break;
       default:
-        setErrorMessage("Invalid transport method");
+        setErrorMessage("Invalid transportation method selected.");
         setShowError(true);
         return;
     }
@@ -80,7 +94,7 @@ const Calculator = () => {
     formData.emissions = calculatedEmissions;
 
     setMessage(
-      `Emissions calculated successfully which was ${formData.emissions}`
+      `Emissions calculated successfully which was ${formData.emissions}`,
     );
 
     setTimeout(() => {
@@ -90,7 +104,9 @@ const Calculator = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      <h1 className=" text-primary text-4xl font-bold">
+        Calculate Emissions
+      </h1>
       <form onSubmit={handleSubmit}>
         <div className=" flex flex-col gap-4 ">
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -111,7 +127,11 @@ const Calculator = () => {
             className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
             onChange={handleInputChange}
           />
-          <Button className="w-full" variant={"ibm_blue"} type="submit">
+          <Button
+            className="w-full"
+            variant={"ibm_blue"}
+            type="submit"
+          >
             Calculate
           </Button>
         </div>
