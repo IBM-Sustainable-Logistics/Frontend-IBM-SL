@@ -12,9 +12,10 @@ interface FormState {
 
 const Calculator = () => {
   const transportMethod = [
-    { value: "truck", label: "Truck" },
-    { value: "ship", label: "Ship" },
-    { value: "aircraft", label: "Aircraft" },
+    { value: "container-vessel", label: "Container Vessel" },
+    { value: "road", label: "Road" },
+    { value: "rail", label: "Rail" },
+    { value: "air", label: "Air" },
   ];
 
   const initialFormState: FormState = {
@@ -49,43 +50,27 @@ const Calculator = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let calculatedEmissions = 0;
-    const distance = Number(formData.distance);
     
-    const emissionFactorTruck = 2.68;
-    const emissionFactorShip = 3.2;
-    const emissionFactorAircraft = 2.52;
-    console.log(formData);
-    setShowMessage(true);
-    setShowError(false);
-    // Calculate the emissions based on the transport method
-    switch (formData.transportMethod) {
-      case "truck":
-        calculatedEmissions = distance * emissionFactorTruck;
-        break;
-      case "ship":
-        calculatedEmissions = distance * emissionFactorShip;
-        break;
-      case "aircraft":
-        calculatedEmissions = distance * emissionFactorAircraft;
-        break;
-      default:
-        setErrorMessage("Invalid transport method");
-        setShowError(true);
-        return;
+    try {
+      const response = await fetch("http://localhost:8000", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error! Got response: " + response.status);
+      }
+
+      const responseData = await response.json();
+      setFormData({ ...formData, emissions: responseData.emissions });
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    formData.emissions = calculatedEmissions;
-
-    setMessage(
-      `Emissions calculated successfully which was ${formData.emissions}`
-    );
-
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 3000);
   };
 
   return (
