@@ -52,14 +52,19 @@ const Calculator = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch("http://localhost:8000", {
+      const response = await fetch("/api/estimate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          list: [
+            {
+              transport_form: formData.transportMethod,
+              distance_km: formData.distance,
+            },
+          ],
+        }),
       });
 
       if (!response.ok) {
