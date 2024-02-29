@@ -12847,6 +12847,7 @@
         "npm:clsx@^2.1.0",
         "npm:cmdk@^0.2.1",
         "npm:cross-env@^7.0.3",
+        "npm:framer-motion@^11.0.8",
         "npm:isbot@^4.1.0",
         "npm:lucide-react@^0.312.0",
         "npm:npm-run-all@^4.1.5",
