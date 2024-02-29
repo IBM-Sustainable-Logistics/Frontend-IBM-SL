@@ -52,25 +52,25 @@ const Calculator = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // We just log the values for now
-    setMessage(
-      `Calculating emissions for ${formData.distance} km using ${formData.transportMethod}`
-    );
-    setShowMessage(true);
-    setShowError(false);
-    // This is a placeholder for emissions calculation
-    const calculatedEmissions = formData.distance * 0.2;
+    
+    try {
+      const response = await fetch("http://localhost:8000", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    formData.emissions = calculatedEmissions;
+      if (!response.ok) {
+        throw new Error("Error! Got response: " + response.status);
+      }
 
-    setMessage(
-      `Emissions calculated successfully which was ${formData.emissions}`
-    );
-
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 3000);
+      const responseData = await response.json();
+      setFormData({ ...formData, emissions: responseData.emissions });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
