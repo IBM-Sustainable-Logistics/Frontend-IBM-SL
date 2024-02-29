@@ -1,4 +1,5 @@
 import * as React from 'react';
+import logo from "../assets/ibm-logo.svg";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,6 +16,11 @@ export default function NavBar() {
       <header >
         <NavigationMenu className='px-4 lg:px-6 h-16 flex '>
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink as="a" href="/" className={navigationMenuTriggerStyle()}>
+                <img src={logo} alt="IBM Logo" className="h-5" />
+              </NavigationMenuLink>
+            </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink as="a" href="/calculate-emissions" className={navigationMenuTriggerStyle()}>
                 Calculate Emissions
