@@ -26,25 +26,30 @@ export const loader = async ({
       return new Response(JSON.stringify(data), { status: 200 });
 };
 
+
 export const action = async ({
-  request, body
+  request,
 }: ActionFunctionArgs) => {
   switch (request.method) {
     case "POST": {
-        console.log("body", await request.body);
-        const url = new URL(`https://ibm-sl-api.deno.dev/api/estimate`);
-        const res = await fetch(url, {
+      const { list } = await request.json();
+
+      const url = new URL(`${backendUrl}api/estimate`);
+      
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(await body),
+        body: JSON.stringify({"list": list}),
       });
-    
+  
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      return res;
-    }    
+       
+      return res.json();
+    }
   }
 };
+
 
 
