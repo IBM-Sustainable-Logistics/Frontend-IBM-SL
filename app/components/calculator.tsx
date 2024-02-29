@@ -12,9 +12,9 @@ interface FormState {
 
 const Calculator = () => {
   const transportMethod = [
-    { value: "boat", label: "Boat" },
     { value: "truck", label: "Truck" },
     { value: "ship", label: "Ship" },
+    { value: "aircraft", label: "Aircraft" },
   ];
 
   const initialFormState: FormState = {
@@ -49,7 +49,7 @@ const Calculator = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
     // We just log the values for now

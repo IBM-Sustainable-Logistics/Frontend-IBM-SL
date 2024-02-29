@@ -50,7 +50,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search Vehicle ... " />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
             {options.map((option) => (
