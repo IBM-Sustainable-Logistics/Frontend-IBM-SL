@@ -65,7 +65,7 @@ const Calculator = () => {
             const response = await fetch(
                 "https://ibm-sl-api.deno.dev/",
                 {
-                    method: "POST",
+                    method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                     },
