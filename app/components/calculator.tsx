@@ -31,7 +31,7 @@ const Calculator = () => {
   const [showError, setShowError] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -79,8 +79,11 @@ const Calculator = () => {
       setFormData({ ...formData, emissions: responseData });
       setShowMessage(true);
       setShowError(false);
+      const distanceRounded = Number.parseFloat(
+        formData.distance,
+      ).toFixed(2);
       setMessage(
-        `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData} kg`
+        `Emissions for ${formData.transportMethod} over ${distanceRounded} km: ${responseData} kg`,
       );
     } catch (error) {
       console.error("Error:", error);
@@ -89,7 +92,9 @@ const Calculator = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      <h1 className=" text-primary text-4xl font-bold">
+        Calculate Emissions
+      </h1>
       <form onSubmit={handleSubmit}>
         <div className=" flex flex-col gap-4 ">
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -110,7 +115,11 @@ const Calculator = () => {
             className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
             onChange={handleInputChange}
           />
-          <Button className="w-full" variant={"ibm_blue"} type="submit">
+          <Button
+            className="w-full"
+            variant={"ibm_blue"}
+            type="submit"
+          >
             Calculate
           </Button>
         </div>
