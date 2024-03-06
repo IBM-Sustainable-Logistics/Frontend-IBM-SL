@@ -14,7 +14,7 @@ const Dashboard = () => {
   return (
     <>
       <h1 className='text-3xl font-bold mb-4 text-center'>My Projects</h1>
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap gap-4 justify-center max-w-4/5'>
         <ProjectCard
           title='Project x'
           description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
