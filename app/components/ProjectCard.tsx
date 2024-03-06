@@ -19,7 +19,7 @@ const ProjectCard = ({
   estimation: number;
 }) => {
   return (
-    <Card className='max-w-96 min-h-32 bg-white shadow-md rounded-lg p-4'>
+    <Card className='min-h-32 bg-white shadow-md rounded-lg p-4'>
       <CardHeader>
         <CardTitle>
           <h1>{title}</h1>
