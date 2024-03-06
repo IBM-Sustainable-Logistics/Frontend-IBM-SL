@@ -3,6 +3,9 @@ import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
+import { transportMethods } from "../lib/Transport.ts";
+import type { TransportListItem } from "../lib/Transport.ts";
+import { number } from "https://esm.sh/v128/@types/prop-types@15.7.11/index.js";
 
 interface FormState {
   transportMethod: string;
@@ -11,13 +14,6 @@ interface FormState {
 }
 
 const Calculator = () => {
-  const transportMethod = [
-    { value: "cargoship", label: "Cargoship" },
-    { value: "aircraft", label: "Aircraft" },
-    { value: "train", label: "Train" },
-    { value: "truck", label: "Truck" },
-  ];
-
   const initialFormState: FormState = {
     transportMethod: "",
     distance: 0,
@@ -39,7 +35,7 @@ const Calculator = () => {
     // Update the corresponding property in the form data
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === "distance" ? Number(value) : value,
     });
   };
 
@@ -54,17 +50,18 @@ const Calculator = () => {
     e.preventDefault();
 
     try {
+      const list: TransportListItem[] = [
+        {
+          transport_form: formData.transportMethod,
+          distance_km: formData.distance,
+        },
+      ];
+
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-
         body: JSON.stringify({
-          list: [
-            {
-              transport_form: formData.transportMethod,
-              distance_km: formData.distance,
-            },
-          ],
+          list: list,
         }),
       });
 
@@ -96,7 +93,7 @@ const Calculator = () => {
             Transport Method:
           </Label>
           <Combobox
-            options={transportMethod}
+            options={transportMethods}
             onChangeTransport={handleSelectChange}
             type="transportMethod"
           />

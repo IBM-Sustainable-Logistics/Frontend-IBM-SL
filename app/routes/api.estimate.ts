@@ -1,4 +1,5 @@
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
+import type { TransportListItem } from "../lib/Transport.ts";
 
 
 const backendUrl = "https://ibm-sl-api.deno.dev/";
@@ -28,7 +29,7 @@ export const loader = async ({
 
 
 export const action = async ({
-  request, body
+  request
 }: ActionFunctionArgs) => {
   switch (request.method) {
     case "POST": {
@@ -36,12 +37,7 @@ export const action = async ({
 
       const url = new URL(`${backendUrl}api/estimate`);
 
-      body.list = body.list.map(item  => {
-        return {
-            ...item,
-            distance_km: parseInt(item.distance_km)
-        };
-    });
+      console.log("body", body);
 
       const res = await fetch(url, {
         method: "POST",
@@ -49,7 +45,6 @@ export const action = async ({
         body: JSON.stringify(body),
       });
 
-  
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
