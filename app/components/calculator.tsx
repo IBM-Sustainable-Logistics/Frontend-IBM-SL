@@ -5,7 +5,6 @@ import { Combobox } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
 import { transportMethods } from "../lib/Transport.ts";
 import type { TransportListItem } from "../lib/Transport.ts";
-import { number } from "https://esm.sh/v128/@types/prop-types@15.7.11/index.js";
 
 interface FormState {
   transportMethod: string;
@@ -64,6 +63,19 @@ const Calculator = () => {
           list: list,
         }),
       });
+      if (formData.transportMethod === "" || !formData.distance) {
+        setShowError(true);
+        setShowMessage(false);
+        setErrorMessage("Please fill in all fields!");
+        return;
+      }
+
+      if (formData.distance < 1) {
+        setShowError(true);
+        setShowMessage(false);
+        setErrorMessage("Distance must be greater than 0!");
+        return;
+      }
 
       if (!response.ok) {
         setShowError(true);
