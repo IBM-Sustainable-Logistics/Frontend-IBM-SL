@@ -13,7 +13,7 @@ const ProjectCard = (
     { title, description, estimation }: { title: string; description: string; estimation: number }
 ) => {
     return (
-        <Card>
+        <Card className="max-w-80 min-h-32 bg-white shadow-md rounded-lg p-4">
             <CardHeader>
                 <CardTitle>
                     <h1>{title}</h1>
