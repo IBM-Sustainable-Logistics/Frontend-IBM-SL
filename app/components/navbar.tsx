@@ -37,10 +37,10 @@ export default function NavBar() {
             <NavigationMenuItem>
               <NavigationMenuLink
                 as="a"
-                href="/transportation"
+                href="/projects"
                 className={navigationMenuTriggerStyle()}
               >
-                Transportation
+                Dashboard 
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
