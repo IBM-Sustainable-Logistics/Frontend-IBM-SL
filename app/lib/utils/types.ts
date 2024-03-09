@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-Need to install the following packages:
-supabase@1.148.6
-Ok to proceed? (y) 
-=======
 export type Json =
   | string
   | number
@@ -233,4 +228,3 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
   ? Database["public"]["Enums"][PublicEnumNameOrOptions]
   : never
->>>>>>> e04ecdb67ad073a01dab9da2fa0efcbfe1216923
