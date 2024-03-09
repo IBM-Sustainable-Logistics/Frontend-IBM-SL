@@ -1,13 +1,18 @@
-import { supabase } from "../supabase.ts";
 import React, { useState } from "react";
 import logo from "../assets/ibm-logo.svg";
+import { LoaderFunction, json } from "@remix-run/deno";
+import { useLoaderData } from "@remix-run/react";
 
 interface FormState {
   email: string;
   password: string;
 }
 
-export const SignUpForm: React.FC = () => {
+interface SignUpFormProps {
+  supabase: any;
+}
+
+export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
   const initialFormState: FormState = {
     email: "",
     password: "",
@@ -22,13 +27,11 @@ export const SignUpForm: React.FC = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission
-
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    });
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
-
       if (error) {
         setErrorMessage(error.message);
         setShowError(true);
