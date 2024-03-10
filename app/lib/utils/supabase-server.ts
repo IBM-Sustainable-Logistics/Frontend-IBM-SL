@@ -5,15 +5,15 @@ const env = await load();
 
 export const getDomainEnv = () => (
     {
-        DOMAIN_URL: Deno.env.get("DOMAIN_URL")! || env.DOMAIN_URL!,
+        DOMAIN_URL: Deno.env.get("DOMAIN_URL"),
     }
 );
 
 
 export const getSupabaseEnv =  () => (
     {
-        SUPABASE_URL: Deno.env.get("SUPABASE_URL")! || env.SUPABASE_URL!,
-        SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY")! || env.SUPABASE_ANON_KEY!,
+        SUPABASE_URL: Deno.env.get("SUPABASE_URL") ,
+        SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY"),
       }
   );
 
