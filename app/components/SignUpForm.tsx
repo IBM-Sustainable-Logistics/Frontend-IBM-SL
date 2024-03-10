@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/ibm-logo.svg";
-import { LoaderFunction, json } from "@remix-run/deno";
-import { useLoaderData } from "@remix-run/react";
+import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
+import { Database } from "../lib/utils/types.ts";
 
 interface FormState {
   email: string;
@@ -9,7 +9,7 @@ interface FormState {
 }
 
 interface SignUpFormProps {
-  supabase: any;
+  supabase: SupabaseClient<Database>;
 }
 
 export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
@@ -43,7 +43,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
         setMessage("Conformation sent to your email " + data.user?.email + ".");
         setTimeout(() => {
           setShowMessage(false);
-          window.location.href = "/konto/login";
         }, 5000);
       }
     } catch (error) {

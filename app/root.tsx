@@ -1,5 +1,11 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/deno";
+import {
+  json,
+  type LinksFunction,
+  type LoaderFunctionArgs,
+} from "@remix-run/deno";
+import { createBrowserClient } from "https://esm.sh/@supabase/ssr@0.1.0";
+import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
 import {
   Links,
   LiveReload,
@@ -7,26 +13,44 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useOutletContext,
 } from "@remix-run/react";
-import * as React from "https://esm.sh/react@18.2.0";
+import React, { useState } from "react";
 import NavBar from "./components/navbar.tsx";
 import stylesheet from "./styles/global.css";
 import Footer from "./components/footer.tsx";
-import { createBrowserClient } from "https://esm.sh/@supabase/ssr@0.1.0";
-import { useState } from "https://esm.sh/react@18.2.0";
-import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
+
 import { Database } from "./lib/utils/types.ts";
+import {
+  getDomainEnv,
+  getSupabaseEnv,
+  getSupabaseWithSessionAndHeaders,
+} from "./lib/utils/supabase-server.ts";
+import { SupabaseOutletContext, useSupabase } from "./lib/utils/supabase.ts";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
-const env = await load();
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { serverSession, headers } = await getSupabaseWithSessionAndHeaders({
+    request,
+  });
+
+  const domainUrl = await getDomainEnv();
+
+  const env = getSupabaseEnv();
+
+  return json({ serverSession, env, domainUrl }, { headers });
+};
 
 export default function App() {
-  const [supabase] = useState(() =>
-    createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
-  );
+  const { env, serverSession, domainUrl } = useLoaderData<typeof loader>();
+
+  const { supabase } = useSupabase({ env, serverSession });
+
   return (
     <html lang="en">
       <head>
@@ -37,7 +61,7 @@ export default function App() {
       </head>
       <NavBar />
       <body>
-        <Outlet context={{ supabase }} />
+        <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

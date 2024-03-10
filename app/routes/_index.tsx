@@ -1,9 +1,12 @@
-import * as React from "react";
-import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/deno";
-import { createServerClient, parse, serialize } from 'https://esm.sh/@supabase/ssr@0.1.0'
-import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
-
+import React, { useState } from "https://esm.sh/react@18.2.0";
+import {
+  type MetaFunction,
+  type LoaderFunctionArgs,
+  redirect,
+  json,
+} from "@remix-run/deno";
 import Hero from "../components/hero.tsx";
+import { getSupabaseWithSessionAndHeaders } from "../lib/utils/supabase-server.ts";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,31 +15,17 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const cookies = parse(request.headers.get('Cookie') ?? '')
-  const headers = new Headers()
+export let loader = async ({ request }: LoaderFunctionArgs) => {
+  const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
+    request,
+  });
 
-  const env = await load();
+  if (serverSession) {
+    return redirect("/", { headers });
+  }
 
-
-  const supabase = createServerClient(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!, {
-    cookies: {
-      get(key) {
-        return cookies[key]
-      },
-      set(key, value, options) {
-        headers.append('Set-Cookie', serialize(key, value, options))
-      },
-      remove(key, options) {
-        headers.append('Set-Cookie', serialize(key, '', options))
-      },
-    },
-  })
-
-  return new Response('...', {
-    headers,
-  })
-}
+  return json({ success: true }, { headers });
+};
 
 export default function Index() {
   return (
