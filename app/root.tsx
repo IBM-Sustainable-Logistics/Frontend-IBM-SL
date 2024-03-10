@@ -49,6 +49,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
   const { env, serverSession, domainUrl } = useLoaderData<typeof loader>();
 
+  console.log("env", env);
+
   const { supabase } = useSupabase({ env, serverSession });
 
   return (
