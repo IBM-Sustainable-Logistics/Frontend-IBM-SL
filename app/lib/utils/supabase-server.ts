@@ -12,7 +12,7 @@ export const getDomainEnv = () => (
 
 export const getSupabaseEnv =  () => (
     {
-        SUPABASE_URL: Deno.env.get("SUPABASE_URL")! || env.SUPABASE_URL,
+        SUPABASE_URL: Deno.env.get("SUPABASE_URL")! || env.SUPABASE_URL!,
         SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY")! || env.SUPABASE_ANON_KEY!,
       }
   );
