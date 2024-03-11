@@ -3,6 +3,8 @@ import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
+import { transportMethods } from "../lib/Transport.ts";
+import type { TransportListItem } from "../lib/Transport.ts";
 
 interface FormState {
   transportMethod: string;
@@ -11,13 +13,6 @@ interface FormState {
 }
 
 const Calculator = () => {
-  const transportMethod = [
-    { value: "cargoship", label: "Cargoship" },
-    { value: "aircraft", label: "Aircraft" },
-    { value: "train", label: "Train" },
-    { value: "truck", label: "Truck" },
-  ];
-
   const initialFormState: FormState = {
     transportMethod: "",
     distance: 0,
@@ -34,7 +29,6 @@ const Calculator = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    console.log(name, value);
 
     // Update the corresponding property in the form data
     setFormData({
@@ -54,19 +48,31 @@ const Calculator = () => {
     e.preventDefault();
 
     try {
+      const list: TransportListItem[] = [
+        {
+          transport_form: formData.transportMethod,
+          distance_km: formData.distance,
+        },
+      ];
+
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-
-        body: JSON.stringify({
-          list: [
-            {
-              transport_form: formData.transportMethod,
-              distance_km: formData.distance,
-            },
-          ],
-        }),
+        body: JSON.stringify(list),
       });
+      if (formData.transportMethod === "" || !formData.distance) {
+        setShowError(true);
+        setShowMessage(false);
+        setErrorMessage("Please fill in all fields!");
+        return;
+      }
+
+      if (formData.distance < 1) {
+        setShowError(true);
+        setShowMessage(false);
+        setErrorMessage("Distance must be greater than 0!");
+        return;
+      }
 
       if (!response.ok) {
         setShowError(true);
@@ -79,9 +85,8 @@ const Calculator = () => {
       setFormData({ ...formData, emissions: responseData });
       setShowMessage(true);
       setShowError(false);
-
       setMessage(
-        `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData} kg`
+        `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData.total_kg} kg`
       );
     } catch (error) {
       console.error("Error:", error);
@@ -97,7 +102,7 @@ const Calculator = () => {
             Transport Method:
           </Label>
           <Combobox
-            options={transportMethod}
+            options={transportMethods}
             onChangeTransport={handleSelectChange}
             type="transportMethod"
           />
