@@ -40,21 +40,46 @@ const ProjectCard = ({
                 <p>Estimation amount: {estimation}kg</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <Button variant="destructive">
-                    <svg
-                        className="w-6 h-6 text-white-800 dark:text-white"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-                            clip-rule="evenodd"
-                        />
-                    </svg>
-                </Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="destructive">
+                            <svg
+                                className="w-6 h-6 text-white-800 dark:text-white"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete this project?</DialogTitle>
+                            <DialogDescription>
+                                This action will permanently delete the project.
+                                Are you sure?
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Button
+                            variant="destructive"
+                            className="border-black border rounded"
+                        >
+                            Delete
+                        </Button>
+                        <Button
+                            variant="light"
+                            className="border-black border rounded"
+                        >
+                            Cancel
+                        </Button>
+                    </DialogContent>
+                </Dialog>
                 <Dialog>
                     <DialogTrigger asChild>
                         <Button
