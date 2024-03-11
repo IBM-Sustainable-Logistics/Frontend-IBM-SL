@@ -37,10 +37,11 @@ jobs:
         run: "pnpm install" # 📝 Update the build command(s) if necessary
 
       - name: Build step
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          DOMAIN_URL: ${{ secrets.DOMAIN_URL }}
         run: "pnpm build" # 📝 Update the build command(s) if necessary
-
-      - name: show structure
-        run: pwd
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
@@ -49,5 +50,3 @@ jobs:
           entrypoint: "./build/index.js" # 📝 Update the entrypoint if necessary
           include: build,public
           root: ""
-
-
