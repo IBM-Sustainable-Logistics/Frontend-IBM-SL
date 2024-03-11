@@ -40,7 +40,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
         }, 5000);
       } else {
         setShowMessage(true);
-        setMessage("Conformation sent to your email " + data.user?.email + ".");
+        setMessage("confirmation sent to your email " + data.user?.email + ".");
         setTimeout(() => {
           setShowMessage(false);
         }, 5000);
