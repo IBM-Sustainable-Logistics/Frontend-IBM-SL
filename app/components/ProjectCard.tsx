@@ -71,10 +71,10 @@ const ProjectCard = ({
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogTitle>Delete project '{title}'?</DialogTitle>
                             <DialogDescription>
                                 This action cannot be undone. Are you sure you want to permanently
-                                delete this file from our servers?
+                                delete project '{title}' from our servers?
                             </DialogDescription>
                         </DialogHeader>
                         <DialogClose asChild>
