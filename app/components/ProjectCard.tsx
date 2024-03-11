@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Card,
     CardContent,
@@ -26,6 +26,16 @@ const ProjectCard = ({
     description: string;
     estimation: number;
 }) => {
+    const [isOpen, setOpen] = useState(false);
+
+    const setOpenTrue = () => {
+        setOpen(true);
+    };
+
+    const setOpenFalse = () => {
+        setOpen(false);
+    };
+
     return (
         <Card className="min-h-32 bg-white shadow-md rounded-lg p-4">
             <CardHeader>
@@ -40,9 +50,9 @@ const ProjectCard = ({
                 <p>Estimation amount: {estimation}kg</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <Dialog>
+                <Dialog open={isOpen} onClose={setOpenFalse}>
                     <DialogTrigger asChild>
-                        <Button variant="destructive">
+                        <Button variant="destructive" onClick={setOpenTrue}>
                             <svg
                                 className="w-6 h-6 text-white-800 dark:text-white"
                                 aria-hidden="true"
@@ -66,8 +76,8 @@ const ProjectCard = ({
                                 Are you sure?
                             </DialogDescription>
                         </DialogHeader>
-                        <Button
-                            variant="destructive"
+                        <Button variant="destructive"
+                            onClick={setOpenFalse}
                             className="border-black border rounded"
                         >
                             Delete
@@ -75,17 +85,16 @@ const ProjectCard = ({
                         <Button
                             variant="light"
                             className="border-black border rounded"
+                            onClick={setOpenFalse}
                         >
                             Cancel
                         </Button>
                     </DialogContent>
                 </Dialog>
+
                 <Dialog>
-                    <DialogTrigger asChild>
-                        <Button
-                            variant="light"
-                            className="border-black border rounded"
-                        >
+                    <DialogTrigger>
+                        <Button variant="light" className="border-black border rounded">
                             Edit
                             {/* SVG icon for edit functionality */}
                         </Button>
@@ -94,12 +103,10 @@ const ProjectCard = ({
                         <DialogHeader>
                             <DialogTitle>Edit Project</DialogTitle>
                             <DialogDescription>
-                                Make changes to your project here. Click save
-                                when you're done.
+                                Make changes to your project here. Click save when you're done.
                             </DialogDescription>
                         </DialogHeader>
-                        {/* Content for the dialog's form will go here */}
-                        {/* You can add inputs and state handling as needed */}
+
                     </DialogContent>
                 </Dialog>
             </CardFooter>
