@@ -15,6 +15,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from "./ui/dialog.tsx";
 
 const ProjectCard = ({
@@ -50,9 +51,9 @@ const ProjectCard = ({
                 <p>Estimation amount: {estimation}kg</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <Dialog open={isOpen} onClose={setOpenFalse}>
-                    <DialogTrigger asChild>
-                        <Button variant="destructive" onClick={setOpenTrue}>
+                <Dialog>
+                    <DialogTrigger>
+                        <Button variant="destructive" >
                             <svg
                                 className="w-6 h-6 text-white-800 dark:text-white"
                                 aria-hidden="true"
@@ -70,25 +71,22 @@ const ProjectCard = ({
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Delete this project?</DialogTitle>
+                            <DialogTitle>Are you absolutely sure?</DialogTitle>
                             <DialogDescription>
-                                This action will permanently delete the project.
-                                Are you sure?
+                                This action cannot be undone. Are you sure you want to permanently
+                                delete this file from our servers?
                             </DialogDescription>
                         </DialogHeader>
-                        <Button variant="destructive"
-                            onClick={setOpenFalse}
-                            className="border-black border rounded"
-                        >
-                            Delete
-                        </Button>
-                        <Button
-                            variant="light"
-                            className="border-black border rounded"
-                            onClick={setOpenFalse}
-                        >
-                            Cancel
-                        </Button>
+                        <DialogClose asChild>
+                            <Button className="border-black border rounded" variant="secondary">
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                            <Button className="border-black border rounded" variant="destructive">
+                                Delete
+                            </Button>
+                        </DialogClose>
                     </DialogContent>
                 </Dialog>
 
