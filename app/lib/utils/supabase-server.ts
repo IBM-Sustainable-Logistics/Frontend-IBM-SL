@@ -22,8 +22,8 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
   const headers = new Headers();
 
   const supabase = createServerClient(
-    env.SUPABASE_URL!,
-    env.SUPABASE_ANON_KEY!,
+    Deno.env.get("SUPABASE_URL") || env["SUPABASE_URL"],
+    Deno.env.get("SUPABASE_ANON_KEY") || env["SUPABASE_ANON_KEY"],
     {
       cookies: {
         get(key) {
