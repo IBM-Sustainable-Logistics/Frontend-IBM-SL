@@ -6,7 +6,7 @@ import {
   json,
 } from "@remix-run/deno";
 import Hero from "../components/hero.tsx";
-import { getSupabaseWithSessionAndHeaders } from "../lib/utils/supabase-server.ts";
+import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
 export const meta: MetaFunction = () => {
   return [
@@ -30,7 +30,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-6 bg-background font-mono">
-      <Hero /> {/* Use the Hero component */}
+      <Hero />
     </div>
   );
 }

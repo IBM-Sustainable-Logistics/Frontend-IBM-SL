@@ -11,8 +11,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination.tsx";
+import { project } from "../lib/Transport.ts";
 
-const Dashboard = () => {
+interface DasgboardProps {
+  Projects: project[];
+}
+const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
+  console.log(Projects);
   const projects = [
     {
       title: "Project x",

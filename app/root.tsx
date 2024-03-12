@@ -26,8 +26,8 @@ import {
   getDomainEnv,
   getSupabaseEnv,
   getSupabaseWithSessionAndHeaders,
-} from "./lib/utils/supabase-server.ts";
-import { SupabaseOutletContext, useSupabase } from "./lib/utils/supabase.ts";
+} from "./lib/supabase-server.ts";
+import { SupabaseOutletContext, useSupabase } from "./lib/supabase.ts";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },

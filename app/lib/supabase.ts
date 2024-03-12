@@ -1,7 +1,7 @@
 import { useRevalidator } from "@remix-run/react";
 import { createBrowserClient } from "https://esm.sh/@supabase/ssr@0.1.0";
 import type { Session, SupabaseClient } from  "https://esm.sh/@supabase/supabase-js@2.39.7";
-import type { Database } from "./types.ts";
+import type { Database } from "./utils/types.ts";
 import { useEffect, useState } from "react";
 
 export type TypedSupabaseClient = SupabaseClient<Database>;
