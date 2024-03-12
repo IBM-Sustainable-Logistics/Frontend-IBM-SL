@@ -21,7 +21,7 @@ export interface project {
 const transportMethods: TransportMethod[] = [
     { value: "cargoship", label: "Cargoship" },
     { value: "aircraft", label: "Aircraft" },
-    { value: "train"s, label: "Train" },
+    { value: "train", label: "Train" },
     { value: "truck", label: "Truck" },
 ];
 
