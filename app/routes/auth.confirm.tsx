@@ -6,47 +6,24 @@ import {
 } from "https://esm.sh/@supabase/ssr@0.1.0";
 import { type EmailOtpType } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
+import { getSupabaseWithHeaders } from "../lib/supabase-server.ts";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const requestUrl = new URL(request.url);
-  const token_hash = requestUrl.searchParams.get("token_hash");
-  const type = requestUrl.searchParams.get("type") as EmailOtpType | null;
+  const code = requestUrl.searchParams.get("code");
   const next = requestUrl.searchParams.get("next") || "/";
-  const headers = new Headers();
 
-  if (token_hash && type) {
-    const cookies = parse(request.headers.get("Cookie") ?? "");
-
-    const env = await load();
-
-    const supabase = createServerClient(
-      env.SUPABASE_URL!,
-      env.SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(key) {
-            return cookies[key];
-          },
-          set(key, value, options) {
-            headers.append("Set-Cookie", serialize(key, value, options));
-          },
-          remove(key, options) {
-            headers.append("Set-Cookie", serialize(key, "", options));
-          },
-        },
-      }
-    );
-
-    const { error } = await supabase.auth.verifyOtp({
-      type,
-      token_hash,
+  if (code) {
+    const { headers, supabase } = getSupabaseWithHeaders({
+      request,
     });
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
       return redirect(next, { headers });
     }
   }
 
-  // return the user to an error page with instructions
-  return redirect("/auth/auth-code-error", { headers });
+  return redirect("/login");
 }

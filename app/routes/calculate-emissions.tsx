@@ -10,7 +10,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   if (serverSession) {
-    return redirect("/signup", { headers });
+    console.log(serverSession, { headers });
   }
 
   return json({ success: true }, { headers });

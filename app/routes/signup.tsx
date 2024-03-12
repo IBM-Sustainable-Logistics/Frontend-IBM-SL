@@ -14,8 +14,8 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
     request,
   });
 
-  if (serverSession) {
-    return redirect("/signin", { headers });
+  if (!serverSession) {
+    redirect("/signin", { headers });
   }
 
   return json({ success: true }, { headers });
