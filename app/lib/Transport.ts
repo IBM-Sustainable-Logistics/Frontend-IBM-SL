@@ -9,6 +9,15 @@ interface TransportListItem {
     distance_km: number;
 }
 
+export interface project {
+    created_at: string;
+    description: string | null;
+    id: string;
+    title: string;
+    user_id: string;
+}
+
+
 const transportMethods: TransportMethod[] = [
     { value: "cargoship", label: "Cargoship" },
     { value: "aircraft", label: "Aircraft" },

@@ -2,7 +2,7 @@ import React from "react";
 
 import Calculator from "../components/calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
-import { getSupabaseWithSessionAndHeaders } from "../lib/utils/supabase-server.ts";
+import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
