@@ -47,7 +47,7 @@ export default function NavBar() {
         key="1"
         className="flex h-20 w-full shrink-0 items-center px-4 md:px-6"
       >
-        <Link className="mr-6 flex items-center" to="#">
+        <Link className="mr-6 flex items-center" to="/">
           <img src={logo} alt="IBM Logo" className="h-5 ml-5" />
         </Link>
         <nav className="lg:flex lg:gap-5 lg:items-center hidden">
