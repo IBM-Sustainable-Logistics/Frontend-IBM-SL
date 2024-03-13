@@ -13,6 +13,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const projects = await getProjects();
 
+
+
   return json({ success: true, projects }, { headers });
 };
 

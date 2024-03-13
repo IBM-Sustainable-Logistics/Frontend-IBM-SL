@@ -13,7 +13,6 @@ import {
   NavigationMenuContent,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu.tsx";
-import { ScrollArea } from "./ui/scroll-area.tsx";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,25 +21,6 @@ export default function NavBar() {
     setIsOpen(!isOpen);
   };
 
-  const navElem = [
-    {
-      value: "Calculate Emissions",
-      href: "/calculate-emissions",
-    },
-    {
-      value: "Dashboard",
-      href: "/projects",
-    },
-    {
-      value: "Data Visualization",
-      href: "/data-visualization",
-    },
-    {
-      value: "Item One",
-      href: "/link1",
-    },
-  ];
-
   return (
     <>
       <header
@@ -48,26 +28,61 @@ export default function NavBar() {
         className="flex h-20 w-full shrink-0 items-center px-4 md:px-6"
       >
         <Link className="mr-6 flex items-center" to="#">
-          <img src={logo} alt="IBM Logo" className="h-5 ml-5" />
+          <ScaleIcon className="h-6 w-6" />
+          <span className="sr-only">Kunan AI</span>
         </Link>
         <nav className="lg:flex lg:gap-5 lg:items-center hidden">
           <NavigationMenu className="invisible lg:visible px-4 lg:px-6 h-16 flex">
             <NavigationMenuList>
-              {navElem.map((item, index) => (
-                <NavigationMenuItem key={index}>
-                  <NavigationMenuLink
-                    as="a"
-                    href={item.href}
-                    className={navigationMenuTriggerStyle()}
-                  >
-                    {item.value}
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  as="a"
+                  href="/"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  <img src={logo} alt="IBM Logo" className="h-5" />
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  as="a"
+                  href="/calculate-emissions"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Calculate Emissions
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  as="a"
+                  href="/projects"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Dashboard
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  as="a"
+                  href="/data-visualization"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Data Visualization
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+                  Item One
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <NavigationMenuLink as="a" href="/link1">
+                    Link One
                   </NavigationMenuLink>
-                </NavigationMenuItem>
-              ))}
+                </NavigationMenuContent>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
-
         <div className="ml-auto">
           <Button
             className="rounded-full lg:hidden"
@@ -85,45 +100,14 @@ export default function NavBar() {
           >
             <span className="sr-only">Toggle user menu</span>
           </Button>
-          <div className="flex gap-4">
-            <Link to={"/signin"}>
-              <Button className=" lg:block" variant="default">
-                Sign In
-              </Button>{" "}
-            </Link>
-            <Link to={"/signup"}>
-              <Button className=" lg:block" variant="default">
-                Sign Up
-              </Button>
-            </Link>
-          </div>
         </div>
 
         {isOpen && (
           <div
             className={
-              "fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-bottom-80 lg:hidden"
+              "fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-bottom-80 md:hidden"
             }
-          >
-            <ScrollArea className="h-[300px] px-1 ">
-              <div className="space-y-1 p-2 ">
-                {navElem.map((item, index) => (
-                  <Link to={item.href}>
-                    <Button
-                      key={index}
-                      className="w-full justify-start font-normal bg-slate-50 text-black"
-                    >
-                      {item.value}
-                    </Button>
-                  </Link>
-                ))}
-                <div className="flex gap-4 justify-center items-center">
-                  <Button variant={"default"}>sign in</Button>
-                  <Button variant={"default"}>sign up</Button>
-                </div>
-              </div>
-            </ScrollArea>
-          </div>
+          ></div>
         )}
       </header>
     </>

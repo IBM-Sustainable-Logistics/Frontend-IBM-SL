@@ -2,8 +2,10 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "npm:@radix-ui/react-slot@^1.0.2": "npm:@radix-ui/react-slot@1.0.2_react@18.2.0",
       "npm:@remix-run/dev@^2.5.1": "npm:@remix-run/dev@2.8.0_@babel+core@7.24.0_esbuild@0.17.6_postcss@8.4.35_@types+node@18.16.19",
-      "npm:@types/node": "npm:@types/node@18.16.19"
+      "npm:@types/node": "npm:@types/node@18.16.19",
+      "npm:class-variance-authority@^0.7.0": "npm:class-variance-authority@0.7.0"
     },
     "npm": {
       "@ampproject/remapping@2.3.0": {
@@ -570,6 +572,21 @@
         "integrity": "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==",
         "dependencies": {}
       },
+      "@radix-ui/react-compose-refs@1.0.1_react@18.2.0": {
+        "integrity": "sha512-fDSBgd44FKHa1FRMU59qBMPFcl2PZE+2nmqunj+BWFyYYjnhIDWL2ItDs3rrbJDQOtzt5nIebLCQc4QRfz6LJw==",
+        "dependencies": {
+          "@babel/runtime": "@babel/runtime@7.24.0",
+          "react": "react@18.2.0"
+        }
+      },
+      "@radix-ui/react-slot@1.0.2_react@18.2.0": {
+        "integrity": "sha512-YeTpuq4deV+6DusvVUW4ivBgnkHwECUu0BiN43L5UCDFgdhsRUWAghhTF5MbvNTPzmiFOx90asDSUjWuCNapwg==",
+        "dependencies": {
+          "@babel/runtime": "@babel/runtime@7.24.0",
+          "@radix-ui/react-compose-refs": "@radix-ui/react-compose-refs@1.0.1_react@18.2.0",
+          "react": "react@18.2.0"
+        }
+      },
       "@remix-run/dev@2.8.0_@babel+core@7.24.0_esbuild@0.17.6_postcss@8.4.35_@types+node@18.16.19": {
         "integrity": "sha512-kZtmK/7vKk7QV8CGCyC9Or3wP7EwL4rOJS9vObmTRAPv8mLyznR8bJxeNVWA7ICnCGejF8s2X3abVJrkEMiFlg==",
         "dependencies": {
@@ -1115,6 +1132,12 @@
         "integrity": "sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==",
         "dependencies": {}
       },
+      "class-variance-authority@0.7.0": {
+        "integrity": "sha512-jFI8IQw4hczaL4ALINxqLEXQbWcNjoSkloa4IaufXCJr6QawJyw7tuRysRsrE8w2p/4gGaxKIt/hX3qz/IbD1A==",
+        "dependencies": {
+          "clsx": "clsx@2.0.0"
+        }
+      },
       "clean-stack@2.2.0": {
         "integrity": "sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==",
         "dependencies": {}
@@ -1131,6 +1154,10 @@
       },
       "clone@1.0.4": {
         "integrity": "sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==",
+        "dependencies": {}
+      },
+      "clsx@2.0.0": {
+        "integrity": "sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==",
         "dependencies": {}
       },
       "color-convert@1.9.3": {
@@ -2014,6 +2041,12 @@
       "longest-streak@3.1.0": {
         "integrity": "sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==",
         "dependencies": {}
+      },
+      "loose-envify@1.4.0": {
+        "integrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
+        "dependencies": {
+          "js-tokens": "js-tokens@4.0.0"
+        }
       },
       "lru-cache@10.2.0": {
         "integrity": "sha512-2bIM8x+VAf6JT4bKAljS1qUWgMsqZRPGJS6FSahIMPVvctcNhyVp7AJu7quxOW9jwkryBReKZY5tY5JYv2n/7Q==",
@@ -2922,6 +2955,12 @@
       "react-refresh@0.14.0": {
         "integrity": "sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==",
         "dependencies": {}
+      },
+      "react@18.2.0": {
+        "integrity": "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==",
+        "dependencies": {
+          "loose-envify": "loose-envify@1.4.0"
+        }
       },
       "readable-stream@2.3.8": {
         "integrity": "sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==",
@@ -4019,6 +4058,7 @@
         "npm:@radix-ui/react-label@^2.0.2",
         "npm:@radix-ui/react-navigation-menu@^1.1.4",
         "npm:@radix-ui/react-popover@^1.0.7",
+        "npm:@radix-ui/react-scroll-area@^1.0.5",
         "npm:@radix-ui/react-slot@^1.0.2",
         "npm:@remix-run/css-bundle@^2.5.1",
         "npm:@remix-run/deno@^2.5.1",
