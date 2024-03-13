@@ -40,7 +40,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
         }, 5000);
       } else {
         setShowMessage(true);
-        setMessage("Confirmation sent to your email " + data.user?.email + ".");
+        setMessage("You are logged in now");
         setTimeout(() => {
           setShowMessage(false);
         }, 5000);
@@ -66,7 +66,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
   return (
     <div className="max-w-sm rounded-lg shadow-lg bg-white p-6 space-y-6  dark:border-gray-700 ">
       <div className="space-y-2 text-center justify-center items-center ">
-        <h1 className="text-3xl font-bold">Sign Up</h1>
+        <h1 className="text-3xl font-bold">Sign In</h1>
 
         <p className="text-zinc-500 dark:text-zinc-400">
           Enter your email to sign in to IBM-SL
