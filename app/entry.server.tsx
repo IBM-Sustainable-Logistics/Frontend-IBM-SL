@@ -6,7 +6,7 @@
 
 import type { AppLoadContext, EntryContext } from "@remix-run/deno";
 import { RemixServer } from "@remix-run/react";
-import React from "https://esm.sh/stable/react@18.2.0/denonext/react.mjs";
+import React from "react";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 

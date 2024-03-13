@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button.tsx";
-import { ProjectCard } from "./ProjectCard.tsx";
+import { ProjectCard } from "./ui/ProjectCard.tsx";
 import { Input } from "./ui/input.tsx";
 import {
   Pagination,
@@ -10,7 +10,52 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./ui/pagination";
+} from "./ui/pagination.tsx";
+import { project } from "../lib/Transport.ts";
+
+interface DasgboardProps {
+  Projects: project[];
+}
+const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
+  console.log(Projects);
+  const projects = [
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+    {
+      title: "Project x",
+      description:
+        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+      estimation: 10.0,
+    },
+  ];
 
 import {
   Dialog,
@@ -40,13 +85,13 @@ const Dashboard = () => {
   };
   return (
     <>
-      <h1 className='text-3xl font-bold my-2 text-center'>My Projects</h1>
-      <div className='flex flex-col mx-10'>
-        <div className='w-full flex flex-row justify-between my-10'>
+      <h1 className="text-3xl font-bold my-2 text-center">My Projects</h1>
+      <div className="flex flex-col mx-10">
+        <div className="w-full flex flex-row justify-between my-10">
           <Input
-            type='text'
-            placeholder='Search for a project'
-            className='w-full'
+            type="text"
+            placeholder="Search for a project"
+            className="w-full"
           />
           <Dialog>
             <DialogTrigger>
@@ -129,53 +174,30 @@ const Dashboard = () => {
           </Dialog>
         </div>
 
-        <div className='grid grid-cols-3 justify-self-stretch max-w-full gap-4'>
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
-          <ProjectCard
-            title='Project x'
-            description='Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.'
-            estimation={10.0}
-          />
+        <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
+          {projects.map((project, index) => (
+            <ProjectCard
+              title={project.title}
+              description={project.description}
+              estimation={project.estimation}
+            />
+          ))}
         </div>
 
-        <div className='my-10'>
+        <div className="my-10">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious href='#' />
+                <PaginationPrevious href="#" />
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href='#'>1</PaginationLink>
+                <PaginationLink href="#">1</PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationEllipsis />
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href='#' />
+                <PaginationNext href="#" />
               </PaginationItem>
             </PaginationContent>
           </Pagination>

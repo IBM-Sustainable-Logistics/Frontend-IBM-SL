@@ -1,7 +1,12 @@
-import * as React from "react";
-import type { MetaFunction } from "@remix-run/deno";
-
+import React, { useState } from "https://esm.sh/react@18.2.0";
+import {
+  type MetaFunction,
+  type LoaderFunctionArgs,
+  redirect,
+  json,
+} from "@remix-run/deno";
 import Hero from "../components/hero.tsx";
+import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,10 +15,18 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export let loader = async ({ request }: LoaderFunctionArgs) => {
+  const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
+    request,
+  });
+
+  return json({ success: true }, { headers });
+};
+
 export default function Index() {
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-6 bg-background font-mono">
-      <Hero /> {/* Use the Hero component */}
+      <Hero />
     </div>
   );
 }

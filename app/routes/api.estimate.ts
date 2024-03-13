@@ -1,5 +1,4 @@
-import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
-import type { TransportListItem } from "../lib/Transport.ts";
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
 
 
 const backendUrl = "https://ibm-sl-api.deno.dev/";
@@ -37,7 +36,6 @@ export const action = async ({
 
       const url = new URL(`${backendUrl}api/estimate`);
 
-      console.log("body", body);
 
       const res = await fetch(url, {
         method: "POST",
