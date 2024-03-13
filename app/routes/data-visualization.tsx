@@ -1,11 +1,11 @@
 import React from "react";
 
-import Dashboard from "../components/dashboard.tsx";
+import DataVisualization from "app/components/DataVisualization.tsx";
 
 const DVPage = () => {
     return (
         <div className="max-h-lvh"> 
-            <Dashboard />
+            <DataVisualization />
         </div>
     );
 };
