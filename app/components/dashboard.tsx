@@ -13,6 +13,18 @@ import {
 } from "./ui/pagination.tsx";
 import { project } from "../lib/Transport.ts";
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog.tsx";
+
+import Calculator from "./calculator.tsx";
+
 interface DasgboardProps {
   Projects: project[];
 }
@@ -57,17 +69,6 @@ const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
     },
   ];
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog.tsx";
-
-import Calculator from "./calculator.tsx";
 
 const Dashboard = () => {
   // State to keep track of the number of Calculator components
@@ -207,4 +208,5 @@ const Dashboard = () => {
   );
 };
 
+}
 export default Dashboard;
