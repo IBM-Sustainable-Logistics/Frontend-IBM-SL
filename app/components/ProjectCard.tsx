@@ -26,6 +26,7 @@ import {
   AccordionTrigger,
 } from "./ui/accordion.tsx";
 
+
 const ProjectCard = ({
   title,
   description,

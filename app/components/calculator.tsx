@@ -10,7 +10,12 @@ interface FormState {
   emissions: number | null;
 }
 
-const Calculator = () => {
+type CalculatorProps = {
+  createProject: boolean;
+};
+
+
+const Calculator = ({ createProject }: CalculatorProps) => {
   const transportMethod = [
     { value: "cargoship", label: "Cargoship" },
     { value: "aircraft", label: "Aircraft" },
@@ -31,7 +36,7 @@ const Calculator = () => {
   const [showError, setShowError] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -79,11 +84,9 @@ const Calculator = () => {
       setFormData({ ...formData, emissions: responseData });
       setShowMessage(true);
       setShowError(false);
-      const distanceRounded = Number.parseFloat(
-        formData.distance,
-      ).toFixed(2);
+      const distanceRounded = Number.parseFloat(formData.distance).toFixed(2);
       setMessage(
-        `Emissions for ${formData.transportMethod} over ${distanceRounded} km: ${responseData} kg`,
+        `Emissions for ${formData.transportMethod} over ${distanceRounded} km: ${responseData} kg`
       );
     } catch (error) {
       console.error("Error:", error);
@@ -91,46 +94,44 @@ const Calculator = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className=" text-primary text-4xl font-bold">
-        Calculate Emissions
-      </h1>
+    <div className='flex flex-col gap-4'>
+      {!createProject && (
+        <h1 className=' text-primary text-4xl font-bold'>
+          Calculate Emissions
+        </h1>
+      )}
       <form onSubmit={handleSubmit}>
-        <div className=" flex flex-col gap-4 ">
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <div className=' flex flex-col gap-4 '>
+          <Label className='text-lg font-medium text-gray-900 dark:text-gray-100'>
             Transport Method:
           </Label>
           <Combobox
             options={transportMethod}
             onChangeTransport={handleSelectChange}
-            type="transportMethod"
+            type='transportMethod'
           />
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+          <Label className='text-lg font-medium text-gray-900 dark:text-gray-100'>
             Distance (km):
           </Label>
           <Input
-            type="number"
-            id="distance"
-            name="distance"
-            className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+            type='number'
+            id='distance'
+            name='distance'
+            className='w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100'
             onChange={handleInputChange}
           />
-          <Button
-            className="w-full"
-            variant={"ibm_blue"}
-            type="submit"
-          >
+          <Button className='w-full' variant={"ibm_blue"} type='submit'>
             Calculate
           </Button>
         </div>
       </form>
       {showMessage && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px]">
+        <div className='bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px]'>
           {message}
         </div>
       )}
       {showError && (
-        <div className="bg-red-200 p-3 mb-3 rounded-md text-red-800 mt-6 w-[330px]">
+        <div className='bg-red-200 p-3 mb-3 rounded-md text-red-800 mt-6 w-[330px]'>
           {errorMessage}
         </div>
       )}
