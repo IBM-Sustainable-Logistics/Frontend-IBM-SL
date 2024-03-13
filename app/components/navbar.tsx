@@ -85,17 +85,19 @@ export default function NavBar() {
           >
             <span className="sr-only">Toggle user menu</span>
           </Button>
-          <div className="flex gap-4">
-            <Link to={"/signin"}>
-              <Button className=" lg:block" variant="default">
-                Sign In
-              </Button>{" "}
-            </Link>
-            <Link to={"/signup"}>
-              <Button className=" lg:block" variant="default">
-                Sign Up
-              </Button>
-            </Link>
+          <div className="lg:block hidden ">
+            <div className="flex gap-4">
+              <Link to={"/signin"}>
+                <Button className="lg:block" variant="default">
+                  Sign In
+                </Button>{" "}
+              </Link>
+              <Link to={"/signup"}>
+                <Button className="lg:block" variant="default">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
