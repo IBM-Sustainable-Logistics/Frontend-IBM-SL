@@ -11,11 +11,11 @@ interface FormState {
 }
 
 type CalculatorProps = {
-  createProject: boolean;
+  isCreateProject: boolean;
 };
 
 
-const Calculator = ({ createProject }: CalculatorProps) => {
+const Calculator = ({ isCreateProject }: CalculatorProps) => {
   const transportMethod = [
     { value: "cargoship", label: "Cargoship" },
     { value: "aircraft", label: "Aircraft" },
@@ -95,7 +95,7 @@ const Calculator = ({ createProject }: CalculatorProps) => {
 
   return (
     <div className='flex flex-col gap-4'>
-      {!createProject && (
+      {!isCreateProject && (
         <h1 className=' text-primary text-4xl font-bold'>
           Calculate Emissions
         </h1>
@@ -120,9 +120,11 @@ const Calculator = ({ createProject }: CalculatorProps) => {
             className='w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100'
             onChange={handleInputChange}
           />
+          {!isCreateProject && (
           <Button className='w-full' variant={"ibm_blue"} type='submit'>
             Calculate
           </Button>
+          )}
         </div>
       </form>
       {showMessage && (

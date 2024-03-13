@@ -25,6 +25,19 @@ import {
 import Calculator from "./calculator.tsx";
 
 const Dashboard = () => {
+  // State to keep track of the number of Calculator components
+  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
+
+  const addCalculator = () => {
+    const newCalculator = {
+      id: Date.now(), // Using the current timestamp as a unique ID
+    };
+    setCalculators([...calculators, newCalculator]);
+  };
+
+  const deleteCalculator = (id: number) => {
+    setCalculators(calculators.filter((calculator) => calculator.id !== id));
+  };
   return (
     <>
       <h1 className='text-3xl font-bold my-2 text-center'>My Projects</h1>
@@ -62,14 +75,37 @@ const Dashboard = () => {
                 </div>
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className='h-2/3 overflow-y-auto'>
               <DialogHeader>
                 <DialogTitle>Create a project</DialogTitle>
                 <DialogDescription>
-                  <div className='flex flex-col gap-4'>
+                  <div
+                    className='flex flex-col gap-4'
+                    style={{ maxHeight: "90vh" }}
+                  >
                     <Input type='text' placeholder='Title' className='w-full' />
-                    <Input type='text' placeholder='Description' className='w-full'/>
-                    <Calculator createProject={true}/>
+                    <Input
+                      type='text'
+                      placeholder='Description'
+                      className='w-full'
+                    />
+                    {calculators.map((calculator) => (
+                      <div key={calculator.id}>
+                        <Calculator isCreateProject={true} />
+                        <Button
+                          variant='destructive'
+                          onClick={() => deleteCalculator(calculator.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      className='w-full'
+                      onClick={addCalculator}
+                    >
+                      Add transport method
+                    </Button>
                   </div>
                 </DialogDescription>
               </DialogHeader>
