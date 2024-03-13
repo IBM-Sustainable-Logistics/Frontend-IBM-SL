@@ -22,6 +22,8 @@ import {
   DialogTrigger,
 } from "./ui/dialog.tsx";
 
+import Calculator from "./calculator.tsx";
+
 const Dashboard = () => {
   return (
     <>
@@ -64,30 +66,27 @@ const Dashboard = () => {
               <DialogHeader>
                 <DialogTitle>Create a project</DialogTitle>
                 <DialogDescription>
-                  <div className='flex flex-col gap-x-6'>
+                  <div className='flex flex-col gap-4'>
                     <Input type='text' placeholder='Title' className='w-full' />
-                    <Input
-                      type='text'
-                      placeholder='Description'
-                      className='w-full'
-                    />
+                    <Input type='text' placeholder='Description' className='w-full'/>
+                    <Calculator createProject={true}/>
                   </div>
                 </DialogDescription>
               </DialogHeader>
               <DialogClose asChild>
                 <Button
                   className='border-black border rounded'
-                  variant='secondary'
+                  variant='primary'
                 >
-                  Cancel
+                  Create
                 </Button>
               </DialogClose>
               <DialogClose asChild>
                 <Button
                   className='border-black border rounded'
-                  variant='primary'
+                  variant='destructive'
                 >
-                  Create
+                  Cancel
                 </Button>
               </DialogClose>
             </DialogContent>
