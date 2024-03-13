@@ -14,7 +14,7 @@ const DataVisualization = () => {
         const data = {
           labels: ["1: train", "2: train", "3: truck", "4: air cargo", "5: truck"],
           datasets: [{
-            label: 'Sales',
+            label: 'CO2 emission',
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1,
