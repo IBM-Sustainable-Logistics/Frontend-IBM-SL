@@ -7,3 +7,4 @@ node_modules
 .envrc
 .direnv/
 package-lock.json
+deno.lock
