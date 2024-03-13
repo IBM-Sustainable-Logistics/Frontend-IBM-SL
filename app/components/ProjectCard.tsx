@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "@remix-run/react";
+
 import {
   Card,
   CardContent,
@@ -33,6 +35,13 @@ const ProjectCard = ({
   description: string;
   estimation: number;
 }) => {
+
+  const navToProj = useNavigate();
+
+  const openProject = () => {
+    navToProj(`/projects/${title.replace(/\s/g, "_")}`);
+  }
+
   return (
     <Card className='min-h-32 bg-white shadow-md rounded-lg p-4'>
       <CardHeader>
@@ -90,6 +99,13 @@ const ProjectCard = ({
               </Button>
             </DialogClose>
           </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className='border-black border rounded' onClick={openProject}>
+              View
+            </Button>
+          </DialogTrigger>
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>

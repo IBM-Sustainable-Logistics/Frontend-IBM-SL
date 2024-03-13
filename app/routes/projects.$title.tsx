@@ -1,12 +1,12 @@
 import React from "react";
 
-import Dashboard from "../components/dashboard.js";
+import ProjectOverview from "app/components/projectoverview";
 
 const ProjectById = () => {
 
     return (
         <div className="max-h-lvh">
-            <Dashboard />
+            <ProjectOverview />
         </div>
     );
 };
