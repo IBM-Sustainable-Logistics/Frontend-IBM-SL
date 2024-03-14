@@ -30,6 +30,7 @@ export async function getProjects(){
     if (error){
         console.log(error)
     }
+    console.log("🚀 ~ getProjects ~ data:", data)
     return data as project[]
 }
 

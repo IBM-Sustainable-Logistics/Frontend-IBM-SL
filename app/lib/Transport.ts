@@ -17,6 +17,10 @@ export interface project {
     user_id: string;
 }
 
+export interface CalculatorInstance {
+    id: number;
+  }
+
 
 const transportMethods: TransportMethod[] = [
     { value: "cargoship", label: "Cargoship" },

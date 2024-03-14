@@ -10,10 +10,9 @@ const remixHandler = createRequestHandlerWithStaticFiles({
   }),
 
   mode: build.mode,
-  
 });
 
-const port = Number(Deno.env.get("PORT")) || 8000;
-console.log(Deno.env.get("PORT"))
+const port = Number(Deno.env.get("PORT")) || 8002;
+console.log(Deno.env.get("PORT"));
 console.log(`Listening on http://localhost:${port}`);
 serve(remixHandler, { port });

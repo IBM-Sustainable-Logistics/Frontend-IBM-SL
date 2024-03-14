@@ -6,5 +6,3 @@ node_modules
 .env
 .envrc
 .direnv/
-package-lock.json
-deno.lock

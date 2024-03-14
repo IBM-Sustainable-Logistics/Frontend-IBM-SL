@@ -11,8 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination.tsx";
-import { project } from "../lib/Transport.ts";
-
+import { CalculatorInstance, project } from "../lib/Transport.ts";
 import {
   Dialog,
   DialogClose,
@@ -25,11 +24,11 @@ import {
 
 import Calculator from "./calculator.tsx";
 
-interface DasgboardProps {
+interface DashboardProps {
   Projects: project[];
 }
-const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
-  console.log(Projects);
+
+const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
   const projects = [
     {
       title: "Project x",
@@ -68,9 +67,6 @@ const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
       estimation: 10.0,
     },
   ];
-
-
-const Dashboard = () => {
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
@@ -80,19 +76,18 @@ const Dashboard = () => {
     };
     setCalculators([...calculators, newCalculator]);
   };
-
   const deleteCalculator = (id: number) => {
     setCalculators(calculators.filter((calculator) => calculator.id !== id));
   };
   return (
     <>
-      <h1 className="text-3xl font-bold my-2 text-center">My Projects</h1>
-      <div className="flex flex-col mx-10">
-        <div className="w-full flex flex-row justify-between my-10">
+      <h1 className='text-3xl font-bold my-2 text-center'>My Projects</h1>
+      <div className='flex flex-col mx-10'>
+        <div className='w-full flex flex-row justify-between my-10'>
           <Input
-            type="text"
-            placeholder="Search for a project"
-            className="w-full"
+            type='text'
+            placeholder='Search for a project'
+            className='w-full'
           />
           <Dialog>
             <DialogTrigger>
@@ -146,10 +141,7 @@ const Dashboard = () => {
                         </Button>
                       </div>
                     ))}
-                    <Button
-                      className='w-full'
-                      onClick={addCalculator}
-                    >
+                    <Button className='w-full' onClick={addCalculator}>
                       Add transport method
                     </Button>
                   </div>
@@ -175,7 +167,7 @@ const Dashboard = () => {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
+        <div className='grid grid-cols-3 justify-self-stretch max-w-full gap-4'>
           {projects.map((project, index) => (
             <ProjectCard
               title={project.title}
@@ -185,20 +177,20 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="my-10">
+        <div className='my-10'>
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious href="#" />
+                <PaginationPrevious href='#' />
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
+                <PaginationLink href='#'>1</PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationEllipsis />
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href="#" />
+                <PaginationNext href='#' />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
@@ -208,5 +200,4 @@ const Dashboard = () => {
   );
 };
 
-}
 export default Dashboard;
