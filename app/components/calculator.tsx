@@ -139,14 +139,27 @@ const Calculator = () => {
       </div>
       <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4 basis-1/3 h-screen">
         <div className="border border-black p-5 my-5">
-          test
+          <h1 className="text-2xl font-bold">Total Emissions</h1>
+          <p className="text-xl font-bold"> 25 Kg</p>
         </div>
+
+        <hr></hr>
+
         <div className="border border-black p-5 my-5">
-          test
+          <h1 className="text-2xl font-bold">Train</h1>
+          <div className="flex flex-row justify-between">
+            <p className="text-lg">Distance</p>
+            <p className="text-lg">50 km</p>
+          </div>
+          <div className="flex flex-row justify-between">
+            <p className="text-lg">Emissions</p>
+            <p className="text-lg">13 kg</p>
+          </div>
         </div>
-        <div className="border border-black p-5 my-5">
-          test
-        </div>
+
+        <Button className="w-full" variant={"ibm_blue"} type="submit">
+          Add Another
+        </Button>
       </ScrollArea>
     </div>
   );
