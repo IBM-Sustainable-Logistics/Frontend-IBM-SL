@@ -56,10 +56,6 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
     fetcher.submit(formData, { method: "POST", action: "/api/project" });
   };
 
-  const handlehello = () => {
-    console.log("hello");
-  };
-
   return (
     <>
       <h1 className="text-3xl font-bold my-2 text-center">My Projects</h1>
@@ -166,6 +162,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
             return (
               <ProjectCard
                 key={index}
+                id={p.id}
                 title={p.title}
                 description={p.description}
                 estimation={sum}

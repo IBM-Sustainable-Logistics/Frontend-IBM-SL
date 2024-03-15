@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "./card.tsx";
 import { Button } from "./button.tsx";
-import { useNavigate } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import {
   Dialog,
   DialogContent,
@@ -26,14 +26,24 @@ import {
 } from "./accordion.tsx";
 
 const ProjectCard = ({
+  id,
   title,
   description,
   estimation,
 }: {
+  id: string;
   title: string;
   description: string | null;
   estimation: number;
 }) => {
+  const fetcher = useFetcher();
+
+  const handleDeleteProject = () => {
+    const formData = {
+      projId: id,
+    };
+    fetcher.submit(formData, { method: "DELETE", action: "/api/project" });
+  };
   const navToProj = useNavigate();
 
   const openProject = () => {
@@ -92,6 +102,7 @@ const ProjectCard = ({
               <Button
                 className="border-black border rounded"
                 variant="destructive"
+                onClick={handleDeleteProject}
               >
                 Delete
               </Button>

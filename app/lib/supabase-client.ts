@@ -69,5 +69,12 @@ export async function insertProject (
 }
 
 
+export async function deleteProject(projectId: string) {
+    const { error } = await supabase.from('projects').delete().eq('id', projectId);
+    if (error) {
+        console.error("Error deleting project:", error);
+    }
+    return { error };
+}
 
 
