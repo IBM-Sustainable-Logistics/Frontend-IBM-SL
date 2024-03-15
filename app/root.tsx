@@ -4,8 +4,6 @@ import {
   type LinksFunction,
   type LoaderFunctionArgs,
 } from "@remix-run/deno";
-import { createBrowserClient } from "https://esm.sh/@supabase/ssr@0.1.0";
-import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
 import {
   Links,
   LiveReload,
@@ -14,20 +12,18 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useOutletContext,
 } from "@remix-run/react";
-import React, { useState } from "react";
-import NavBar from "./components/navbar.tsx";
+import React from "react";
+import { NavBar } from "./components/navbar.tsx";
 import stylesheet from "./styles/global.css";
 import Footer from "./components/footer.tsx";
 
-import { Database } from "./lib/utils/types.ts";
 import {
   getDomainEnv,
   getSupabaseEnv,
   getSupabaseWithSessionAndHeaders,
 } from "./lib/supabase-server.ts";
-import { SupabaseOutletContext, useSupabase } from "./lib/supabase.ts";
+import { useSupabase } from "./lib/supabase.ts";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -59,7 +55,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <NavBar />
+      <NavBar serverSession={serverSession} supabase={supabase} />
       <body>
         <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
