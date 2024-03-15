@@ -69,6 +69,20 @@ export default function NavBar() {
         </nav>
 
         <div className="ml-auto">
+          <div className="lg:block hidden mt-10">
+            <div className="flex gap-4">
+              <Link to={"/signin"}>
+                <Button className="lg:block" variant="default">
+                  Sign In
+                </Button>{" "}
+              </Link>
+              <Link to={"/signup"}>
+                <Button className="lg:block" variant="default">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          </div>
           <Button
             className="rounded-full lg:hidden"
             size="icon"
@@ -85,18 +99,6 @@ export default function NavBar() {
           >
             <span className="sr-only">Toggle user menu</span>
           </Button>
-          <div className="flex gap-4">
-            <Link to={"/signin"}>
-              <Button className=" lg:block" variant="default">
-                Sign In
-              </Button>{" "}
-            </Link>
-            <Link to={"/signup"}>
-              <Button className=" lg:block" variant="default">
-                Sign Up
-              </Button>
-            </Link>
-          </div>
         </div>
 
         {isOpen && (
