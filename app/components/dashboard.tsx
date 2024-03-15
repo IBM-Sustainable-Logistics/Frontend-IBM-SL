@@ -29,44 +29,6 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
-  const projects = [
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-  ];
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
@@ -168,13 +130,23 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
         </div>
 
         <div className='grid grid-cols-3 justify-self-stretch max-w-full gap-4'>
-          {projects.map((project, index) => (
-            <ProjectCard
-              title={project.title}
-              description={project.description}
-              estimation={project.estimation}
-            />
-          ))}
+          {Projects.map((p, index) => {
+            console.log("🚀 ~ {Projects.map ~ p:", p)
+            let sum = 0;
+            
+            p.projects_transports.forEach((t) => {
+              sum += t.distance_km * t.transports.emissions_per_km;
+            });
+
+            return (
+              <ProjectCard
+                key={index}
+                title={p.title}
+                description={p.description}
+                estimation={sum}
+              />
+            );
+          })}
         </div>
 
         <div className='my-10'>

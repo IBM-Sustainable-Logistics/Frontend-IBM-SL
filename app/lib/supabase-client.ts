@@ -25,14 +25,29 @@ export async function getEstimates(){
     return await supabase.from('estimates').select('*')
 }
 
-export async function getProjects(){
-    const {data, error} = await supabase.from('projects').select('*') 
-    if (error){
-        console.log(error)
+export async function getProjects() {
+    const { data, error } = await supabase
+        .from('projects')
+        .select(`
+            *,
+            projects_transports (
+                *,
+                transports (
+                    *
+                )
+            )
+        `)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching projects:", error);
+        return [];
     }
-    console.log("🚀 ~ getProjects ~ data:", data)
-    return data as project[]
+    
+    console.log("Fetched projects with transports:", data);
+    return data;
 }
+
 
 
 
