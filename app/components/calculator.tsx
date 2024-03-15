@@ -9,6 +9,8 @@ import type { TransportListItem } from "../lib/Transport.ts";
 interface FormState {
   transportMethod: string;
   distance: number;
+  from: string
+  to: string
   emissions: number | null;
 }
 
@@ -16,6 +18,8 @@ const Calculator = () => {
   const initialFormState: FormState = {
     transportMethod: "",
     distance: 0,
+    from: "",
+    to: "",
     emissions: null,
   };
 
@@ -24,6 +28,7 @@ const Calculator = () => {
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [distanceOnly, setDistanceOnly] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,6 +43,10 @@ const Calculator = () => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
+    if (name === "transportMethod") {
+      setDistanceOnly(!(value === "truck" || value === "etruck"));
+    }
+
     setFormData({
       ...formData,
       [name]: value,
@@ -48,30 +57,95 @@ const Calculator = () => {
     e.preventDefault();
 
     try {
-      const list: TransportListItem[] = [
-        {
-          transport_form: formData.transportMethod,
-          distance_km: formData.distance,
-        },
-      ];
+      const list: TransportListItem[] = [];
 
-      const response = await fetch("/api/estimate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(list),
-      });
-      if (formData.transportMethod === "" || !formData.distance) {
+      let response;
+
+      // TODO: Maybe refactor all these conditionals
+
+      if (formData.transportMethod === "") {
         setShowError(true);
         setShowMessage(false);
-        setErrorMessage("Please fill in all fields!");
+        setErrorMessage("Please choose a Transport Method!");
         return;
       }
 
-      if (formData.distance < 1) {
-        setShowError(true);
-        setShowMessage(false);
-        setErrorMessage("Distance must be greater than 0!");
-        return;
+      if (formData.from == "" && formData.to == "" && formData.distance == "") {
+        console.log("all empty");
+        if (formData.transportMethod === "truck" || formData.transportMethod === "etruck") {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Please specify either origin and destination address or distance!");
+          return;
+        } else {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Please specify a distance!");
+          return;
+        }
+      }
+
+      const usesAddress = formData.from !== "" || formData.to !== "";
+
+      // If we are using addresses
+      if (usesAddress) {
+        if (!(formData.transportMethod === "truck" || formData.transportMethod === "etruck")) {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Only `Truck` and `Electric Truck` allows for specifying origin and destination address!");
+          return;
+        }
+
+        if (formData.from == "" || formData.to == "") {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Please specify both origin and destination address!");
+          return;
+        }
+
+        if (formData.distance) {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Please specify either origin and destination address or distance, not both!");
+          return;
+        }
+
+        list.push({
+          transport_form: formData.transportMethod,
+          from: formData.from,
+          to: formData.to,
+        });
+
+        response = await fetch("/api/estimate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(list),
+        });
+      } else {
+        if (!formData.distance) {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Please specify a distance!");
+          return;
+        }
+
+        if (formData.distance < 1) {
+          setShowError(true);
+          setShowMessage(false);
+          setErrorMessage("Distance must be greater than 0!");
+          return;
+        }
+
+        list.push({
+          transport_form: formData.transportMethod,
+          distance_km: formData.distance,
+        });
+
+        response = await fetch("/api/estimate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(list),
+        });
       }
 
       if (!response.ok) {
@@ -86,7 +160,9 @@ const Calculator = () => {
       setShowMessage(true);
       setShowError(false);
       setMessage(
-        `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData.total_kg} kg`
+        usesAddress
+        ? `Emissions for ${formData.transportMethod} from ${transportMethods[formData.from]} to ${formData.to}: ${responseData.total_kg} kg`
+        : `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData.total_kg} kg`
       );
     } catch (error) {
       console.error("Error:", error);
@@ -98,6 +174,7 @@ const Calculator = () => {
       <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
       <form onSubmit={handleSubmit}>
         <div className=" flex flex-col gap-4 ">
+
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Transport Method:
           </Label>
@@ -106,6 +183,34 @@ const Calculator = () => {
             onChangeTransport={handleSelectChange}
             type="transportMethod"
           />
+
+          {!distanceOnly
+            ? (<>
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Origin Address:
+              </Label>
+              <Input
+                type="string"
+                id="from"
+                name="from"
+                className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                onChange={handleInputChange}
+              />
+
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Destination Address:
+              </Label>
+              <Input
+                type="string"
+                id="to"
+                name="to"
+                className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                onChange={handleInputChange}
+              />
+            </>)
+            : null
+          }
+
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Distance (km):
           </Label>
@@ -116,6 +221,7 @@ const Calculator = () => {
             className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
             onChange={handleInputChange}
           />
+
           <Button className="w-full" variant={"ibm_blue"} type="submit">
             Calculate
           </Button>
