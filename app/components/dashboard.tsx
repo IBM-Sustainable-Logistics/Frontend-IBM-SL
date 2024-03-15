@@ -29,7 +29,11 @@ interface DashboardProps {
   serverSession: any;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
+const Dashboard: React.FC<DashboardProps> = ({
+  Projects,
+  serverSession,
+  addProject,
+}) => {
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
@@ -47,13 +51,17 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
     setCalculators(calculators.filter((calculator) => calculator.id !== id));
   };
 
-  // const handleCreateProject = async () => {
-  //   await addProject({
-  //     title: titleProject,
-  //     description: descriptionProject,
-  //     user_id: userId,
-  //   });
-  // };
+  const handleCreateProject = () => {
+    addProject({
+      title: titleProject,
+      description: descriptionProject,
+      user_id: userId,
+    });
+  };
+
+  const handleHello = () => {
+    console.log("hello");
+  };
 
   return (
     <>
@@ -100,11 +108,17 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
                     className='flex flex-col gap-4'
                     style={{ maxHeight: "90vh" }}
                   >
-                    <Input type='text' placeholder='Title' className='w-full' />
+                    <Input
+                      type='text'
+                      placeholder='Title'
+                      className='w-full'
+                      onChange={(e) => setTitleProject(e.target.value)}
+                    />
                     <Input
                       type='text'
                       placeholder='Description'
                       className='w-full'
+                      onChange={(e) => setDescriptionProject(e.target.value)}
                     />
                     {calculators.map((calculator) => (
                       <div key={calculator.id}>
@@ -162,6 +176,8 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
             );
           })}
         </div>
+
+        <Button onClick={handleHello}>Click me</Button>
 
         <div className='my-10'>
           <Pagination>

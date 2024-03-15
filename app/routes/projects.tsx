@@ -23,15 +23,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const ProjectsPage = () => {
   const { projects, serverSession } = useLoaderData<typeof loader>();
 
-  // const addProject = async (projectDetails) => {
-  //   await insertProject(projectDetails);
-  // };
+  const addProject =  (projectDetails) => {
+    // try {
+    //    insertProject(projectDetails);
+    // } catch (error) {
+    //   console.error("Failed to add project:", error);
+    //   // Handle the error appropriately
+    // }
+  };
+  
   return (
     <div className='max-h-lvh'>
       <Dashboard
         Projects={projects}
         serverSession={serverSession}
-        // addProject={addProject}
+        addProject={addProject}
       />
     </div>
   );
