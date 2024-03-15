@@ -45,7 +45,6 @@ export async function getProjects() {
         return [];
     }
     
-    console.log("Fetched projects with transports:", data);
     return data;
 }
 
@@ -54,7 +53,6 @@ export async function insertProject (
     description: string | null,
     user_id: string,
 ) {
-    console.log("Inserting project:", title, description, user_id);
     const { error } = await supabase.from('projects').insert(
         {
             title,
