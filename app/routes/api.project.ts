@@ -18,7 +18,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const description = formData.get("descriptionProject")?.toString();
   const userId = formData.get("userId")?.toString();
 
-  const skipRevalidation = ["gitposts", "profile.$username"];
 
   // Check if userId and tweetId are present
 if (!userId || !title || !description) {
@@ -36,10 +35,10 @@ const { error } = await insertProject(
 
 if (error) {
     return json(
-        { error: "Failed create new project", skipRevalidation },
+        { error: "Failed create new project" },
         { status: 500, headers }
     );
 }
 
-  return json({ ok: true, error: null, skipRevalidation }, { headers });
+  return json({ ok: true, error: null }, { headers });
 }

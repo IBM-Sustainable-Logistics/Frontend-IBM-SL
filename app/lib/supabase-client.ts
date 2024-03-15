@@ -54,12 +54,12 @@ export async function insertProject (
     description: string | null,
     user_id: string,
 ) {
+    console.log("Inserting project:", title, description, user_id);
     const { error } = await supabase.from('projects').insert(
         {
             title,
             description,
             user_id,
-            created_at: new Date().toISOString(),
         }
     );
     if (error) {
