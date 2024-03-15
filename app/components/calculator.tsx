@@ -28,6 +28,7 @@ const Calculator = () => {
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [distanceOnly, setDistanceOnly] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,6 +43,10 @@ const Calculator = () => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
+    if (name === "transportMethod") {
+      setDistanceOnly(!(value === "truck" || value === "etruck"));
+    }
+
     setFormData({
       ...formData,
       [name]: value,
@@ -54,10 +59,9 @@ const Calculator = () => {
     try {
       const list: TransportListItem[] = [];
 
-      console.log(formData.transportMethod);
-      console.log(formData.transportMethod === "truck");
-
       let response;
+
+      // TODO: Maybe refactor all these conditionals
 
       if (formData.transportMethod === "") {
         setShowError(true);
@@ -180,27 +184,32 @@ const Calculator = () => {
             type="transportMethod"
           />
 
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Origin Address:
-          </Label>
-          <Input
-            type="string"
-            id="from"
-            name="from"
-            className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-            onChange={handleInputChange}
-          />
+          {!distanceOnly
+            ? (<>
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Origin Address:
+              </Label>
+              <Input
+                type="string"
+                id="from"
+                name="from"
+                className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                onChange={handleInputChange}
+              />
 
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Destination Address:
-          </Label>
-          <Input
-            type="string"
-            id="to"
-            name="to"
-            className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-            onChange={handleInputChange}
-          />
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Destination Address:
+              </Label>
+              <Input
+                type="string"
+                id="to"
+                name="to"
+                className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                onChange={handleInputChange}
+              />
+            </>)
+            : null
+          }
 
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Distance (km):
