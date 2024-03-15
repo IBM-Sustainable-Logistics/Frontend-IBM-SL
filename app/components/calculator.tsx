@@ -18,9 +18,11 @@ type FormData = {
   emissions: number | null;
 }
 
-// Currently working on making this form allow for multiple stages instead of just one.
+type CalculatorProps = {
+  isCreateProject: boolean;
+};
 
-const Calculator = () => {
+const Calculator = ({ isCreateProject }: CalculatorProps) => {
   const initialFormState: FormData = {
     stages: [
       {
@@ -120,9 +122,6 @@ const Calculator = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log(formData);
-    console.log(distanceOnly);
 
     try {
       const list: TransportListItem[] = [];
@@ -232,7 +231,11 @@ const Calculator = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      {!isCreateProject && (
+        <h1 className=" text-primary text-4xl font-bold">
+          Calculate Emissions
+        </h1>
+      )}
       <form onSubmit={handleSubmit}>
         {[...Array(formData.stages.length)].map((_, index) => (
           <div className=" flex flex-col gap-4 ">
@@ -294,9 +297,11 @@ const Calculator = () => {
         <Button onClick={handleAddStage} className="w-full" variant={"secondary"} type="button">
           Add Stage
         </Button>
-        <Button className="w-full" variant={"ibm_blue"} type="submit">
-          Calculate
-        </Button>
+        {!isCreateProject && (
+          <Button className="w-full" variant={"ibm_blue"} type="submit">
+            Calculate
+          </Button>
+        )}
       </form>
 
       {showMessage && (
