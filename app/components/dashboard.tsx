@@ -22,24 +22,21 @@ import {
   DialogTrigger,
 } from "./ui/dialog.tsx";
 import Calculator from "./calculator.tsx";
+import { useFetcher } from "@remix-run/react";
 
 interface DashboardProps {
   Projects: project[];
-  addProject: (project: project) => void;
   serverSession: any;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({
-  Projects,
-  serverSession,
-  addProject,
-}) => {
+const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
   const [userId] = useState(serverSession?.user.id);
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
+  const fetcher = useFetcher();
 
   const addCalculator = () => {
     const newCalculator = {
@@ -52,86 +49,89 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const handleCreateProject = () => {
-    addProject({
+    const formData = {
       title: titleProject,
-      description: descriptionProject,
-      user_id: userId,
-    });
+      descriptionProject: descriptionProject,
+      userId: userId,
+    };
+    console.log(formData);
+
+    fetcher.submit(formData, { method: "POST", action: "/api/project" });
   };
 
-  const handleHello = () => {
+  const handlehello = () => {
     console.log("hello");
   };
 
   return (
     <>
-      <h1 className='text-3xl font-bold my-2 text-center'>My Projects</h1>
-      <div className='flex flex-col mx-10'>
-        <div className='w-full flex flex-row justify-between my-10'>
+      <h1 className="text-3xl font-bold my-2 text-center">My Projects</h1>
+      <div className="flex flex-col mx-10">
+        <div className="w-full flex flex-row justify-between my-10">
           <Input
-            type='text'
-            placeholder='Search for a project'
-            className='w-full'
+            type="text"
+            placeholder="Search for a project"
+            className="w-full"
           />
           <Dialog>
             <DialogTrigger>
-              <Button variant='outline'>
+              <Button variant="outline">
                 <div
-                  className='flex 
+                  className="flex 
             
-            items-center justify-between'
+            items-center justify-between"
                 >
-                  <span className='mr-2'>Create a project</span>
+                  <span className="mr-2">Create a project</span>
                   <svg
-                    className='w-4 h-4 text-gray-800 dark:text-white'
-                    aria-hidden='true'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
+                    className="w-4 h-4 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
                   >
                     <path
-                      stroke='currentColor'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M5 12h14m-7 7V5'
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h14m-7 7V5"
                     />
                   </svg>
                 </div>
               </Button>
             </DialogTrigger>
-            <DialogContent className='h-2/3 overflow-y-auto'>
+            <DialogContent className="h-2/3 overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create a project</DialogTitle>
                 <DialogDescription>
                   <div
-                    className='flex flex-col gap-4'
+                    className="flex flex-col gap-4"
                     style={{ maxHeight: "90vh" }}
                   >
                     <Input
-                      type='text'
-                      placeholder='Title'
-                      className='w-full'
+                      type="text"
+                      placeholder="Title"
+                      className="w-full"
                       onChange={(e) => setTitleProject(e.target.value)}
                     />
                     <Input
-                      type='text'
-                      placeholder='Description'
-                      className='w-full'
+                      type="text"
+                      placeholder="Description"
+                      className="w-full"
                       onChange={(e) => setDescriptionProject(e.target.value)}
                     />
                     {calculators.map((calculator) => (
                       <div key={calculator.id}>
                         <Calculator isCreateProject={true} />
                         <Button
-                          variant='destructive'
+                          variant="destructive"
                           onClick={() => deleteCalculator(calculator.id)}
                         >
                           Delete
                         </Button>
                       </div>
                     ))}
-                    <Button className='w-full' onClick={addCalculator}>
+                    <Button className="w-full" onClick={addCalculator}>
                       Add transport method
                     </Button>
                   </div>
@@ -139,17 +139,17 @@ const Dashboard: React.FC<DashboardProps> = ({
               </DialogHeader>
               <DialogClose asChild>
                 <Button
-                  className='border-black border rounded'
-                  variant='primary'
-                  // onClick={handleCreateProject}
+                  className="border-black border rounded"
+                  variant="primary"
+                  onClick={handleCreateProject}
                 >
                   Create
                 </Button>
               </DialogClose>
               <DialogClose asChild>
                 <Button
-                  className='border-black border rounded'
-                  variant='destructive'
+                  className="border-black border rounded"
+                  variant="destructive"
                 >
                   Cancel
                 </Button>
@@ -158,7 +158,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           </Dialog>
         </div>
 
-        <div className='grid grid-cols-3 justify-self-stretch max-w-full gap-4'>
+        <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
           {Projects.map((p, index) => {
             let sum = 0;
 
@@ -177,22 +177,20 @@ const Dashboard: React.FC<DashboardProps> = ({
           })}
         </div>
 
-        <Button onClick={handleHello}>Click me</Button>
-
-        <div className='my-10'>
+        <div className="my-10">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious href='#' />
+                <PaginationPrevious href="#" />
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href='#'>1</PaginationLink>
+                <PaginationLink href="#">1</PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationEllipsis />
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href='#' />
+                <PaginationNext href="#" />
               </PaginationItem>
             </PaginationContent>
           </Pagination>

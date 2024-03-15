@@ -2,6 +2,7 @@ import { createClient } from  "https://esm.sh/@supabase/supabase-js@2.39.7";
 import type { Database } from "./utils/types.ts";
 import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
 import { project } from "./Transport.ts";
+import * as uuid from "https://deno.land/std@0.207.0/uuid/mod.ts";
 
 
 const env = await load();
@@ -48,15 +49,25 @@ export async function getProjects() {
     return data;
 }
 
-export async function insertProject (project: project) {
-    const { data, error } = await supabase.from('projects').insert([project]);
-
+export async function insertProject (
+    title: string,
+    description: string | null,
+    user_id: string,
+) {
+    const { error } = await supabase.from('projects').insert(
+        {
+            title,
+            description,
+            user_id,
+            created_at: new Date().toISOString(),
+        }
+    );
     if (error) {
-        console.error("Error adding project:", error);
-        return;
+        console.error("Error inserting project:", error);
     }
 
-    console.log("Added project:", data);
+    return { error };
+
 }
 
 

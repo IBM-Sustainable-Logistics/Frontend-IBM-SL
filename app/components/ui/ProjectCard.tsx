@@ -31,7 +31,7 @@ const ProjectCard = ({
   estimation,
 }: {
   title: string;
-  description: string;
+  description: string | null;
   estimation: number;
 }) => {
   const navToProj = useNavigate();
@@ -51,23 +51,23 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {estimation}  kg</p>
+        <p>Estimation amount: {estimation} kg</p>
       </CardContent>
       <CardFooter className="flex justify-between">
-      <Dialog>
+        <Dialog>
           <DialogTrigger>
-            <Button variant='destructive'>
+            <Button variant="destructive">
               <svg
-                className='w-6 h-6 text-white-800 dark:text-white'
-                aria-hidden='true'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='currentColor'
-                viewBox='0 0 24 24'
+                className="w-6 h-6 text-white-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
               >
                 <path
-                  fill-rule='evenodd'
-                  d='M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z'
-                  clip-rule='evenodd'
+                  fill-rule="evenodd"
+                  d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                  clip-rule="evenodd"
                 />
               </svg>
             </Button>
@@ -82,16 +82,16 @@ const ProjectCard = ({
             </DialogHeader>
             <DialogClose asChild>
               <Button
-                className='border-black border rounded'
-                variant='secondary'
+                className="border-black border rounded"
+                variant="secondary"
               >
                 Cancel
               </Button>
             </DialogClose>
             <DialogClose asChild>
               <Button
-                className='border-black border rounded'
-                variant='destructive'
+                className="border-black border rounded"
+                variant="destructive"
               >
                 Delete
               </Button>
@@ -101,8 +101,8 @@ const ProjectCard = ({
         <Dialog>
           <DialogTrigger asChild>
             <Button
-              variant='outline'
-              className='border-black border rounded'
+              variant="outline"
+              className="border-black border rounded"
               onClick={openProject}
             >
               View
@@ -111,21 +111,21 @@ const ProjectCard = ({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant='light' className='border-black border rounded'>
+            <Button variant="light" className="border-black border rounded">
               Edit
               <svg
-                className='w-6 h-6 text-gray-800 dark:text-white'
-                aria-hidden='true'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
+                className="w-6 h-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
                 <path
-                  stroke='currentColor'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='m10.8 17.8-6.4 2.1 2.1-6.4m4.3 4.3L19 9a3 3 0 0 0-4-4l-8.4 8.6m4.3 4.3-4.3-4.3m2.1 2.1L15 9.1m-2.1-2 4.2 4.2'
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m10.8 17.8-6.4 2.1 2.1-6.4m4.3 4.3L19 9a3 3 0 0 0-4-4l-8.4 8.6m4.3 4.3-4.3-4.3m2.1 2.1L15 9.1m-2.1-2 4.2 4.2"
                 />
               </svg>
             </Button>
@@ -134,13 +134,13 @@ const ProjectCard = ({
             <DialogHeader>
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>
-                <h2 className='text-lg'>Description</h2>
+                <h2 className="text-lg">Description</h2>
                 <p>{description}</p>
               </DialogDescription>
             </DialogHeader>
             {/* Content for the dialog's form will go here */}
-            <Accordion type='single' collapsible>
-              <AccordionItem value='item-1'>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
                 <AccordionTrigger>
                   {/* We need to replace this with the transportation method */}
                   Transport Type 1
