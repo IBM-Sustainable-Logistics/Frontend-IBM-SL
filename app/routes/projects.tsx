@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Dashboard from "../components/dashboard.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
-import { getEstimates, getProjects } from "../lib/supabase-client.ts";
+import { getProjects, insertProject } from "../lib/supabase-client.ts";
 import { useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -13,21 +13,23 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const projects = await getProjects();
 
+  if (!serverSession) {
+    return redirect("/signin", { headers });
+  }
 
+  const userId = serverSession.user.id;
+  console.log("userId", userId);
 
-  return json({ success: true, projects }, { headers });
+  return json({ success: true, projects, userId }, { headers });
 };
 
 const ProjectsPage = () => {
-  {
-    /* here is how you get data from server  */
-  }
-  const { projects } = useLoaderData<typeof loader>();
+  const { projects, userId } = useLoaderData<typeof loader>();
+  console.log("userId", userId);
 
   return (
     <div className="max-h-lvh">
-      {/* here you can now pass the data to the component that uses it  */}
-      <Dashboard Projects={projects} />
+      <Dashboard Projects={projects} UserId={userId} />
     </div>
   );
 };
