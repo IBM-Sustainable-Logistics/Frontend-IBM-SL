@@ -26,14 +26,13 @@ import { useFetcher } from "@remix-run/react";
 
 interface DashboardProps {
   Projects: project[];
-  serverSession: any;
+  UserId: string;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
+const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
-  const [userId] = useState(serverSession?.user.id);
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
   const fetcher = useFetcher();
@@ -52,10 +51,8 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
     const formData = {
       title: titleProject,
       descriptionProject: descriptionProject,
-      userId: userId,
+      userId: UserId,
     };
-    console.log(formData);
-
     fetcher.submit(formData, { method: "POST", action: "/api/project" });
   };
 

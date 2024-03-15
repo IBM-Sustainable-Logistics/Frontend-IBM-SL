@@ -17,28 +17,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/signin", { headers });
   }
 
-  return json({ success: true, projects }, { headers });
+  const userId = serverSession.user.id;
+  console.log("userId", userId);
+
+  return json({ success: true, projects, userId }, { headers });
 };
 
 const ProjectsPage = () => {
-  const { projects, serverSession } = useLoaderData<typeof loader>();
+  const { projects, userId } = useLoaderData<typeof loader>();
+  console.log("userId", userId);
 
-  const addProject =  (projectDetails) => {
-    // try {
-    //    insertProject(projectDetails);
-    // } catch (error) {
-    //   console.error("Failed to add project:", error);
-    //   // Handle the error appropriately
-    // }
-  };
-  
   return (
-    <div className='max-h-lvh'>
-      <Dashboard
-        Projects={projects}
-        serverSession={serverSession}
-        addProject={addProject}
-      />
+    <div className="max-h-lvh">
+      <Dashboard Projects={projects} UserId={userId} />
     </div>
   );
 };
