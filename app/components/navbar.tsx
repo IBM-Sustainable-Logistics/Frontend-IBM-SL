@@ -1,6 +1,5 @@
-import { SheetTrigger, SheetContent, Sheet } from "./ui/sheet.tsx";
 import { Button } from "./ui/button.tsx";
-import { Link } from "@remix-run/react";
+import { Link, useOutletContext } from "@remix-run/react";
 import React, { SVGProps, useState } from "react";
 import logo from "../assets/ibm-logo.svg";
 
@@ -9,17 +8,32 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu.tsx";
 import { ScrollArea } from "./ui/scroll-area.tsx";
+import type {
+  Session,
+  SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2.39.7";
+import { Database } from "../lib/utils/types.ts";
+import { SupabaseOutletContext } from "../lib/supabase.ts";
+export type TypedSupabaseClient = SupabaseClient<Database>;
 
-export default function NavBar() {
+interface NavBar {
+  serverSession: Session | null;
+  supabase: SupabaseClient<Database>;
+}
+
+export const NavBar = ({ serverSession, supabase }: NavBar) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    console.log("error", error);
   };
 
   const navElem = [
@@ -71,16 +85,28 @@ export default function NavBar() {
         <div className="ml-auto">
           <div className="lg:block hidden mt-10">
             <div className="flex gap-4">
-              <Link to={"/signin"}>
-                <Button className="lg:block" variant="default">
-                  Sign In
-                </Button>{" "}
-              </Link>
-              <Link to={"/signup"}>
-                <Button className="lg:block" variant="default">
-                  Sign Up
+              {serverSession ? (
+                <Button
+                  className="lg:block"
+                  variant="default"
+                  onClick={signOut}
+                >
+                  Sign Out
                 </Button>
-              </Link>
+              ) : (
+                <>
+                  <Link to={"/signin"}>
+                    <Button className="lg:block" variant="default">
+                      Sign In
+                    </Button>{" "}
+                  </Link>
+                  <Link to={"/signup"}>
+                    <Button className="lg:block" variant="default">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <Button
@@ -130,7 +156,7 @@ export default function NavBar() {
       </header>
     </>
   );
-}
+};
 
 function MenuIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (

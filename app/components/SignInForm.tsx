@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../assets/ibm-logo.svg";
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Database } from "../lib/utils/types.ts";
 
 interface FormState {

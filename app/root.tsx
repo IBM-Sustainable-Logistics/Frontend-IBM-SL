@@ -17,7 +17,7 @@ import {
   useOutletContext,
 } from "@remix-run/react";
 import React, { useState } from "react";
-import NavBar from "./components/navbar.tsx";
+import { NavBar } from "./components/navbar.tsx";
 import stylesheet from "./styles/global.css";
 import Footer from "./components/footer.tsx";
 
@@ -59,7 +59,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <NavBar />
+      <NavBar serverSession={serverSession} />
       <body>
         <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
