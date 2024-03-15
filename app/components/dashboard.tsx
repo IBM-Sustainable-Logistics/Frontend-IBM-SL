@@ -11,51 +11,54 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination.tsx";
-import { project } from "../lib/Transport.ts";
+import { CalculatorInstance, project } from "../lib/Transport.ts";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog.tsx";
+import Calculator from "./calculator.tsx";
+import { useFetcher } from "@remix-run/react";
 
-interface DasgboardProps {
+interface DashboardProps {
   Projects: project[];
+  UserId: string;
 }
-const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
-  console.log(Projects);
-  const projects = [
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-    {
-      title: "Project x",
-      description:
-        "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-      estimation: 10.0,
-    },
-  ];
+
+const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
+  // State to keep track of the number of Calculator components
+  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
+
+  const [titleProject, setTitleProject] = useState("");
+  const [descriptionProject, setDescriptionProject] = useState("");
+  const fetcher = useFetcher();
+
+  const addCalculator = () => {
+    const newCalculator = {
+      id: Date.now(), // Using the current timestamp as a unique ID
+    };
+    setCalculators([...calculators, newCalculator]);
+  };
+  const deleteCalculator = (id: number) => {
+    setCalculators(calculators.filter((calculator) => calculator.id !== id));
+  };
+
+  const handleCreateProject = () => {
+    const formData = {
+      title: titleProject,
+      descriptionProject: descriptionProject,
+      userId: UserId,
+    };
+    fetcher.submit(formData, { method: "POST", action: "/api/project" });
+  };
+
+  const handlehello = () => {
+    console.log("hello");
+  };
 
   return (
     <>
@@ -67,40 +70,108 @@ const Dashboard: React.FC<DasgboardProps> = ({ Projects }) => {
             placeholder="Search for a project"
             className="w-full"
           />
-          <Button variant="outline">
-            <div
-              className="flex 
+          <Dialog>
+            <DialogTrigger>
+              <Button variant="outline">
+                <div
+                  className="flex 
             
             items-center justify-between"
-            >
-              <span className="mr-2">Create a project</span>
-              <svg
-                className="w-4 h-4 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 12h14m-7 7V5"
-                />
-              </svg>
-            </div>
-          </Button>
+                >
+                  <span className="mr-2">Create a project</span>
+                  <svg
+                    className="w-4 h-4 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h14m-7 7V5"
+                    />
+                  </svg>
+                </div>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="h-2/3 overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Create a project</DialogTitle>
+                <DialogDescription>
+                  <div
+                    className="flex flex-col gap-4"
+                    style={{ maxHeight: "90vh" }}
+                  >
+                    <Input
+                      type="text"
+                      placeholder="Title"
+                      className="w-full"
+                      onChange={(e) => setTitleProject(e.target.value)}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Description"
+                      className="w-full"
+                      onChange={(e) => setDescriptionProject(e.target.value)}
+                    />
+                    {calculators.map((calculator) => (
+                      <div key={calculator.id}>
+                        <Calculator isCreateProject={true} />
+                        <Button
+                          variant="destructive"
+                          onClick={() => deleteCalculator(calculator.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    ))}
+                    <Button className="w-full" onClick={addCalculator}>
+                      Add transport method
+                    </Button>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              <DialogClose asChild>
+                <Button
+                  className="border-black border rounded"
+                  variant="primary"
+                  onClick={handleCreateProject}
+                >
+                  Create
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  className="border-black border rounded"
+                  variant="destructive"
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
-          {projects.map((project, index) => (
-            <ProjectCard
-              title={project.title}
-              description={project.description}
-              estimation={project.estimation}
-            />
-          ))}
+          {Projects.map((p, index) => {
+            let sum = 0;
+
+            p.projects_transports.forEach((t) => {
+              sum += t.distance_km * t.transports.emissions_per_km;
+            });
+
+            return (
+              <ProjectCard
+                key={index}
+                title={p.title}
+                description={p.description}
+                estimation={sum}
+              />
+            );
+          })}
         </div>
 
         <div className="my-10">

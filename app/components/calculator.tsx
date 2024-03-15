@@ -9,12 +9,23 @@ import type { TransportListItem } from "../lib/Transport.ts";
 interface FormState {
   transportMethod: string;
   distance: number;
-  from: string
-  to: string
+  from: string;
+  to: string;
   emissions: number | null;
 }
 
-const Calculator = () => {
+type CalculatorProps = {
+  isCreateProject: boolean;
+};
+
+const Calculator = ({ isCreateProject }: CalculatorProps) => {
+  const transportMethod = [
+    { value: "cargoship", label: "Cargoship" },
+    { value: "aircraft", label: "Aircraft" },
+    { value: "train", label: "Train" },
+    { value: "truck", label: "Truck" },
+  ];
+
   const initialFormState: FormState = {
     transportMethod: "",
     distance: 0,
@@ -70,12 +81,21 @@ const Calculator = () => {
         return;
       }
 
-      if (formData.from == "" && formData.to == "" && formData.distance == "") {
+      if (
+        formData.from == "" &&
+        formData.to == "" &&
+        formData.distance == null
+      ) {
         console.log("all empty");
-        if (formData.transportMethod === "truck" || formData.transportMethod === "etruck") {
+        if (
+          formData.transportMethod === "truck" ||
+          formData.transportMethod === "etruck"
+        ) {
           setShowError(true);
           setShowMessage(false);
-          setErrorMessage("Please specify either origin and destination address or distance!");
+          setErrorMessage(
+            "Please specify either origin and destination address or distance!"
+          );
           return;
         } else {
           setShowError(true);
@@ -89,24 +109,35 @@ const Calculator = () => {
 
       // If we are using addresses
       if (usesAddress) {
-        if (!(formData.transportMethod === "truck" || formData.transportMethod === "etruck")) {
+        if (
+          !(
+            formData.transportMethod === "truck" ||
+            formData.transportMethod === "etruck"
+          )
+        ) {
           setShowError(true);
           setShowMessage(false);
-          setErrorMessage("Only `Truck` and `Electric Truck` allows for specifying origin and destination address!");
+          setErrorMessage(
+            "Only `Truck` and `Electric Truck` allows for specifying origin and destination address!"
+          );
           return;
         }
 
         if (formData.from == "" || formData.to == "") {
           setShowError(true);
           setShowMessage(false);
-          setErrorMessage("Please specify both origin and destination address!");
+          setErrorMessage(
+            "Please specify both origin and destination address!"
+          );
           return;
         }
 
         if (formData.distance) {
           setShowError(true);
           setShowMessage(false);
-          setErrorMessage("Please specify either origin and destination address or distance, not both!");
+          setErrorMessage(
+            "Please specify either origin and destination address or distance, not both!"
+          );
           return;
         }
 
@@ -159,10 +190,13 @@ const Calculator = () => {
       setFormData({ ...formData, emissions: responseData });
       setShowMessage(true);
       setShowError(false);
+
       setMessage(
         usesAddress
-        ? `Emissions for ${formData.transportMethod} from ${transportMethods[formData.from]} to ${formData.to}: ${responseData.total_kg} kg`
-        : `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData.total_kg} kg`
+          ? `Emissions for ${formData.transportMethod} from ${
+              transportMethods[formData.from]
+            } to ${formData.to}: ${responseData.total_kg} kg`
+          : `Emissions for ${formData.transportMethod} over ${formData.distance} km: ${responseData.total_kg} kg`
       );
     } catch (error) {
       console.error("Error:", error);
@@ -171,10 +205,13 @@ const Calculator = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      {!isCreateProject && (
+        <h1 className=" text-primary text-4xl font-bold">
+          Calculate Emissions
+        </h1>
+      )}
       <form onSubmit={handleSubmit}>
         <div className=" flex flex-col gap-4 ">
-
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Transport Method:
           </Label>
@@ -184,8 +221,8 @@ const Calculator = () => {
             type="transportMethod"
           />
 
-          {!distanceOnly
-            ? (<>
+          {!distanceOnly ? (
+            <>
               <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Origin Address:
               </Label>
@@ -207,9 +244,8 @@ const Calculator = () => {
                 className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
                 onChange={handleInputChange}
               />
-            </>)
-            : null
-          }
+            </>
+          ) : null}
 
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Distance (km):
@@ -221,10 +257,11 @@ const Calculator = () => {
             className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
             onChange={handleInputChange}
           />
-
-          <Button className="w-full" variant={"ibm_blue"} type="submit">
-            Calculate
-          </Button>
+          {!isCreateProject && (
+            <Button className="w-full" variant={"ibm_blue"} type="submit">
+              Calculate
+            </Button>
+          )}
         </div>
       </form>
       {showMessage && (
