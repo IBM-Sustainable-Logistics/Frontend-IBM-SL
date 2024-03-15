@@ -48,6 +48,17 @@ export async function getProjects() {
     return data;
 }
 
+export async function insertProject (project: project) {
+    const { data, error } = await supabase.from('projects').insert([project]);
+
+    if (error) {
+        console.error("Error adding project:", error);
+        return;
+    }
+
+    console.log("Added project:", data);
+}
+
 
 
 

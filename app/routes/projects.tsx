@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Dashboard from "../components/dashboard.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
-import { getProjects } from "../lib/supabase-client.ts";
+import { getProjects, insertProject } from "../lib/supabase-client.ts";
 import { useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -21,11 +21,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const ProjectsPage = () => {
-  const { projects } = useLoaderData<typeof loader>();
+  const { projects, serverSession } = useLoaderData<typeof loader>();
 
+  // const addProject = async (projectDetails) => {
+  //   await insertProject(projectDetails);
+  // };
   return (
     <div className='max-h-lvh'>
-      <Dashboard Projects={projects} />
+      <Dashboard
+        Projects={projects}
+        serverSession={serverSession}
+        // addProject={addProject}
+      />
     </div>
   );
 };

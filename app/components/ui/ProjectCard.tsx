@@ -134,7 +134,7 @@ const ProjectCard = ({
             <DialogHeader>
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>
-                <h2 class='text-lg'>Description</h2>
+                <h2 className='text-lg'>Description</h2>
                 <p>{description}</p>
               </DialogDescription>
             </DialogHeader>

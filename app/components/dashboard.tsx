@@ -25,11 +25,17 @@ import Calculator from "./calculator.tsx";
 
 interface DashboardProps {
   Projects: project[];
+  addProject: (project: project) => void;
+  serverSession: any;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
+const Dashboard: React.FC<DashboardProps> = ({ Projects, serverSession }) => {
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
+
+  const [userId] = useState(serverSession?.user.id);
+  const [titleProject, setTitleProject] = useState("");
+  const [descriptionProject, setDescriptionProject] = useState("");
 
   const addCalculator = () => {
     const newCalculator = {
@@ -40,6 +46,15 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
   const deleteCalculator = (id: number) => {
     setCalculators(calculators.filter((calculator) => calculator.id !== id));
   };
+
+  // const handleCreateProject = async () => {
+  //   await addProject({
+  //     title: titleProject,
+  //     description: descriptionProject,
+  //     user_id: userId,
+  //   });
+  // };
+
   return (
     <>
       <h1 className='text-3xl font-bold my-2 text-center'>My Projects</h1>
@@ -112,6 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
                 <Button
                   className='border-black border rounded'
                   variant='primary'
+                  // onClick={handleCreateProject}
                 >
                   Create
                 </Button>
