@@ -1,12 +1,16 @@
 
- interface TransportMethod {
+interface TransportMethod {
     value: string;
     label: string;
 }
 
-interface TransportListItem {
+type TransportListItem = {
     transport_form: string;
     distance_km: number;
+} | {
+    transport_form: string;
+    from: string;
+    to: string;
 }
 
 export interface project {
