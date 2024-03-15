@@ -16,12 +16,11 @@ import type {
   SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Database } from "../lib/utils/types.ts";
-import { SupabaseOutletContext } from "../lib/supabase.ts";
-export type TypedSupabaseClient = SupabaseClient<Database>;
+import { SignOut } from "../routes/stateful/signout.tsx";
 
 interface NavBar {
   serverSession: Session | null;
-  supabase: SupabaseClient<Database>;
+  supabase: any;
 }
 
 export const NavBar = ({ serverSession, supabase }: NavBar) => {
@@ -31,9 +30,8 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
     setIsOpen(!isOpen);
   };
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    console.log("error", error);
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
   };
 
   const navElem = [
@@ -86,13 +84,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
           <div className="lg:block hidden mt-10">
             <div className="flex gap-4">
               {serverSession ? (
-                <Button
-                  className="lg:block"
-                  variant="default"
-                  onClick={signOut}
-                >
-                  Sign Out
-                </Button>
+                <Button onClick={handleSignOut}>Sihn out</Button>
               ) : (
                 <>
                   <Link to={"/signin"}>
