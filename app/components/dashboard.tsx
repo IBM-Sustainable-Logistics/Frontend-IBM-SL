@@ -21,7 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog.tsx";
-
 import Calculator from "./calculator.tsx";
 
 interface DashboardProps {
@@ -131,9 +130,8 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects }) => {
 
         <div className='grid grid-cols-3 justify-self-stretch max-w-full gap-4'>
           {Projects.map((p, index) => {
-            console.log("🚀 ~ {Projects.map ~ p:", p)
             let sum = 0;
-            
+
             p.projects_transports.forEach((t) => {
               sum += t.distance_km * t.transports.emissions_per_km;
             });

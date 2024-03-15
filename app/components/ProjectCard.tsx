@@ -26,7 +26,6 @@ import {
   AccordionTrigger,
 } from "./ui/accordion.tsx";
 
-
 const ProjectCard = ({
   title,
   description,
@@ -36,12 +35,13 @@ const ProjectCard = ({
   description: string;
   estimation: number;
 }) => {
-
   const navToProj = useNavigate();
 
   const openProject = () => {
     navToProj(`/projects/${title.replace(/\s/g, "_")}`);
-  }
+  };
+
+  console.log("ProjectCard", title, description, estimation);
 
   return (
     <Card className='min-h-32 bg-white shadow-md rounded-lg p-4'>
@@ -54,7 +54,7 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {estimation}kg</p>
+        <p>Estimation amount: {estimation} kg</p>
       </CardContent>
       <CardFooter className='flex justify-between'>
         <Dialog>
@@ -103,7 +103,11 @@ const ProjectCard = ({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" className='border-black border rounded' onClick={openProject}>
+            <Button
+              variant='outline'
+              className='border-black border rounded'
+              onClick={openProject}
+            >
               View
             </Button>
           </DialogTrigger>
@@ -144,7 +148,7 @@ const ProjectCard = ({
                   {/* We need to replace this with the transportation method */}
                   Transport Type 1
                 </AccordionTrigger>
-                <AccordionContent>{estimation}kg</AccordionContent>
+                <AccordionContent>{estimation} kg</AccordionContent>
               </AccordionItem>
             </Accordion>
             {/* You can add inputs and state handling as needed */}
