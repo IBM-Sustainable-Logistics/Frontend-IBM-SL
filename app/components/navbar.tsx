@@ -84,7 +84,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
           <div className="lg:block hidden mt-10">
             <div className="flex gap-4">
               {serverSession ? (
-                <Button onClick={handleSignOut}>Sihn out</Button>
+                <Button onClick={handleSignOut}>Sign out</Button>
               ) : (
                 <>
                   <Link to={"/signin"}>
