@@ -23,6 +23,7 @@ const transportMethods: TransportMethod[] = [
     { value: "aircraft", label: "Aircraft" },
     { value: "train", label: "Train" },
     { value: "truck", label: "Truck" },
+    { value: "etruck", label: "Electric Truck" },
 ];
 
 
