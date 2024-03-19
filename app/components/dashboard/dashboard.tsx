@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "./ui/button.tsx";
-import { ProjectCard } from "./ui/ProjectCard.tsx";
-import { Input } from "./ui/input.tsx";
+import { Button } from "../ui/button.tsx";
+import { ProjectCard } from "../ui/ProjectCard.tsx";
+import { Input } from "../ui/input.tsx";
 import {
   Pagination,
   PaginationContent,
@@ -10,8 +10,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./ui/pagination.tsx";
-import { CalculatorInstance, project } from "../lib/Transport.ts";
+} from "../ui/pagination.tsx";
+import { CalculatorInstance, project } from "../../lib/Transport.ts";
 import {
   Dialog,
   DialogClose,
@@ -20,8 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog.tsx";
-import Calculator from "./calculator.tsx";
+} from "../ui/dialog.tsx";
+import Calculator from "../calculator.tsx";
 import { useFetcher } from "@remix-run/react";
 
 interface DashboardProps {
@@ -36,6 +36,8 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
   const fetcher = useFetcher();
+
+  function HandleCalulation() {}
 
   const addCalculator = () => {
     const newCalculator = {
@@ -133,7 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
               <DialogClose asChild>
                 <Button
                   className="border-black border rounded"
-                  variant="primary"
+                  variant="default"
                   onClick={handleCreateProject}
                 >
                   Create

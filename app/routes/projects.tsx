@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import Dashboard from "../components/dashboard.tsx";
+import Dashboard from "../components/dashboard/dashboard.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { getProjects, insertProject } from "../lib/supabase-client.ts";
