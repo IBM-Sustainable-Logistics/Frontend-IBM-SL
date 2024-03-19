@@ -7,7 +7,7 @@ import { LoaderFunctionArgs } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { redirect } from "@remix-run/deno";
 import { json } from "@remix-run/deno";
-import { ForgotForm } from "../components/account/ForgotForm.tsx";
+import { UpdateForm } from "../components/account/UpdateForm.tsx";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
@@ -18,11 +18,11 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const Forgot = () => {
-  const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
 
   return (
     <div className=" min-h-screen flex items-center justify-center">
-      <ForgotForm supabase={supabase} domain_url={domainUrl} />
+      <UpdateForm supabase={supabase} />
     </div>
   );
 };
