@@ -125,26 +125,116 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
     e.preventDefault();
 
     try {
-      const list: TransportListItem[] = formData.stages.map((stage) => {
-        const { transportMethod, distance, from, to } = stage;
-        if (
-          transportMethod == "" ||
-          distance == 0 ||
-          (from == "" && to == "")
-        ) {
+      const list: TransportListItem[] = [];
+
+      for (let index = 0; index < formData.stages.length; index++) {
+        const stage = formData.stages[index];
+
+        // TODO: Maybe refactor all these conditionals
+
+        if (stage.transportMethod === "") {
           setShowError(true);
           setShowMessage(false);
-          setErrorMessage("Error! Please fill in all fields");
-          throw new Error("Error! Please fill in all fields");
+          setErrorMessage(
+            "Please choose a Transport Method for stage " + (index + 1)
+          );
+          return;
         }
 
-        if (transportMethod !== "truck" && transportMethod !== "etruck") {
-          return {
-            transport_form: transportMethod,
-            distance_km: distance,
-          };
+        if (stage.from == "" && stage.to == "" && stage.distance == "") {
+          if (
+            stage.transportMethod === "truck" ||
+            stage.transportMethod === "etruck"
+          ) {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Please specify either origin and destination address or distance for stage " +
+                (index + 1)
+            );
+            return;
+          } else {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Please specify a distance for stage " + (index + 1)
+            );
+            return;
+          }
         }
-      });
+
+        const usesAddress =
+          distanceOnly[index] && (stage.from !== "" || stage.to !== "");
+
+        // If we are using addresses
+        if (usesAddress) {
+          if (
+            !(
+              stage.transportMethod === "truck" ||
+              stage.transportMethod === "etruck"
+            )
+          ) {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Only `Truck` and `Electric Truck` allows for specifying origin and destination address for stage " +
+                (index + 1)
+            );
+            return;
+          }
+
+          if (stage.from == "" || stage.to == "") {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Please specify both origin and destination address for stage " +
+                (index + 1)
+            );
+            return;
+          }
+
+          if (stage.distance) {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Please specify either origin and destination address or distance, not both, for stage " +
+                (index + 1)
+            );
+            return;
+          }
+
+          list.push({
+            transport_form: stage.transportMethod,
+            from: stage.from,
+            to: stage.to,
+          });
+        }
+        // If we are using distances
+        else {
+          if (!stage.distance) {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Please specify a distance for stage " + (index + 1)
+            );
+            return;
+          }
+
+          if (stage.distance < 1) {
+            setShowError(true);
+            setShowMessage(false);
+            setErrorMessage(
+              "Distance must be greater than 0 for stage " + (index + 1)
+            );
+            return;
+          }
+
+          list.push({
+            transport_form: stage.transportMethod,
+            distance_km: stage.distance,
+          });
+        }
+      }
 
       const response = await fetch("/api/estimate", {
         method: "POST",
@@ -254,8 +344,7 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
         {!isCreateProject && (
           <Button className="w-full" variant={"ibm_blue"} type="submit">
             Calculate
-          </Button> :
-          
+          </Button>
         )}
       </form>
 

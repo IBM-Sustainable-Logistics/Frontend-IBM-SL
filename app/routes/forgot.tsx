@@ -1,5 +1,4 @@
 import React from "react";
-import { SignUpForm } from "../components/account/SignUpForm.tsx";
 import { useOutletContext } from "@remix-run/react";
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Database } from "../lib/utils/types.ts";
@@ -21,14 +20,10 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ success: true }, { headers });
 };
 
-const SignUp = () => {
+const Forgot = () => {
   const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
 
-  return (
-    <div className=" min-h-screen flex items-center justify-center">
-      <SignUpForm supabase={supabase} />
-    </div>
-  );
+  return <div className=" min-h-screen flex items-center justify-center"></div>;
 };
 
-export default SignUp;
+export default Forgot;

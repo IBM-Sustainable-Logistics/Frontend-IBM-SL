@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import logo from "../assets/ibm-logo.svg";
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
-import { Database } from "../lib/utils/types.ts";
+import logo from "../../assets/ibm-logo.svg";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
+import { Database } from "../../lib/utils/types.ts";
 
 interface FormState {
   email: string;
   password: string;
 }
 
-interface SignUpFormProps {
+interface SignInFormProps {
   supabase: SupabaseClient<Database>;
 }
 
-export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
+export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
   const initialFormState: FormState = {
     email: "",
     password: "",
@@ -27,7 +27,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
@@ -40,7 +40,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
         }, 5000);
       } else {
         setShowMessage(true);
-        setMessage("confirmation sent to your email " + data.user?.email + ".");
+        setMessage("You are logged in now");
         setTimeout(() => {
           setShowMessage(false);
         }, 5000);
@@ -63,28 +63,13 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
     });
   };
 
-  const handleSelectFormChange = (name: string, value: string) => {
-    // Update the corresponding property in the form data
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFormChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
   return (
     <div className="max-w-sm rounded-lg shadow-lg bg-white p-6 space-y-6  dark:border-gray-700 ">
       <div className="space-y-2 text-center justify-center items-center ">
-        <h1 className="text-3xl font-bold">Sign Up</h1>
+        <h1 className="text-3xl font-bold">Sign In</h1>
 
         <p className="text-zinc-500 dark:text-zinc-400">
-          Enter your email to sign up for IBM-SL{" "}
+          Enter your email to sign in to IBM-SL
         </p>
       </div>
       <div className="items-center justify-center">
@@ -129,7 +114,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
           className="w-full border-2 border-black hover:bg-black text-black hover:text-white p-2 rounded transition duration-300"
           onClick={handleSubmit}
         >
-          Sign Up
+          Sign In
         </button>
       </form>
       {showMessage && (
