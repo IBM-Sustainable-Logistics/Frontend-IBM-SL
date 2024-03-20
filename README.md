@@ -4,7 +4,8 @@
 <h2>How to run:</h2>
 <ol>
   <li>Open a terminal and change directory into the project folder.</li>
-  <li> Install the dependencies by running the command: <b>npm install</b></li>
+  <li>Run the following commands in the terminal:</li>
+  <li>Install the dependencies by running the command: <b>npm install</b> or simply <b>npm i</b></li>
   <li>Build the project by running the command: <b>npm run build</b></li>
   <li>Then run the app locally by running the command: <b>npm run dev</b></li>
   <li>The application should now be locally available (typically at the URL <a href="http://localhost:8000">localhost:8000</a>.)</li>

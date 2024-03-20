@@ -12,13 +12,13 @@ const DataVisualization = () => {
       if (chartRef.current) {
 
         const data = {
-          labels: ["1: train", "2: train", "3: truck", "4: air cargo", "5: truck"],
+          labels: ["1: Train", "2: Train", "3: Truck", "4: Air Cargo", "5: Truck", "6: Hybrid Truck"],
           datasets: [{
             label: 'CO2 emission',
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
+            borderColor: 'rgba(53, 162, 234, 1)',
             borderWidth: 1,
-            data: [8, 3, 6, 25, 2],
+            data: [8, 3, 6, 25, 2, 1],
           }]
         };
   
