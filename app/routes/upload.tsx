@@ -1,5 +1,3 @@
-
-
 import { Button } from "app/components/ui/button"
 import {
   Card,
@@ -10,13 +8,24 @@ import {
   CardTitle,
 } from "app/components/ui/card"
 import { Label } from "app/components/ui/label"
+
 import { useState } from "react"
+
+import { useToast } from "app/components/ui/use-toast"
 
 const UploadFile = () => {
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const { toast } = useToast()
+
+  function showToast() {
+    toast({
+      title: "File upload failed!",
+      description: "The file is not in a valid .csv format!",
+    })
+  }
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
@@ -34,12 +43,14 @@ const UploadFile = () => {
         if (item.kind === "file") {
           const file = item.getAsFile();
           if (file) {
-            setFileName(file.name);
             if (file.name.endsWith(".csv")) {
+              setFileName(file.name);
               console.log(`… file[${i}].name = ${file.name}`);
               setHasUploaded(true);
             } else {
               console.log(`file rejected: ${file.name}`)
+              showToast();
+              alert("Not a valid .csv format!");
               setHasUploaded(false);
             }
           }
@@ -81,7 +92,7 @@ const UploadFile = () => {
   }
 
   return (
-    <div id="drop_zone" onDrop={dropHandler} onDragOver={dragOverHandler} onDragLeave={dragHoverEnd}>
+    <div className=' min-h-screen flex items-center justify-center' id="drop_zone" onDrop={dropHandler} onDragOver={dragOverHandler} onDragLeave={dragHoverEnd}>
       <Card
         className="w-[350px]"
         style={{
