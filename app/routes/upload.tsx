@@ -14,6 +14,9 @@ import { useState } from "react"
 
 const UploadFile = () => {
 
+  /**
+   * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
+   */
   function dropHandler(ev: React.DragEvent<HTMLDivElement>): void {
     console.log("File(s) dropped");
 
@@ -27,8 +30,13 @@ const UploadFile = () => {
         if (item.kind === "file") {
           const file = item.getAsFile();
           if (file) {
-            console.log(`… file[${i}].name = ${file.name}`);
+            if (file.name.endsWith(".csv")) {
+              console.log(`… file[${i}].name = ${file.name}`);
+            } else {
+              console.log(`file rejected: ${file.name}`)
+            }
           }
+
         }
       });
     } else {
@@ -53,7 +61,7 @@ const UploadFile = () => {
     setHasUploaded(false);
   }
 
-  function dragOverHandler(ev: React.DragEvent<HTMLDivElement>): void{
+  function dragOverHandler(ev: React.DragEvent<HTMLDivElement>): void {
     console.log("File(s) in drop zone");
 
     // Prevent default behavior (Prevent file from being opened)
