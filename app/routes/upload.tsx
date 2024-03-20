@@ -74,6 +74,7 @@ const UploadFile = () => {
   }
 
   function deleteUpload(): void {
+    setFileName(null);
     setHasUploaded(false);
   }
 
@@ -118,14 +119,16 @@ const UploadFile = () => {
           </form>
         </CardContent>
         <CardFooter className="flex justify-between">
-          {hasUploaded &&
-            <Button variant="ibm_green" disabled>Upload</Button>}
           {!hasUploaded &&
-            <Button variant="ibm_green" onClick={handleUploadClick}>Upload</Button>}
+            <Button variant="ibm_green" disabled>Upload</Button>}
+          {hasUploaded &&
+            <Button variant="ibm_green" >Upload</Button>}
           {hasUploaded &&
             <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
+          {hasUploaded &&
+            <Button variant="ibm_blue" disabled>Choose file</Button>}
           {!hasUploaded &&
-            <Button variant="ibm_blue">Choose file</Button>}
+            <Button variant="ibm_blue" onClick={handleUploadClick}>Choose file</Button>}
         </CardFooter>
       </Card>
     </div>
