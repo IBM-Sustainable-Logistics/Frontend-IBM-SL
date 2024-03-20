@@ -5,6 +5,7 @@ import { Combobox } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
 import { transportMethods } from "../lib/Transport.ts";
 import type { TransportListItem } from "../lib/Transport.ts";
+import { useNavigate } from 'react-router-dom';
 
 type FormStage = {
   transportMethod: string;
@@ -41,6 +42,8 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
   const [showMessage, setShowMessage] = useState(false);
   const [showError, setShowError] = useState(false);
   const [distanceOnly, setDistanceOnly] = useState([false]);
+
+  const navigate = useNavigate();
 
   const handleInputChange =
     (index: number) =>
@@ -261,6 +264,10 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
     }
   };
 
+  function handleUploadPage(): void {
+    navigate('/upload');
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {!isCreateProject && (
@@ -346,6 +353,14 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             Calculate
           </Button>
         )}
+        <Button
+          onClick={handleUploadPage}
+          className="w-full"
+          variant={"ibm_green"}
+          type="button"
+        >
+          Upload file
+        </Button>
       </form>
 
       {showMessage && (
