@@ -17,7 +17,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ success: true }, { headers });
 };
 
-const Forgot = () => {
+const Reset = () => {
   const { supabase } = useOutletContext<SupabaseOutletContext>();
 
   return (
@@ -27,4 +27,4 @@ const Forgot = () => {
   );
 };
 
-export default Forgot;
+export default Reset;

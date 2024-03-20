@@ -86,7 +86,7 @@ export const UpdateForm: React.FC<UpdateFormProps> = ({ supabase }) => {
             Password
           </label>
           <input
-            type="text"
+            type="password"
             id="password"
             name="password"
             value={formData.password || ""}

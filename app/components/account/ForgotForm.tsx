@@ -28,15 +28,13 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("form data", formData);
-
     e.preventDefault(); // Prevent the default form submission
 
-    const url = domain_url + "reset";
+    const url = `${window.location.origin}/reset`;
     const { error } = await supabase.auth.resetPasswordForEmail(
       formData.email,
       {
-        redirectTo: `${domain_url}/reset`,
+        redirectTo: url,
       }
     );
     try {
