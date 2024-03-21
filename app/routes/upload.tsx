@@ -15,7 +15,10 @@ const UploadFile = () => {
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
+
+  // metadata for the chosen file
   const [fileName, setFileName] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
@@ -61,10 +64,11 @@ const UploadFile = () => {
       fileInput.click();
 
       fileInput.addEventListener("change", (event) => {
-        
+
         const file = (event.target as HTMLInputElement).files?.[0];
 
         if (file) {
+          setFile(file);
 
           const filename = file.name;
           setFileName(filename);
@@ -75,7 +79,7 @@ const UploadFile = () => {
             console.log(`file rejected: ${file.name}`)
             alert("Not in a valid .csv/.xls format!");
             setHasUploaded(false);
-            fileInput.value ="";
+            fileInput.value = "";
           } else {
             setHasUploaded(true);
           }
@@ -102,6 +106,34 @@ const UploadFile = () => {
 
     ev.preventDefault();
   }
+
+  /**
+   * Read the user-provided file, of type .csv and .xls
+   */
+  async function sendFile(): Promise<void> {
+    if (file) {
+      return new Promise<void>((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.onload = function (event) {
+          if (event.target && event.target.result) {
+            const contents = event.target.result as string;
+            console.log("File contents:", contents);
+            resolve();
+          } else {
+            reject(new Error("Failed to read file contents"));
+          }
+        };
+
+        fileReader.onerror = function (event) {
+          reject(new Error("Error reading file: " + fileReader.error));
+        };
+        fileReader.readAsText(file);
+      });
+    } else {
+      throw new Error("Unable to read file!");
+    }
+  }
+
 
   return (
     <div className=' min-h-screen flex items-center justify-center' id="drop_zone" onDrop={dropHandler} onDragOver={dragOverHandler} onDragLeave={dragHoverEnd}>
@@ -133,7 +165,7 @@ const UploadFile = () => {
           {!hasUploaded &&
             <Button variant="ibm_green" disabled>Upload</Button>}
           {hasUploaded &&
-            <Button variant="ibm_green" >Upload</Button>}
+            <Button variant="ibm_green" onClick={sendFile}>Upload</Button>}
           {hasUploaded &&
             <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
           {hasUploaded &&
