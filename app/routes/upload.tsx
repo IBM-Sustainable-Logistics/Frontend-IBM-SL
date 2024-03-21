@@ -56,9 +56,31 @@ const UploadFile = () => {
 
 
   function handleUploadClick(): void {
-    const fileInput = document.getElementById("fileInput");
+    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
+
+      fileInput.addEventListener("change", (event) => {
+        
+        const file = (event.target as HTMLInputElement).files?.[0];
+
+        if (file) {
+
+          const filename = file.name;
+          setFileName(filename);
+          console.log("Chosen file: " + filename);
+
+          if (!filename.toLowerCase().endsWith(".csv") && !filename.toLowerCase().endsWith(".xls")) {
+
+            console.log(`file rejected: ${file.name}`)
+            alert("Not in a valid .csv/.xls format!");
+            setHasUploaded(false);
+            fileInput.value ="";
+          } else {
+            setHasUploaded(true);
+          }
+        }
+      });
     }
   }
 
