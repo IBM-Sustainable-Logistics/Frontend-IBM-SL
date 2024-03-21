@@ -11,21 +11,11 @@ import { Label } from "app/components/ui/label"
 
 import { useState } from "react"
 
-import { useToast } from "app/components/ui/use-toast"
-
 const UploadFile = () => {
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const { toast } = useToast()
-
-  function showToast() {
-    toast({
-      title: "File upload failed!",
-      description: "The file is not in a valid .csv format!",
-    })
-  }
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
@@ -43,14 +33,13 @@ const UploadFile = () => {
         if (item.kind === "file") {
           const file = item.getAsFile();
           if (file) {
-            if (file.name.endsWith(".csv")) {
+            if (file.name.endsWith(".csv") || file.name.endsWith(".xls")) {
               setFileName(file.name);
               console.log(`… file[${i}].name = ${file.name}`);
               setHasUploaded(true);
             } else {
               console.log(`file rejected: ${file.name}`)
-              showToast();
-              alert("Not a valid .csv format!");
+              alert("Not in a valid .csv/.xls format!");
               setHasUploaded(false);
             }
           }
