@@ -14,6 +14,10 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
     request,
   });
 
+  if (!serverSession) {
+    return redirect("/forgot", { headers });
+  }
+
   return json({ success: true }, { headers });
 };
 
