@@ -17,8 +17,8 @@ const UploadFile = () => {
   const [onHover, setOnHover] = useState(false);
 
   // metadata for the chosen file
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  var [fileName, setFileName] = useState<string | null>(null);
+  var [file, setFile] = useState<File | null>(null);
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
@@ -34,7 +34,7 @@ const UploadFile = () => {
       [...ev.dataTransfer.items].forEach((item, i) => {
         // If dropped items aren't files, reject them
         if (item.kind === "file") {
-          const file = item.getAsFile();
+          file = item.getAsFile();
           if (file) {
             if (file.name.endsWith(".csv") || file.name.endsWith(".xls")) {
               setFileName(file.name);
@@ -88,7 +88,11 @@ const UploadFile = () => {
     }
   }
 
+  /**
+   * Equivalent to garbage collecting
+   */
   function deleteUpload(): void {
+    setFile(null);
     setFileName(null);
     setHasUploaded(false);
   }
@@ -127,7 +131,7 @@ const UploadFile = () => {
         fileReader.onerror = function (event) {
           reject(new Error("Error reading file: " + fileReader.error));
         };
-        fileReader.readAsText(file);
+        fileReader.readAsText(file as Blob);
       });
     } else {
       throw new Error("Unable to read file!");
