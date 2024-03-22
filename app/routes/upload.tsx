@@ -9,7 +9,9 @@ import {
 } from "app/components/ui/card"
 import { Label } from "app/components/ui/label"
 
-import { useState } from "react"
+import { useState } from "react";
+import ReadFilePage from "./upload.any";
+import { redirect } from "@remix-run/deno";
 
 const UploadFile = () => {
 
@@ -17,8 +19,10 @@ const UploadFile = () => {
   const [onHover, setOnHover] = useState(false);
 
   // metadata for the chosen file
+  const [fileIsSent, setIsSent] = useState(false);
   var [fileName, setFileName] = useState<string | null>(null);
   var [file, setFile] = useState<File | null>(null);
+  const [getContent, setContent] = useState<string>("");
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
@@ -36,7 +40,7 @@ const UploadFile = () => {
         if (item.kind === "file") {
           file = item.getAsFile();
           if (file) {
-            if (file.name.endsWith(".csv") || file.name.endsWith(".xls")) {
+            if (file.name.endsWith(".csv") || file.name.endsWith(".xls") || file.name.endsWith(".txt")) {
               setFileName(file.name);
               console.log(`… file[${i}].name = ${file.name}`);
               setHasUploaded(true);
@@ -57,6 +61,12 @@ const UploadFile = () => {
     }
   }
 
+  function navigateToReadFilePage() {
+    if (fileIsSent) {
+      return redirect("/upload/any");
+    }
+  }
+
 
   function handleUploadClick(): void {
     const fileInput = document.getElementById("fileInput") as HTMLInputElement;
@@ -74,13 +84,14 @@ const UploadFile = () => {
           setFileName(filename);
           console.log("Chosen file: " + filename);
 
-          if (!filename.toLowerCase().endsWith(".csv") && !filename.toLowerCase().endsWith(".xls")) {
+          if (!filename.toLowerCase().endsWith(".csv") && !filename.toLowerCase().endsWith(".xls") && !filename.toLowerCase().endsWith(".txt")) {
 
             console.log(`file rejected: ${file.name}`)
             alert("Not in a valid .csv/.xls format!");
             setHasUploaded(false);
             fileInput.value = "";
           } else {
+            readGivenFile();
             setHasUploaded(true);
           }
         }
@@ -89,8 +100,26 @@ const UploadFile = () => {
   }
 
   /**
-   * Equivalent to garbage collecting
+   * Read the content of the file using the FileReader API
    */
+  function readGivenFile() {
+    var fileReader = new FileReader();
+
+    fileReader.onload = (event) => {
+      if (event.target && event.target.result) {
+        const getContentAsString = event.target.result as string;
+        setContent(getContentAsString);
+      }
+    };
+    if (file != null) {
+      fileReader.readAsText(file);
+      setIsSent(true);
+    }
+  }
+
+  /**
+   * Equivalent to garbage collecting
+  */
   function deleteUpload(): void {
     setFile(null);
     setFileName(null);
@@ -113,7 +142,7 @@ const UploadFile = () => {
 
   /**
    * Read the user-provided file, of type .csv and .xls
-   */
+  */
   async function sendFile(): Promise<void> {
     if (file) {
       return new Promise<void>((resolve, reject) => {
@@ -155,7 +184,7 @@ const UploadFile = () => {
           <form>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                {fileName === null ? (
+                {(fileName === null || !hasUploaded) ? (
                   <Label htmlFor="name">File name:</Label>
                 ) : (
                   <Label htmlFor="name">File name: {fileName}</Label>
@@ -176,10 +205,11 @@ const UploadFile = () => {
             <Button variant="ibm_blue" disabled>Choose file</Button>}
           {!hasUploaded &&
             <Button variant="ibm_blue" onClick={handleUploadClick}>Choose file</Button>}
+          {navigateToReadFilePage()}
         </CardFooter>
       </Card>
     </div>
   );
-};
 
+};
 export default UploadFile;
