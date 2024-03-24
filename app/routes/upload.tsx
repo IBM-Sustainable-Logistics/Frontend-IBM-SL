@@ -61,7 +61,7 @@ const UploadFile = () => {
   }
 
   async function navigateToReadFilePage(): Promise<void> {
-    redirect('/result'); 
+    redirect('/result');
   }
 
 
@@ -159,7 +159,7 @@ const UploadFile = () => {
         };
         fileReader.readAsText(file as Blob);
       }).then(() => {
-        navigateToReadFilePage(); 
+        navigateToReadFilePage();
       }).catch((error) => {
         console.error("Error:", error);
       });
@@ -199,7 +199,9 @@ const UploadFile = () => {
           {!hasUploaded &&
             <Button variant="ibm_green" disabled>Upload</Button>}
           {hasUploaded &&
-            <Button variant="ibm_green" onClick={sendFile}>Upload</Button>}
+            <a href="/result">
+              <Button variant="ibm_green">Upload</Button>
+            </a>}
           {hasUploaded &&
             <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
           {hasUploaded &&
