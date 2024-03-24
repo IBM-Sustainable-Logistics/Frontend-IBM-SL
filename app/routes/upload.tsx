@@ -1,3 +1,4 @@
+import { redirect } from "@remix-run/deno";
 import { Button } from "app/components/ui/button"
 import {
   Card,
@@ -10,8 +11,6 @@ import {
 import { Label } from "app/components/ui/label"
 
 import { useState } from "react";
-import ReadFilePage from "./upload.any";
-import { redirect } from "@remix-run/deno";
 
 const UploadFile = () => {
 
@@ -61,10 +60,8 @@ const UploadFile = () => {
     }
   }
 
-  function navigateToReadFilePage() {
-    if (fileIsSent) {
-      return redirect("/upload/any");
-    }
+  async function navigateToReadFilePage(): Promise<void> {
+    redirect('/result'); 
   }
 
 
@@ -161,6 +158,10 @@ const UploadFile = () => {
           reject(new Error("Error reading file: " + fileReader.error));
         };
         fileReader.readAsText(file as Blob);
+      }).then(() => {
+        navigateToReadFilePage(); 
+      }).catch((error) => {
+        console.error("Error:", error);
       });
     } else {
       throw new Error("Unable to read file!");
@@ -205,7 +206,6 @@ const UploadFile = () => {
             <Button variant="ibm_blue" disabled>Choose file</Button>}
           {!hasUploaded &&
             <Button variant="ibm_blue" onClick={handleUploadClick}>Choose file</Button>}
-          {navigateToReadFilePage()}
         </CardFooter>
       </Card>
     </div>
