@@ -61,7 +61,7 @@ const UploadFile = () => {
   }
 
   async function navigateToReadFilePage(): Promise<void> {
-    redirect('/result');
+    redirect('/uploads');
   }
 
 
@@ -140,7 +140,11 @@ const UploadFile = () => {
   /**
    * Read the user-provided file, of type .csv and .xls
   */
-  async function sendFile(): Promise<void> {
+  const sendFile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', file as Blob);
+
     if (file) {
       return new Promise<void>((resolve, reject) => {
         const fileReader = new FileReader();
@@ -154,18 +158,29 @@ const UploadFile = () => {
           }
         };
 
-        fileReader.onerror = function (event) {
+        fileReader.onerror = function (_event) {
           reject(new Error("Error reading file: " + fileReader.error));
         };
         fileReader.readAsText(file as Blob);
-      }).then(() => {
-        navigateToReadFilePage();
+      }).then(async () => {
+        const response = await fetch('/api/uploads', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Error! Got response: " + response.status);
+        } else {
+          navigateToReadFilePage();
+        }
       }).catch((error) => {
         console.error("Error:", error);
       });
+
     } else {
       throw new Error("Unable to read file!");
     }
+
   }
 
 
@@ -199,9 +214,7 @@ const UploadFile = () => {
           {!hasUploaded &&
             <Button variant="ibm_green" disabled>Upload</Button>}
           {hasUploaded &&
-            <a href="/result">
-              <Button variant="ibm_green">Upload</Button>
-            </a>}
+            <Button variant="ibm_green" onClick={sendFile}>Upload</Button>}
           {hasUploaded &&
             <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
           {hasUploaded &&
