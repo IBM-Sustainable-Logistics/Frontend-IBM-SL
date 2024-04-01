@@ -70,7 +70,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
   };
 
   return (
-    <div className="max-w-sm rounded-lg shadow-lg bg-white p-6 space-y-6  dark:border-gray-700 ">
+    <div className="max-w-sm rounded-lg shadow-lg bg-white p-6 space-y-6  dark:border-gray-700  ">
       <div className="space-y-2 text-center justify-center items-center ">
         <h1 className="text-3xl font-bold">Forgot Password</h1>
 
@@ -88,7 +88,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
       <form>
         <div>
           <label htmlFor="email" className="block text-black font-medium mb-2 ">
-            Forgot
+            Email
           </label>
           <input
             type="text"
@@ -119,7 +119,3 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
     </div>
   );
 };
-
-function getDomainEnv(): string | undefined {
-  throw new Error("Function not implemented.");
-}
