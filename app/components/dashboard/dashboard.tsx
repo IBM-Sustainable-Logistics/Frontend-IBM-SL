@@ -24,20 +24,44 @@ import {
 import Calculator from "../calculator.tsx";
 import { useFetcher } from "@remix-run/react";
 
+type FormStage = {
+  transportMethod: string;
+  distance?: number;
+  from: string;
+  to: string;
+};
+
+type FormData = {
+  stages: FormStage[];
+  emissions: number | null;
+};
+
 interface DashboardProps {
   Projects: project[];
   UserId: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
+  const initialFormState: FormData = {
+    stages: [
+      {
+        transportMethod: "",
+        distance: 0,
+        from: "",
+        to: "",
+      },
+    ],
+    emissions: null,
+  };
+
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
+
+  const [formData, setFormData] = useState<FormData>(initialFormState);
 
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
   const fetcher = useFetcher();
-
-  function HandleCalulation() {}
 
   const addCalculator = () => {
     const newCalculator = {
@@ -50,6 +74,9 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
   };
 
   const handleCreateProject = () => {
+    // calculate here
+
+    // after calculating the emissions, we can submit the form
     const formData = {
       title: titleProject,
       descriptionProject: descriptionProject,
@@ -117,7 +144,11 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
                     />
                     {calculators.map((calculator) => (
                       <div key={calculator.id}>
-                        <Calculator isCreateProject={true} />
+                        <Calculator
+                          isCreateProject={true}
+                          formData={formData}
+                          setFormData={setFormData}
+                        />
                         <Button
                           variant="destructive"
                           onClick={() => deleteCalculator(calculator.id)}

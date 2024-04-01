@@ -20,22 +20,15 @@ type FormData = {
 
 type CalculatorProps = {
   isCreateProject: boolean;
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 };
 
-const Calculator = ({ isCreateProject }: CalculatorProps) => {
-  const initialFormState: FormData = {
-    stages: [
-      {
-        transportMethod: "",
-        distance: 0,
-        from: "",
-        to: "",
-      },
-    ],
-    emissions: null,
-  };
-
-  const [formData, setFormData] = useState<FormData>(initialFormState);
+const Calculator = ({
+  isCreateProject,
+  formData,
+  setFormData,
+}: CalculatorProps) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
