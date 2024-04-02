@@ -18,7 +18,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 const CalculateEmissionsPage = () => {
   return (
     <div className=' min-h-screen flex items-center justify-center'>
-      <Calculator isCreateProject={false} />
+      <Calculator isCreateProject={false} getContent="" />
     </div>
   );
 };

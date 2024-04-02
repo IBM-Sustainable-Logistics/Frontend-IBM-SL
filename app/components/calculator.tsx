@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox } from "./ui/combobox.tsx";
@@ -21,9 +21,23 @@ type FormData = {
 
 type CalculatorProps = {
   isCreateProject: boolean;
+  getContent: string;
 };
 
-const Calculator = ({ isCreateProject }: CalculatorProps) => {
+const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
+
+  // Placeholder for testing
+  const [alertShown, setAlertShown] = useState(false);
+
+  useEffect(() => {
+    if (getContent && getContent.length > 0 && !alertShown) {
+      console.log(getContent);
+      alert(getContent);
+      setAlertShown(true);
+      getContent = "";
+    }
+  }, [getContent, alertShown]);
+
   const initialFormState: FormData = {
     stages: [
       {
@@ -47,18 +61,18 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
 
   const handleInputChange =
     (index: number) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
 
-      setFormData((prev: FormData) => {
-        const newFormData = [...prev.stages];
-        newFormData[index] = {
-          ...newFormData[index],
-          [name]: name === "distance" ? Number(value) : value,
-        };
-        return { ...prev, stages: newFormData };
-      });
-    };
+        setFormData((prev: FormData) => {
+          const newFormData = [...prev.stages];
+          newFormData[index] = {
+            ...newFormData[index],
+            [name]: name === "distance" ? Number(value) : value,
+          };
+          return { ...prev, stages: newFormData };
+        });
+      };
 
   const handleSelectChange =
     (index: number) => (name: string, value: string) => {
@@ -153,7 +167,7 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             setShowMessage(false);
             setErrorMessage(
               "Please specify either origin and destination address or distance for stage " +
-                (index + 1)
+              (index + 1)
             );
             return;
           } else {
@@ -181,7 +195,7 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             setShowMessage(false);
             setErrorMessage(
               "Only `Truck` and `Electric Truck` allows for specifying origin and destination address for stage " +
-                (index + 1)
+              (index + 1)
             );
             return;
           }
@@ -191,7 +205,7 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             setShowMessage(false);
             setErrorMessage(
               "Please specify both origin and destination address for stage " +
-                (index + 1)
+              (index + 1)
             );
             return;
           }
@@ -201,7 +215,7 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             setShowMessage(false);
             setErrorMessage(
               "Please specify either origin and destination address or distance, not both, for stage " +
-                (index + 1)
+              (index + 1)
             );
             return;
           }
@@ -353,14 +367,14 @@ const Calculator = ({ isCreateProject }: CalculatorProps) => {
             Calculate
           </Button>
         )}
-        <Button
+        {!getContent && <Button
           onClick={handleUploadPage}
           className="w-full"
           variant={"ibm_green"}
           type="button"
         >
           Upload file
-        </Button>
+        </Button>}
       </form>
 
       {showMessage && (

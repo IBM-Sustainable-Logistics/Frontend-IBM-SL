@@ -12,6 +12,7 @@ import { Label } from "app/components/ui/label"
 import { useState } from "react";
 import ReadFilePage from "./upload.any";
 import { redirect } from "@remix-run/deno";
+import Calculator from "app/components/calculator";
 
 const UploadFile = () => {
 
@@ -60,13 +61,6 @@ const UploadFile = () => {
       });
     }
   }
-
-  function navigateToReadFilePage() {
-    if (fileIsSent) {
-      return redirect("/upload/any");
-    }
-  }
-
 
   function handleUploadClick(): void {
     const fileInput = document.getElementById("fileInput") as HTMLInputElement;
@@ -143,16 +137,18 @@ const UploadFile = () => {
   /**
    * Read the user-provided file, of type .csv and .xls
   */
-  async function sendFile(): Promise<void> {
+  async function readFile(): Promise<void> {
     if (file) {
       return new Promise<void>((resolve, reject) => {
         const fileReader = new FileReader();
         fileReader.onload = function (event) {
           if (event.target && event.target.result) {
-            const contents = event.target.result as string;
-            console.log("File contents:", contents);
+            setContent(event.target.result as string);
+            setIsSent(true);
+            console.log("File contents:", getContent);
             resolve();
           } else {
+            alert("Unable to read file! Please try again.");
             reject(new Error("Failed to read file contents"));
           }
         };
@@ -167,47 +163,54 @@ const UploadFile = () => {
     }
   }
 
-
   return (
-    <div className=' min-h-screen flex items-center justify-center' id="drop_zone" onDrop={dropHandler} onDragOver={dragOverHandler} onDragLeave={dragHoverEnd}>
-      <Card
-        className="w-[350px]"
-        style={{
-          backgroundColor: onHover ? "lightgray" : "white",
-        }}
-      >
-        <CardHeader>
-          <CardTitle>Upload your file here</CardTitle>
-          <CardDescription>You can drag and drop your file here. Alternatively, you can click the 'Choose file' button below: </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                {(fileName === null || !hasUploaded) ? (
-                  <Label htmlFor="name">File name:</Label>
-                ) : (
-                  <Label htmlFor="name">File name: {fileName}</Label>
-                )}
-                <input type="file" id="fileInput" style={{ display: "none" }} />
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          {!hasUploaded &&
-            <Button variant="ibm_green" disabled>Upload</Button>}
-          {hasUploaded &&
-            <Button variant="ibm_green" onClick={sendFile}>Upload</Button>}
-          {hasUploaded &&
-            <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
-          {hasUploaded &&
-            <Button variant="ibm_blue" disabled>Choose file</Button>}
-          {!hasUploaded &&
-            <Button variant="ibm_blue" onClick={handleUploadClick}>Choose file</Button>}
-          {navigateToReadFilePage()}
-        </CardFooter>
-      </Card>
+    <div>
+      {!fileIsSent &&
+        <div className=' min-h-screen flex items-center justify-center' id="drop_zone" onDrop={dropHandler} onDragOver={dragOverHandler} onDragLeave={dragHoverEnd}>
+          <Card
+            className="w-[350px]"
+            style={{
+              backgroundColor: onHover ? "lightgray" : "white",
+            }}
+          >
+            <CardHeader>
+              <CardTitle>Upload your file here</CardTitle>
+              <CardDescription>You can drag and drop your file here. Alternatively, you can click the 'Choose file' button below: </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form>
+                <div className="grid w-full items-center gap-4">
+                  <div className="flex flex-col space-y-1.5">
+                    {(fileName === null || !hasUploaded) ? (
+                      <Label htmlFor="name">File name:</Label>
+                    ) : (
+                      <Label htmlFor="name">File name: {fileName}</Label>
+                    )}
+                    <input type="file" id="fileInput" style={{ display: "none" }} />
+                  </div>
+                </div>
+              </form>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              {!hasUploaded &&
+                <Button variant="ibm_green" disabled>Upload</Button>}
+              {hasUploaded &&
+                <Button variant="ibm_green" onClick={readFile}>Upload</Button>}
+              {hasUploaded &&
+                <Button variant="destructive" onClick={deleteUpload}>Cancel</Button>}
+              {hasUploaded &&
+                <Button variant="ibm_blue" disabled>Choose file</Button>}
+              {!hasUploaded &&
+                <Button variant="ibm_blue" onClick={handleUploadClick}>Choose file</Button>}
+            </CardFooter>
+          </Card>
+        </div>
+      }
+      {fileIsSent &&
+        <div className=' min-h-screen flex items-center justify-center'>
+          <Calculator isCreateProject={false} getContent={getContent}/>
+        </div>
+      }
     </div>
   );
 
