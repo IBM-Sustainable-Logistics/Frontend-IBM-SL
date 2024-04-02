@@ -4,7 +4,6 @@ const url = "http://localhost:8000";
 const email = "dummy@gmail.com";
 const password = "qwerty";
 
-//Test error????
 test("can login and see dashboard", async ({ page }) => {
   try {
     await page.goto(url);
