@@ -3,6 +3,9 @@ import { test, expect } from "@playwright/test";
 const url = process.env.DOMAIN_URL;
 const email = process.env.EMAIL_TEST;
 const password = process.env.PASSWORD_TEST;
+console.log("🚀 url", url);
+console.log("🚀 email", email);
+console.log("🚀 password", password);
 
 test("can login and see dashboard", async ({ page }) => {
   try {
