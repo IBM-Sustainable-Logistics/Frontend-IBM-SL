@@ -255,12 +255,14 @@ const Calculator = ({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {!isCreateProject && (
-        <h1 className=" text-primary text-4xl font-bold">
-          Calculate Emissions
-        </h1>
-      )}
+    <div
+      className={
+        isCreateProject
+          ? "justify-center items-center flex flex-col gap-4 "
+          : "flex flex-col gap-4 "
+      }
+    >
+      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
       <form onSubmit={handleSubmit}>
         {[...Array(formData.stages.length)].map((_, index) => (
           <div className=" flex flex-col gap-4 ">
@@ -334,15 +336,13 @@ const Calculator = ({
         >
           Add Stage
         </Button>
-        {!isCreateProject && (
-          <Button className="w-full" variant={"ibm_blue"} type="submit">
-            Calculate
-          </Button>
-        )}
+        <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
+          Calculate
+        </Button>
       </form>
 
       {showMessage && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px]">
+        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px] ">
           {message}
         </div>
       )}
