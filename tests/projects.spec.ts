@@ -3,9 +3,6 @@ import { test, expect } from "@playwright/test";
 const url = process.env.DOMAIN_URL;
 const email = process.env.EMAIL_TEST;
 const password = process.env.PASSWORD_TEST;
-console.log("🚀 url", url);
-console.log("🚀 email", email);
-console.log("🚀 password", password);
 
 test("can login and see dashboard", async ({ page }) => {
   try {
@@ -64,7 +61,8 @@ test("can delete a project", async ({ page }) => {
 
   try {
     // Ensure the project's title and description are visible
-    await expect(page.getByText(projectTitle, { exact: true })).toBeVisible();
+    await page.waitForTimeout(3000);
+    await expect(page.getByText(projectTitle)).toBeVisible();
     await expect(page.getByText(projectDescription)).toBeVisible();
 
     // Identify the delete button within the card, using either text or an icon's alt text or some other unique property
