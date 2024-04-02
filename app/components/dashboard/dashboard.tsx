@@ -74,15 +74,16 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
   };
 
   const handleCreateProject = () => {
-    // calculate here
+    // get the calculated data
+    console.log("calculators", formData);
 
     // after calculating the emissions, we can submit the form
-    const formData = {
+    const project = {
       title: titleProject,
       descriptionProject: descriptionProject,
       userId: UserId,
     };
-    fetcher.submit(formData, { method: "POST", action: "/api/project" });
+    fetcher.submit(project, { method: "POST", action: "/api/project" });
   };
 
   return (
@@ -143,7 +144,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
                       onChange={(e) => setDescriptionProject(e.target.value)}
                     />
                     {calculators.map((calculator) => (
-                      <div key={calculator.id}>
+                      <div key={calculator.id} className=" w-full">
                         <Calculator
                           isCreateProject={true}
                           formData={formData}
