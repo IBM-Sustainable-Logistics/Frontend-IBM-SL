@@ -4,6 +4,7 @@ const url = "http://localhost:8000";
 const email = "dummy@gmail.com";
 const password = "qwerty";
 
+//Test error????
 test("can login and see dashboard", async ({ page }) => {
   try {
     await page.goto(url);
@@ -69,9 +70,11 @@ test("can delete a project", async ({ page }) => {
 
     await deleteButton.click();
 
-    await expect(page.getByRole('heading', { name: 'Delete project \'Test Project' })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Delete project 'Test Project" })
+    ).toBeVisible();
 
-    await page.getByRole('button', { name: 'Delete' }).click();
+    await page.getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(3000);
     await expect(page.getByText(projectTitle)).not.toBeVisible();
   } catch (error) {
