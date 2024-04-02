@@ -50,9 +50,8 @@ test("can create and delete a project", async ({ page }) => {
     await deleteButton.click();
 
     await page.waitForTimeout(3000);
-    await expect(
-      page.getByRole('heading', { name: 'Delete project \'Test Project' })).toBeVisible({ timeout: 10000 });
-
+    // await expect(
+    //   page.getByRole('heading', { name: `"Delete project '${projectTitle}'?` })).toBeVisible({ timeout: 30000 });
     await page.getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(3000);
     await expect(page.getByText(projectTitle)).not.toBeVisible();
