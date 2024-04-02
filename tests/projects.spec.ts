@@ -45,12 +45,13 @@ test("can create and delete a project", async ({ page }) => {
     await expect(page.getByText(projectTitle, { exact: true })).toBeVisible();
     await expect(page.getByText(projectDescription)).toBeVisible();
 
-    const deleteButton = await page.locator("button > .inline-flex").first();
-    await deleteButton.click();
+    await page.locator(`div`).filter({ hasText: new RegExp(`^${projectTitle}${projectDescription}Estimation amount: 0 kgViewEdit$`) }).getByRole('button').nth(1).click();
+
+    // const deleteButton = await page.locator("button > .inline-flex").first();
+    // await deleteButton.click();
 
     await page.waitForTimeout(3000);
-
-    await page.getByRole("button", { name: "Delete" }).click();
+    await page.getByRole('button', { name: 'Delete' }).click();
     await page.waitForTimeout(3000);
     await expect(page.getByText(projectTitle)).not.toBeVisible();
   } catch (error) {
