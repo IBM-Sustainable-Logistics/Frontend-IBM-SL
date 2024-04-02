@@ -1,5 +1,5 @@
 import { createClient } from  "https://esm.sh/@supabase/supabase-js@2.39.7";
-import type { Database } from "./utils/types.ts";
+import type { Database, Json } from "./utils/types.ts";
 import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
 import { project } from "./Transport.ts";
 import * as uuid from "https://deno.land/std@0.207.0/uuid/mod.ts";
@@ -52,12 +52,14 @@ export async function insertProject (
     title: string,
     description: string | null,
     user_id: string,
+    calculation: Json | null,
 ) {
     const { error } = await supabase.from('projects').insert(
         {
             title,
             description,
             user_id,
+            calculation,
         }
     );
     if (error) {

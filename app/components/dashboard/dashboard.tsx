@@ -82,6 +82,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
       title: titleProject,
       descriptionProject: descriptionProject,
       userId: UserId,
+      calc: JSON.stringify(formData),
     };
     fetcher.submit(project, { method: "POST", action: "/api/project" });
   };
