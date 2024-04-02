@@ -1,3 +1,4 @@
+import { redirect } from "@remix-run/deno";
 import { Button } from "app/components/ui/button"
 import {
   Card,
@@ -153,14 +154,29 @@ const UploadFile = () => {
           }
         };
 
-        fileReader.onerror = function (event) {
+        fileReader.onerror = function (_event) {
           reject(new Error("Error reading file: " + fileReader.error));
         };
         fileReader.readAsText(file as Blob);
+      }).then(async () => {
+        const response = await fetch('/api/uploads', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Error! Got response: " + response.status);
+        } else {
+          navigateToReadFilePage();
+        }
+      }).catch((error) => {
+        console.error("Error:", error);
       });
+
     } else {
       throw new Error("Unable to read file!");
     }
+
   }
 
   return (
