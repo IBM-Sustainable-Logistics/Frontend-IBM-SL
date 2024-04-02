@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-const url = "http://localhost:8000";
-const email = "dummy@gmail.com";
-const password = "qwerty";
+const url = process.env.DOMAIN_URL;
+const email = process.env.EMAIL_TEST;
+const password = process.env.PASSWORD_TEST;
 
 test("can login and see dashboard", async ({ page }) => {
   try {

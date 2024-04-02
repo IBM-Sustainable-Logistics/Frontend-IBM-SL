@@ -27,6 +27,7 @@
       "npm:cmdk@^0.2.1": "npm:cmdk@0.2.1_react@18.2.0_react-dom@18.2.0__react@18.2.0_@types+react@18.2.60",
       "npm:cross-env@^7.0.3": "npm:cross-env@7.0.3",
       "npm:deno@^0.1.1": "npm:deno@0.1.1",
+      "npm:dotenv@^16.4.5": "npm:dotenv@16.4.5",
       "npm:framer-motion@^11.0.8": "npm:framer-motion@11.0.13_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:isbot@^4.1.0": "npm:isbot@4.4.0",
       "npm:lucide-react@^0.312.0": "npm:lucide-react@0.312.0_react@18.2.0",
@@ -13576,6 +13577,7 @@
     }
   },
   "redirects": {
+    "https://deno.land/x/dotenv/mod.ts": "https://deno.land/x/dotenv@v3.2.2/mod.ts",
     "https://esm.sh/@supabase/ssr@^0.1.0": "https://esm.sh/@supabase/ssr@0.1.0",
     "https://esm.sh/react@^18.2.0": "https://esm.sh/react@18.2.0",
     "https://esm.sh/v128/@types/react@~18.2/index.d.ts": "https://esm.sh/v128/@types/react@18.2.38/index.d.ts"
