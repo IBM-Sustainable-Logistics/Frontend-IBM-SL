@@ -45,53 +45,16 @@ test("can create and delete a project", async ({ page }) => {
     await expect(page.getByText(projectTitle, { exact: true })).toBeVisible();
     await expect(page.getByText(projectDescription)).toBeVisible();
 
-
     const deleteButton = await page.locator("button > .inline-flex").first();
     await deleteButton.click();
 
     await page.waitForTimeout(3000);
-    // await expect(
-    //   page.getByRole('heading', { name: `"Delete project '${projectTitle}'?` })).toBeVisible({ timeout: 30000 });
+
     await page.getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(3000);
     await expect(page.getByText(projectTitle)).not.toBeVisible();
-
-  
   } catch (error) {
     console.error("Test failed during title check", error);
     throw error; // Rethrow if you want the test to fail
   }
 });
-
-// test("can delete a project", async ({ page }) => {
-//   await page.goto(url);
-//   await page.getByRole("button", { name: "Sign In" }).click();
-//   await page.getByLabel("Email").click();
-//   await page.getByLabel("Email").fill(email);
-//   await page.getByLabel("Password").click();
-//   await page.getByLabel("Password").fill(password);
-//   await page.locator("form").getByRole("button", { name: "Sign In" }).click();
-
-//   try {
-//     // Ensure the project's title and description are visible
-//     await page.waitForTimeout(3000);
-//     await expect(page.getByText(projectTitle)).toBeVisible();
-//     await expect(page.getByText(projectDescription)).toBeVisible();
-    
-//     // Identify the delete button within the card, using either text or an icon's alt text or some other unique property
-//     const deleteButton = await page.locator("button > .inline-flex").first();
-    
-//     await deleteButton.click();
-    
-//     await page.waitForTimeout(3000);
-//     await expect(
-//       page.getByRole('heading', { name: 'Delete project \'Test Project' }).toBeVisible();
-
-//     await page.getByRole("button", { name: "Delete" }).click();
-//     await page.waitForTimeout(3000);
-//     await expect(page.getByText(projectTitle)).not.toBeVisible();
-//   } catch (error) {
-//     console.error("Test failed", error);
-//     throw error; // Rethrow if you want the test to fail
-//   }
-// });
