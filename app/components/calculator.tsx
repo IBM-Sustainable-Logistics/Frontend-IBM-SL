@@ -26,19 +26,8 @@ type CalculatorProps = {
 
 const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
 
-  // Placeholder for testing
-  const [alertShown, setAlertShown] = useState(false);
-
-  useEffect(() => {
-    if (getContent && getContent.length > 0 && !alertShown) {
-      console.log(getContent);
-      alert(getContent);
-      setAlertShown(true);
-      getContent = "";
-    }
-  }, [getContent, alertShown]);
-
-  const initialFormState: FormData = {
+  const [formData, setFormData] = useState<FormData>({
+    // Initial form state, same as if the user never uploads a file
     stages: [
       {
         transportMethod: "",
@@ -48,9 +37,100 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
       },
     ],
     emissions: null,
-  };
+  });
 
-  const [formData, setFormData] = useState<FormData>(initialFormState);
+  // Placeholder for testing
+  const [alertShown, setAlertShown] = useState(false);
+
+  // If user has uploaded a file, then we want to split it up before proceeding
+  var contentSplit;
+  const contentMap: { [key: string]: any } = {};
+
+  useEffect(() => {
+    if (getContent && getContent.length > 0 && !alertShown) {
+      console.log(getContent);
+      alert(getContent);
+      setAlertShown(true);
+
+      contentSplit = getContent.split('\n');
+
+      contentSplit.forEach(content => {
+        var tmp = content.split(':');
+        var key = tmp[0].trim();
+        var value = tmp[1].trim().replace(/,\s*$/, "");
+
+        contentMap[key] = value;
+
+        console.log("Received " + key + ": " + contentMap[key])
+      })
+
+      console.log("Received map: " + contentMap["Distance (km)"]);
+
+      const newFormState: FormData = getContent == null ? {
+        stages: [
+          {
+            transportMethod: "",
+            distance: contentMap["Distance (km)"],
+            from: contentMap["Origin Address"],
+            to: contentMap["Destination Address"],
+          },
+        ],
+        emissions: null,
+      } : {
+        stages: [
+          {
+            transportMethod: "",
+            distance: 0,
+            from: "",
+            to: "",
+          },
+        ],
+        emissions: null,
+      };
+
+      console.log("New form state:", newFormState);
+
+      setFormData(prev => ({
+        ...prev,
+        ...newFormState
+      }));
+
+      getContent = "";
+    }
+
+  }, [getContent, alertShown]);
+
+  useEffect(() => {
+  // Only update formData when contentMap is updated
+  if (Object.keys(contentMap).length > 0) {
+    const newFormState: FormData = getContent == null ? {
+      stages: [
+        {
+          transportMethod: "",
+          distance: contentMap["Distance (km)"],
+          from: contentMap["Origin Address"],
+          to: contentMap["Destination Address"],
+        },
+      ],
+      emissions: null,
+    } : {
+      stages: [
+        {
+          transportMethod: "",
+          distance: 0,
+          from: "",
+          to: "",
+        },
+      ],
+      emissions: null,
+    };
+    setFormData(prev => ({
+      ...prev,
+      ...newFormState
+    }));
+  }
+}, [contentMap, getContent]);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
@@ -282,6 +362,8 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
     navigate('/upload');
   }
 
+
+
   return (
     <div className="flex flex-col gap-4">
       {!isCreateProject && (
@@ -389,6 +471,9 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
       )}
     </div>
   );
+
 };
+
+
 
 export default Calculator;
