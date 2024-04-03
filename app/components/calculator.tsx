@@ -302,8 +302,6 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
       navigate('/upload');
     }
 
-
-
   function getDistance(): number | undefined {
     if(formData.stages[0].distance == undefined || formData.stages[0].distance <= 0){
       return undefined;
@@ -312,7 +310,12 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
   }
 
     return (
-      <div className="flex flex-col gap-4">
+      <div className={
+        isCreateProject
+          ? "justify-center items-center flex flex-col gap-4 "
+          : "flex flex-col gap-4 "
+      }
+      >
         {!isCreateProject && (
           <h1 className=" text-primary text-4xl font-bold">
             Calculate Emissions
@@ -411,7 +414,7 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
         </form>
 
       {showMessage && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px]">
+        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[330px] ">
           {message}
         </div>
       )}

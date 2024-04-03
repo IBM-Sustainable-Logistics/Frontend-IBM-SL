@@ -17,6 +17,15 @@ export const getSupabaseEnv =  () => (
       }
   );
 
+export const getLoginForTestingEnv = () => (
+    {
+        EMAIL_TEST: Deno.env.get("EMAIL") || env["EMAIL"],
+        PASSWORD_TEST: Deno.env.get("PASSWORD") || env["PASSWORD"],
+      }
+  );
+
+
+
 export function getSupabaseWithHeaders({ request }: { request: Request }) {
   const cookies = parse(request.headers.get("Cookie") ?? "");
   const headers = new Headers();

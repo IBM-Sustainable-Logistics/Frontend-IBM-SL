@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 import Calculator from "../components/calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
@@ -15,7 +16,33 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ success: true }, { headers });
 };
 
+type FormStage = {
+  transportMethod: string;
+  distance?: number;
+  from: string;
+  to: string;
+};
+
+type FormData = {
+  stages: FormStage[];
+  emissions: number | null;
+};
+
 const CalculateEmissionsPage = () => {
+  const initialFormState: FormData = {
+    stages: [
+      {
+        transportMethod: "",
+        distance: 0,
+        from: "",
+        to: "",
+      },
+    ],
+    emissions: null,
+  };
+
+  const [formData, setFormData] = useState<FormData>(initialFormState);
+
   return (
     <div className=' min-h-screen flex items-center justify-center'>
       <Calculator isCreateProject={false} getContent="" />

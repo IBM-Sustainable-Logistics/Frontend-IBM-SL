@@ -116,6 +116,11 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
         >
           Sign In
         </button>
+        <div>
+          <a href="/forgot" className="text-blue-500 hover:underline">
+            Forgot Password ?
+          </a>
+        </div>
       </form>
       {showMessage && (
         <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
