@@ -22,12 +22,14 @@ interface ComboboxOption {
 interface ComboboxProps {
   options: ComboboxOption[];
   type: string;
+  typeFromFile: string;
   onChangeTransport: (name: string, value: string) => void;
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
   options,
   type,
+  typeFromFile,
   onChangeTransport,
 }) => {
   const [open, setOpen] = React.useState(false);
@@ -42,9 +44,10 @@ export const Combobox: React.FC<ComboboxProps> = ({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
-            : "Select transport form..."}
+          {typeFromFile ? typeFromFile :
+            (value
+              ? options.find((option) => option.value === value)?.label
+              : "Select transport form...")}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

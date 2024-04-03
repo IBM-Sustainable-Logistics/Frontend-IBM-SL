@@ -11,8 +11,6 @@ import {
 import { Label } from "app/components/ui/label"
 
 import { useState } from "react";
-import ReadFilePage from "./upload.any";
-import { redirect } from "@remix-run/deno";
 import Calculator from "app/components/calculator";
 
 const UploadFile = () => {
@@ -146,7 +144,6 @@ const UploadFile = () => {
           if (event.target && event.target.result) {
             setContent(event.target.result as string);
             setIsSent(true);
-            console.log("File contents:", getContent);
             resolve();
           } else {
             alert("Unable to read file! Please try again.");
@@ -158,19 +155,6 @@ const UploadFile = () => {
           reject(new Error("Error reading file: " + fileReader.error));
         };
         fileReader.readAsText(file as Blob);
-      }).then(async () => {
-        const response = await fetch('/api/uploads', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error("Error! Got response: " + response.status);
-        } else {
-          navigateToReadFilePage();
-        }
-      }).catch((error) => {
-        console.error("Error:", error);
       });
 
     } else {
