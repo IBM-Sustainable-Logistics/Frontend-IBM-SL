@@ -3,9 +3,8 @@ import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
-import { transportMethods, TransportMethod, TruckTransportMethod } from "../lib/Transport.ts";
-import { isTruckTransportMethod, getTransportMethodLabel } from "../lib/Transport.ts";
-import { Address, Stage } from "../lib/Transport.ts";
+import { Stage, TransportMethod, TruckTransportMethod } from "../lib/Transport.ts";
+import { transportMethods, isTruckTransportMethod } from "../lib/Transport.ts";
 
 /* Termonology:
  * - Stage:
@@ -23,11 +22,6 @@ import { Address, Stage } from "../lib/Transport.ts";
  * - Truck transport method:
  *      A transport method that can use addresses, e.g. "truck".
  */          
-
-type Estimate = {
-  total: number,
-  perStage: number[],
-};
 
 type FormData = {
   stages: Stage[],
@@ -249,7 +243,7 @@ const Calculator = ({
 
       const beforeStage = old.stages[index];
 
-      let newStage: Stage = beforeStage.usesAddress
+      const newStage: Stage = beforeStage.usesAddress
         ? {
           usesAddress: true,
           transportMethod: beforeStage.transportMethod,
