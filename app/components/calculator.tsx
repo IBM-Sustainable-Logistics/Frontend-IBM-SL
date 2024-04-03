@@ -1,38 +1,49 @@
 import React, { useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
-import { Combobox } from "./ui/combobox.tsx";
+import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import { Input } from "./ui/input.tsx";
 import { Stage, TransportMethod, TruckTransportMethod } from "../lib/Transport.ts";
-import { transportMethods, isTruckTransportMethod } from "../lib/Transport.ts";
+import { transportMethods, isTruckTransportMethod, getTransportMethodLabel } from "../lib/Transport.ts";
 
 /* Termonology:
  * - Stage:
- *      A part of a route that has a transport method and either
- *      a distance or an origin and destination address.
- *      It can only use addresses if the transport method id a
- *      truck transport method.
+ *      A part of a route that has a transport method and
+ *      either a distance or an origin and destination
+ *      address. It can only use addresses if the transport
+ *      method id a truck transport method.
  *
  * - Address:
  *      A city and optionally a country.
  *
  * - Transport method
- *      A method of transport, e.g. "truck", "train", "aircraft".
+ *      A method of transport, e.g: "truck", "train",
  *
  * - Truck transport method:
- *      A transport method that can use addresses, e.g. "truck".
+ *      A transport method that allows addresses,
+ *      specifically "truck" and "etruck".
  */          
 
-type FormData = {
-  stages: Stage[],
+export interface Keyed {
+  id: number,
+}
+
+export type FormData = {
+  stages: (Stage & Keyed)[],
   emissions: {
     totalKg: number,
     stages: {
       kg: number,
       transportMethod: TransportMethod,
     }[],
-  },
+  } | undefined,
 };
+
+const transportMethodOptions: ComboboxOption[] =
+  transportMethods.map((method) => ({
+    value: method,
+    label: getTransportMethodLabel(method)
+  }));
 
 type CalculatorProps = {
   isCreateProject: boolean;
@@ -56,13 +67,17 @@ const Calculator = ({
    */
   const onTransportMethodChange = (index: number) =>
     (_comboboxType: string, comboboxValue: TransportMethod): void => {
+      console.log("changing transport method to", comboboxValue);
+
       setFormData((old: FormData): FormData => {
         const stage: Stage = old.stages[index];
 
         // if the old stage used addresses
         if (stage.usesAddress) {
+          console.log("stage uses address");
           // and if the new transport method allows for addresses
           if (isTruckTransportMethod(comboboxValue)) {
+            console.log("method allows address");
             // then keep the addresses
             return {
               ...old,
@@ -71,11 +86,13 @@ const Calculator = ({
                 transportMethod: comboboxValue as TruckTransportMethod,
                 from: stage.from,
                 to: stage.to,
+                id: old.stages[index].id,
               }),
             };
           }
           // but if the new transport method does not allow for addresses
           else {
+            console.log("method does not allow address");
             // then use default distance of 0
             return {
               ...old,
@@ -83,12 +100,14 @@ const Calculator = ({
                 usesAddress: false,
                 transportMethod: comboboxValue,
                 distance: 0,
+                id: old.stages[index].id,
               }),
             };
           }
         }
         // or if the old stage used distance
         else {
+          console.log("stage does not use address");
           // then keep the distance
           return {
             ...old,
@@ -96,6 +115,7 @@ const Calculator = ({
               usesAddress: false,
               transportMethod: comboboxValue,
               distance: stage.distance,
+              id: old.stages[index].id,
             }),
           };
         }
@@ -134,7 +154,7 @@ const Calculator = ({
 
         return {
           ...old,
-          stages: old.stages.with(index, stage),
+          stages: old.stages.with(index, { ...stage, id: old.stages[index].id }),
         };
       });
     };
@@ -159,6 +179,7 @@ const Calculator = ({
             usesAddress: stage.usesAddress,
             transportMethod: stage.transportMethod,
             distance: Number(inputValue),
+            id: old.stages[index].id,
           }),
         };
       });
@@ -189,6 +210,7 @@ const Calculator = ({
               transportMethod: stage.transportMethod as TruckTransportMethod,
               from: { city: "", country: "" },
               to: { city: "", country: "" },
+              id: old.stages[index].id,
             }),
           };
         }
@@ -203,6 +225,7 @@ const Calculator = ({
               usesAddress: false,
               transportMethod: stage.transportMethod,
               distance: 0,
+              id: old.stages[index].id,
             }),
           };
         }
@@ -224,48 +247,54 @@ const Calculator = ({
    * If the index is -1, the new stage is inserted as the
    * first stage.
    */
-  const onInsertAfter = (index: number | -1) => {
-    setFormData((old: FormData): FormData => {
-      // if index is -1, insert as first stage
-      if (index === -1)
+  const onInsertAfter = (index: number | -1) =>
+    () => {
+      console.log("inserting after", index);
+
+      setFormData((old: FormData): FormData => {
+        // if index is -1, insert as first stage
+        if (index === -1)
+          return {
+            ...old,
+            stages: [
+              {
+                usesAddress: true,
+                transportMethod: "truck",
+                from: { city: "", country: "" },
+                to: { city: "", country: "" },
+                id: Math.random(),
+              },
+              ...old.stages,
+            ],
+          };
+
+        const beforeStage = old.stages[index];
+
+        const newStage: Stage & Keyed = beforeStage.usesAddress
+          ? {
+            usesAddress: true,
+            transportMethod: beforeStage.transportMethod,
+            from: beforeStage.to,
+            to: { city: "", country: "" },
+            id: Math.random(),
+          }
+          : {
+            usesAddress: false,
+            transportMethod: beforeStage.transportMethod,
+            distance: 0,
+            id: Math.random(),
+          };
+
         return {
           ...old,
           stages: [
-            {
-              usesAddress: true,
-              transportMethod: "truck",
-              from: { city: "", country: "" },
-              to: { city: "", country: "" },
-            },
-            ...old.stages,
+            ...old.stages.slice(0, index + 1),
+            newStage,
+            ...old.stages.slice(index + 1),
           ],
         };
-
-      const beforeStage = old.stages[index];
-
-      const newStage: Stage = beforeStage.usesAddress
-        ? {
-          usesAddress: true,
-          transportMethod: beforeStage.transportMethod,
-          from: beforeStage.to,
-          to: { city: "", country: "" },
-        }
-        : {
-          usesAddress: false,
-          transportMethod: beforeStage.transportMethod,
-          distance: 0,
-        };
-
-      return {
-        ...old,
-        stages: [
-          ...old.stages.slice(0, index + 1),
-          newStage,
-          ...old.stages.slice(index + 1),
-        ],
-      };
-    });
-  };
+      });
+    };
 
   /**
    * Given an index of a stage, returns a button onClick
@@ -368,8 +397,8 @@ const Calculator = ({
           Add Stage
         </Button>
 
-        {formData.stages.map((stage: Stage, index: number) => (
-          <div className=" flex flex-col gap-4 ">
+        {formData.stages.map((stage: Stage & Keyed, index: number) => (
+          <div className=" flex flex-col gap-4 " key={stage.id}>
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               {formData.stages.length <= 1 ? (
                 <>Transport Method:</>
@@ -379,9 +408,9 @@ const Calculator = ({
             </Label>
 
             <Combobox
-              options={transportMethods}
-              type="transportMethod"
-              onChangeTransport={onTransportMethodChange(index)}
+              options={transportMethodOptions}
+              type="transportType"
+              onChange={onTransportMethodChange(index)}
             />
 
             {stage.usesAddress
