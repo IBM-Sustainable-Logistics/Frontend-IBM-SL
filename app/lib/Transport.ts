@@ -1,3 +1,4 @@
+import { Json } from "./utils/types.ts";
 
 interface TransportMethod {
     value: string;
@@ -16,6 +17,7 @@ type TransportListItem = {
 export interface project {
     created_at: string;
     description: string | null;
+    emissions: number | null;
     id: string;
     title: string;
     user_id: string;

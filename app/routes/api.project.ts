@@ -23,7 +23,7 @@ export async function action({ request }: ActionFunctionArgs) {
         const title = formData.get("title")?.toString();
         const description = formData.get("descriptionProject")?.toString();
         const userId = formData.get("userId")?.toString();
-        const calc = formData.get("calc")?.toString();
+        const calc = formData.get("calc");
       
       
       if (!userId || !title || !description) {

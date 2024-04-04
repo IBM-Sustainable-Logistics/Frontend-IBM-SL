@@ -23,22 +23,12 @@ const supabase = createClient<Database>(getSupabaseEnv().SUPABASE_URL, getSupaba
 
 // example 
 export async function getEstimates(){
-    return await supabase.from('estimates').select('*')
+    return await supabase.from('estimates').select(' id, created_at, title, description,user_id, description ')
 }
 
 export async function getProjects() {
     const { data, error } = await supabase
-        .from('projects')
-        .select(`
-            *,
-            projects_transports (
-                *,
-                transports (
-                    *
-                )
-            )
-        `)
-        .order('created_at', { ascending: false });
+        .from('projects').select(' id, created_at, title, description,user_id, description, emissions: calculation->emissions, distance: calculation->stages');
 
     if (error) {
         console.error("Error fetching projects:", error);
@@ -52,14 +42,17 @@ export async function insertProject (
     title: string,
     description: string | null,
     user_id: string,
-    calculation: Json | null,
+    calculation: string,
 ) {
+
+    const calcJson = JSON.parse(calculation);
+
     const { error } = await supabase.from('projects').insert(
         {
             title,
             description,
             user_id,
-            calculation,
+            calculation: calcJson,
         }
     );
     if (error) {

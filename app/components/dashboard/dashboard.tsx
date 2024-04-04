@@ -106,21 +106,6 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
             items-center justify-between"
                 >
                   <span className="mr-2">Create a project</span>
-                  <svg
-                    className="w-4 h-4 text-gray-800 dark:text-white"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 12h14m-7 7V5"
-                    />
-                  </svg>
                 </div>
               </Button>
             </DialogTrigger>
@@ -188,19 +173,13 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
 
         <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
           {Projects.map((p, index) => {
-            let sum = 0;
-
-            p.projects_transports.forEach((t) => {
-              sum += t.distance_km * t.transports.emissions_per_km;
-            });
-
             return (
               <ProjectCard
                 key={index}
                 id={p.id}
                 title={p.title}
                 description={p.description}
-                estimation={sum}
+                emissions={p.emissions}
               />
             );
           })}

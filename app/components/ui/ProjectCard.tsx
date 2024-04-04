@@ -29,12 +29,12 @@ const ProjectCard = ({
   id,
   title,
   description,
-  estimation,
+  emissions,
 }: {
   id: string;
   title: string;
   description: string | null;
-  estimation: number;
+  emissions: number | null;
 }) => {
   const fetcher = useFetcher();
 
@@ -61,9 +61,9 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {estimation} kg</p>
+        <p>Estimation amount: {emissions} kg</p>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-estimationbetween">
         <Dialog>
           <DialogTrigger>
             <Button variant="destructive">
@@ -122,7 +122,7 @@ const ProjectCard = ({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="light" className="border-black border rounded">
+            <Button variant="outline" className="border-black border rounded">
               Edit
               <svg
                 className="w-6 h-6 text-gray-800 dark:text-white"
@@ -156,7 +156,7 @@ const ProjectCard = ({
                   {/* We need to replace this with the transportation method */}
                   Transport Type 1
                 </AccordionTrigger>
-                <AccordionContent>{estimation} kg</AccordionContent>
+                <AccordionContent>{emissions} kg</AccordionContent>
               </AccordionItem>
             </Accordion>
             {/* You can add inputs and state handling as needed */}
