@@ -1,336 +1,467 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
-import { Combobox } from "./ui/combobox.tsx";
+import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
+import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
-import { transportMethods } from "../lib/Transport.ts";
-import type { TransportListItem } from "../lib/Transport.ts";
-import { useNavigate } from 'react-router-dom';
+import {
+  Address,
+  Stage,
+  TransportMethod,
+  TruckTransportMethod,
+} from "../lib/Transport.ts";
+import {
+  transportMethods,
+  isTruckTransportMethod,
+  getTransportMethodLabel,
+} from "../lib/Transport.ts";
 
-type FormStage = {
-  transportMethod: string;
-  distance?: number;
-  from: string;
-  to: string;
+/* Termonology:
+ * - Stage:
+ *      A part of a route that has a transport method and
+ *      either a distance or an origin and destination
+ *      address. It can only use addresses if the transport
+ *      method id a truck transport method.
+ *
+ * - Address:
+ *      A city and optionally a country.
+ *
+ * - Transport method
+ *      A method of transport, e.g: "truck", "train",
+ *
+ * - Truck transport method:
+ *      A transport method that allows addresses,
+ *      specifically "truck" and "etruck".
+ */
+
+export interface Keyed {
+  id: number;
+}
+
+export type FormData = {
+  stages: (Stage & Keyed)[];
+  emissions:
+    | {
+        totalKg: number;
+        stages: {
+          kg: number;
+          transportMethod: TransportMethod;
+        }[];
+      }
+    | undefined;
 };
 
-type FormData = {
-  stages: FormStage[];
-  emissions: number | null;
-};
+const transportMethodOptions: ComboboxOption[] = transportMethods.map(
+  (method) => ({
+    value: method,
+    label: getTransportMethodLabel(method),
+  })
+);
 
 type CalculatorProps = {
   isCreateProject: boolean;
-  getContent: string;
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 };
 
-const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
-
-
-  const [initVal, setInitVal] = useState(0);
-  var distAsNum = 0;
-
-  const [formData, setFormData] = useState<FormData>({
-    // Initial form state, same as if the user never uploads a file
-    stages: [
-      {
-        transportMethod: "",
-        distance: 0,
-        from: "",
-        to: "",
-      },
-    ],
-    emissions: null,
-  });
-
-  // If user has uploaded a file, then we want to split it up before proceeding
-  var contentSplit;
-  const contentMap: { [key: string]: any } = {};
-
-  useEffect(() => {
-    if (getContent && getContent.length > 0) {
-      contentSplit = getContent.split('\n');
-
-
-      contentSplit.forEach(content => {
-        var tmp = content.split(':');
-        var key = tmp[0].trim();
-        var value = tmp[1].trim().replace(/,\s*$/, "").replaceAll("\"", "");
-
-        contentMap[key] = value;
-
-        console.log("Received " + key + ": " + contentMap[key])
-      })
-      try {
-        distAsNum = Number(contentMap["Distance (km)"]);
-      } catch (_error) {
-        console.error("Distance not a valid number!");
-      }
-      
-      setInitVal(distAsNum);
-
-      const newFormState: FormData = {
-        stages: [
-          {
-            transportMethod: contentMap["Transport Method"],
-            distance: distAsNum,
-            from: contentMap["Origin Address"],
-            to: contentMap["Destination Address"],
-          },
-        ],
-        emissions: null,
-      }
-
-
-      console.log("Received newformstate before setFormData ->");
-      console.log(newFormState);
-
-      setFormData(prev => ({
-        ...prev,
-        ...newFormState
-      }));
-    }
-
-  }, [getContent]);
-
+const Calculator = ({
+  isCreateProject,
+  formData,
+  setFormData,
+}: CalculatorProps) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [distanceOnly, setDistanceOnly] = useState([false]);
+  const [suggestions, setSuggestions]: [Address[], any] = useState([]);
 
-  const navigate = useNavigate();
-
-  const handleInputChange =
+  /**
+   * Given an index of a stage, returns a combobox onChange
+   * function that updates the stage's transportMethod.
+   */
+  const onTransportMethodChange =
     (index: number) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+    (_comboboxType: string, comboboxValue: TransportMethod): void => {
+      setFormData((old: FormData): FormData => {
+        const stage: Stage = old.stages[index];
 
-        setFormData((prev: FormData) => {
-          const newFormData = [...prev.stages];
-          newFormData[index] = {
-            ...newFormData[index],
-            [name]: name === "distance" ? Number(value) : value,
+        // if the old stage used addresses
+        if (stage.usesAddress) {
+          // and if the new transport method allows for addresses
+          if (isTruckTransportMethod(comboboxValue)) {
+            // then keep the addresses
+            return {
+              ...old,
+              stages: old.stages.with(index, {
+                usesAddress: true,
+                transportMethod: comboboxValue as TruckTransportMethod,
+                from: stage.from,
+                to: stage.to,
+                id: old.stages[index].id,
+              }),
+            };
+          }
+          // but if the new transport method does not allow for addresses
+          else {
+            // then use default distance of 0
+            return {
+              ...old,
+              stages: old.stages.with(index, {
+                usesAddress: false,
+                transportMethod: comboboxValue,
+                distance: 0,
+                id: old.stages[index].id,
+              }),
+            };
+          }
+        }
+        // or if the old stage used distance
+        else {
+          // then keep the distance
+          return {
+            ...old,
+            stages: old.stages.with(index, {
+              usesAddress: false,
+              transportMethod: comboboxValue,
+              distance: stage.distance,
+              id: old.stages[index].id,
+            }),
           };
-          return { ...prev, stages: newFormData };
-        });
-      };
-
-  const handleSelectChange =
-    (index: number) => (name: string, value: string) => {
-      let emptyAddresses = false;
-
-      if (name === "transportMethod") {
-        const isTruck = !(value === "truck" || value === "etruck");
-        emptyAddresses = !isTruck;
-
-        setDistanceOnly((prev: boolean[]) => {
-          const newDistanceOnly = [...prev];
-          newDistanceOnly[index] = isTruck;
-          return newDistanceOnly;
-        });
-      }
-
-      setFormData((prev: FormData) => {
-        const newFormData = [...prev.stages];
-        newFormData[index] = {
-          ...newFormData[index],
-          [name]: value,
-        };
-        return { ...prev, stages: newFormData };
+        }
       });
     };
 
-  const handleAddStage = () => {
-    setFormData((prev: FormData) => {
-      return {
-        ...prev,
-        stages: [
-          ...prev.stages,
-          {
-            transportMethod: "",
+  interface EventTarget {
+    name: string;
+    value: string;
+  }
+
+  /**
+   * Given an index of a stage, returns an auto-suggest
+   * onSuggestionsFetchRequested that updates the current
+   * suggestions.
+   */
+  const onSuggestionsRequested = (index: number) => async () => {
+    const stage = formData.stages[index];
+
+    if (!stage.usesAddress) throw new Error("Stage uses distance");
+
+    type Input = {
+      city: string;
+      country?: string;
+    };
+
+    const input: Input = {
+      city: stage.from.city,
+      country: stage.from.country,
+    };
+
+    const response = await fetch("/api/suggest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      console.error(
+        "Error! Got response code: " +
+          response.status +
+          " " +
+          (await response.text())
+      );
+    }
+
+    type Output = {
+      city: string;
+      country: string;
+    }[];
+
+    const output: Output = await response.json();
+
+    setSuggestions((old: Address[]): Address[] => output);
+  };
+
+  /**
+   * Given an index of a stage, returns an input onChange
+   * function that updates the stage's address.
+   *
+   * The place parameter determines whether the city or
+   * country part of the address should be updated.
+   */
+  const onAddressChange =
+    (index: number, place: "city" | "country") =>
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const { name: inputName, value: inputValue } = e.target as EventTarget;
+
+      setFormData((old: FormData): FormData => {
+        const stage: Stage = { ...old.stages[index] };
+
+        if (!stage.usesAddress) throw new Error("Stage uses distance");
+
+        // check which address to update
+        const addressToUpdate = inputName === "from" ? stage.from : stage.to;
+
+        // either update the city or country
+        if (place === "city") addressToUpdate.city = inputValue;
+        else addressToUpdate.country = inputValue;
+
+        return {
+          ...old,
+          stages: old.stages.with(index, {
+            ...stage,
+            id: old.stages[index].id,
+          }),
+        };
+      });
+    };
+
+  /**
+   * Given an index of a stage, returns an input onChange
+   * function that updates the stage's distance.
+   */
+  const onDistanceChange =
+    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value: inputValue } = e.target as EventTarget;
+
+      setFormData((old: FormData): FormData => {
+        const stage: Stage = old.stages[index];
+
+        if (stage.usesAddress) throw new Error("Stage uses addresses");
+
+        return {
+          ...old,
+          stages: old.stages.with(index, {
+            usesAddress: stage.usesAddress,
+            transportMethod: stage.transportMethod,
+            distance: Number(inputValue),
+            id: old.stages[index].id,
+          }),
+        };
+      });
+    };
+
+  /**
+   * Given an index of a stage, returns a button onClick
+   * function that changes wether that stage uses addresses
+   * or distances.
+   */
+  const onToggleUsesAddress =
+    (index: number, use: "address" | "distance") => () => {
+      setFormData((old: FormData): FormData => {
+        const stage: Stage = old.stages[index];
+
+        // if we want to change stage to use addresses
+        if (use === "address") {
+          if (stage.usesAddress)
+            throw new Error("Stage already uses addresses");
+
+          if (!isTruckTransportMethod(stage.transportMethod))
+            throw new Error("Stage uses non-truck transport method");
+
+          return {
+            ...old,
+            stages: old.stages.with(index, {
+              usesAddress: true,
+              transportMethod: stage.transportMethod as TruckTransportMethod,
+              from: { city: "", country: "" },
+              to: { city: "", country: "" },
+              id: old.stages[index].id,
+            }),
+          };
+        }
+        // or if we want to change stage to use distances
+        else {
+          if (!stage.usesAddress)
+            throw new Error("Stage already uses distances");
+
+          return {
+            ...old,
+            stages: old.stages.with(index, {
+              usesAddress: false,
+              transportMethod: stage.transportMethod,
+              distance: 0,
+              id: old.stages[index].id,
+            }),
+          };
+        }
+      });
+    };
+
+  /**
+   * Given an index of a stage, returns a button onClick
+   * function that inserts a new stage at the given index.
+   *
+   * The new stage will be a copy of the stage before it,
+   * except distances will be reset.
+   *
+   * Though, if the stage before it uses addresses then
+   * its destination address will be used as the new
+   * stage's origin address, and the new stage's
+   * destination address will be empty.
+   *
+   * If the index is -1, the new stage is inserted as the
+   * first stage.
+   */
+  const onInsertAfter = (index: number | -1) => () => {
+    const id = Math.random();
+
+    setFormData((old: FormData): FormData => {
+      // if index is -1, insert as first stage
+      if (index === -1)
+        return {
+          ...old,
+          stages: [
+            {
+              usesAddress: true,
+              transportMethod: "truck",
+              from: { city: "", country: "" },
+              to: { city: "", country: "" },
+              id: id,
+            },
+            ...old.stages,
+          ],
+        };
+
+      const beforeStage = old.stages[index];
+
+      const newStage: Stage & Keyed = beforeStage.usesAddress
+        ? {
+            usesAddress: true,
+            transportMethod: beforeStage.transportMethod,
+            from: {
+              city: beforeStage.to.city,
+              country: beforeStage.to.country,
+            },
+            to: { city: "", country: "" },
+            id: id,
+          }
+        : {
+            usesAddress: false,
+            transportMethod: beforeStage.transportMethod,
             distance: 0,
-            from: "",
-            to: "",
-          },
+            id: id,
+          };
+
+      return {
+        ...old,
+        stages: [
+          ...old.stages.slice(0, index + 1),
+          newStage,
+          ...old.stages.slice(index + 1),
         ],
       };
     });
   };
-  const handleRemoveStage = (index: number) => () => {
-    setFormData((prev: FormData) => {
-      const newFormData = [...prev.stages];
-      newFormData.splice(index, 1);
-      return { ...prev, stages: newFormData };
-    });
 
-    setDistanceOnly((prev: boolean[]) => {
-      const newDistanceOnly = [...prev];
-      newDistanceOnly.splice(index, 1);
-      return newDistanceOnly;
+  /**
+   * Given an index of a stage, returns a button onClick
+   * function that removes the stage at the given index.
+   */
+  const handleRemoveStage = (index: number) => () => {
+    setFormData((old: FormData): FormData => {
+      return {
+        ...old,
+        stages: [...old.stages.slice(0, index), ...old.stages.slice(index + 1)],
+      };
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const list: TransportListItem[] = [];
-
-      for (let index = 0; index < formData.stages.length; index++) {
-        const stage = formData.stages[index];
-
-        // TODO: Maybe refactor all these conditionals
-
-        if (stage.transportMethod === "") {
-          setShowError(true);
-          setShowMessage(false);
-          setErrorMessage(
-            "Please choose a Transport Method for stage " + (index + 1)
-          );
-          return;
-        }
-
-        if (stage.from == "" && stage.to == "") {
-          if (
-            stage.transportMethod === "truck" ||
-            stage.transportMethod === "etruck"
-          ) {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Please specify either origin and destination address or distance for stage " +
-              (index + 1)
-            );
-            return;
-          } else {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Please specify a distance for stage " + (index + 1)
-            );
-            return;
+      type Input = ({
+        transport_form: string;
+      } & (
+        | {
+            from: { city: string; country: string };
+            to: { city: string; country: string };
           }
-        }
-
-        const usesAddress =
-          distanceOnly[index] && (stage.from !== "" || stage.to !== "");
-
-        // If we are using addresses
-        if (usesAddress) {
-          if (
-            !(
-              stage.transportMethod === "truck" ||
-              stage.transportMethod === "etruck"
-            )
-          ) {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Only `Truck` and `Electric Truck` allows for specifying origin and destination address for stage " +
-              (index + 1)
-            );
-            return;
+        | {
+            distance_km: number;
           }
+      ))[];
 
-          if (stage.from == "" || stage.to == "") {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Please specify both origin and destination address for stage " +
-              (index + 1)
-            );
-            return;
-          }
-
-          if (stage.distance) {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Please specify either origin and destination address or distance, not both, for stage " +
-              (index + 1)
-            );
-            return;
-          }
-
-          list.push({
-            transport_form: stage.transportMethod,
-            from: stage.from,
-            to: stage.to,
-          });
-        }
-        // If we are using distances
-        else {
-          if (!stage.distance) {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Please specify a distance for stage " + (index + 1)
-            );
-            return;
-          }
-
-          if (stage.distance < 1) {
-            setShowError(true);
-            setShowMessage(false);
-            setErrorMessage(
-              "Distance must be greater than 0 for stage " + (index + 1)
-            );
-            return;
-          }
-
-          list.push({
-            transport_form: stage.transportMethod,
-            distance_km: stage.distance,
-          });
-        }
-      }
+      const input: Input = formData.stages.map((stage: Stage) =>
+        stage.usesAddress
+          ? {
+              transport_form: stage.transportMethod,
+              from: stage.from,
+              to: stage.to,
+            }
+          : {
+              transport_form: stage.transportMethod,
+              distance_km: stage.distance,
+            }
+      );
 
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(list),
+        body: JSON.stringify(input),
       });
 
       if (!response.ok) {
         setShowError(true);
         setShowMessage(false);
         setErrorMessage("Error! Please try again");
-        console.log(response.statusText);
-        throw new Error("Error! Got response: " + response.status);
+        console.error(
+          "Error! Got response code: " +
+            response.status +
+            " " +
+            (await response.text())
+        );
       }
 
-      const responseData = await response.json();
-      setFormData({ ...formData, emissions: responseData.total_kg });
+      type Output = {
+        total_kg: number;
+        stages: { kg: number; transport_form: string }[];
+      };
+
+      const output: Output = await response.json();
+
+      setFormData(
+        (old: FormData): FormData => ({
+          ...old,
+          emissions: {
+            totalKg: output.total_kg,
+            stages: output.stages.map((stage) => ({
+              kg: stage.kg,
+              transportMethod: stage.transport_form as TransportMethod,
+            })),
+          },
+        })
+      );
+
+      setMessage("Total estimated CO2 emission: " + output.total_kg + " kg.");
       setShowMessage(true);
       setShowError(false);
-      setMessage(
-        `Estimated CO2 emission for specified route: ${responseData.total_kg} kg`
-      );
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  function handleUploadPage(): void {
-    navigate('/upload');
-  }
-
   return (
-    <div className={
-      isCreateProject
-        ? "justify-center items-center flex flex-col gap-4 "
-        : "flex flex-col gap-4 "
-    }
+    <div
+      className={
+        isCreateProject
+          ? "justify-center items-center flex flex-col gap-4 "
+          : "flex flex-col gap-4 "
+      }
     >
-      {!isCreateProject && (
-        <h1 className=" text-primary text-4xl font-bold">
-          Calculate Emissions
-        </h1>
-      )}
-      <form onSubmit={handleSubmit}>
-        {[...Array(formData.stages.length)].map((_, index) => (
-          <div className=" flex flex-col gap-4 ">
+      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      <form onSubmit={onSubmit}>
+        <Button
+          className="w-full"
+          variant={"secondary"}
+          type="button"
+          onClick={onInsertAfter(-1)}
+        >
+          Add Stage
+        </Button>
+
+        {formData.stages.map((stage: Stage & Keyed, index: number) => (
+          <div className=" flex flex-col gap-4 " key={stage.id}>
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               {formData.stages.length <= 1 ? (
                 <>Transport Method:</>
@@ -338,52 +469,116 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
                 <>Route Stage {index + 1}:</>
               )}
             </Label>
+
             <Combobox
-              options={transportMethods}
-              onChangeTransport={handleSelectChange(index)}
-              type="transportMethod"
-              typeFromFile={formData.stages[0].transportMethod}
+              options={transportMethodOptions}
+              defaultOption={transportMethodOptions.find(
+                (option) => option.value === "truck"
+              )}
+              type="transportType"
+              onChange={onTransportMethodChange(index)}
             />
 
-            {!distanceOnly[index] ? (
+            {stage.usesAddress ? (
               <>
                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Origin Address:
                 </Label>
+                <AutoSuggest
+                  suggestions={suggestions}
+                  onSuggestionsFetchRequested={onSuggestionsRequested(index)}
+                  onSuggestionsClearRequested={() => setSuggestions([])}
+                  getSuggestionValue={(suggestion: Address) => suggestion.city}
+                  renderSuggestion={(suggestion: Address) => suggestion.city}
+                  inputProps={{
+                    value: stage.from.city,
+                    type: "string",
+                    id: "from",
+                    name: "from",
+                    className:
+                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100",
+                    placeholder: "City",
+                    onChange: onAddressChange(index, "city"),
+                  }}
+                  id={String(stage.id)}
+                />
                 <Input
+                  value={stage.from.city}
                   type="string"
                   id="from"
                   name="from"
-                  value={formData.stages[0].from}
                   className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                  onChange={handleInputChange(index)}
+                  placeholder="City"
+                  onChange={onAddressChange(index, "city")}
+                />
+                <Input
+                  value={stage.from.country}
+                  type="string"
+                  id="from"
+                  name="from"
+                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                  placeholder="Country"
+                  onChange={onAddressChange(index, "country")}
                 />
 
                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Destination Address:
                 </Label>
                 <Input
+                  value={stage.to.city}
                   type="string"
                   id="to"
                   name="to"
-                  value={formData.stages[0].to}
                   className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                  onChange={handleInputChange(index)}
+                  placeholder="City"
+                  onChange={onAddressChange(index, "city")}
                 />
-              </>
-            ) : null}
+                <Input
+                  value={stage.to.country}
+                  type="string"
+                  id="to"
+                  name="to"
+                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                  placeholder="Country"
+                  onChange={onAddressChange(index, "country")}
+                />
 
-            <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Distance (km):
-            </Label>
-            <Input
-              type="number"
-              id="distance"
-              name="distance"
-              value={initVal}
-              className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-              onChange={e => setInitVal(e.target.valueAsNumber)}
-            />
+                {isTruckTransportMethod(stage.transportMethod) ? (
+                  <Button
+                    className="w-full"
+                    variant={"secondary"}
+                    type="button"
+                    onClick={onToggleUsesAddress(index, "distance")}
+                  >
+                    Use Distance?
+                  </Button>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Distance (km):
+                </Label>
+                <Input
+                  type="number"
+                  id="distance"
+                  name="distance"
+                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                  onChange={onDistanceChange(index)}
+                />
+
+                {isTruckTransportMethod(stage.transportMethod) ? (
+                  <Button
+                    className="w-full"
+                    variant={"secondary"}
+                    type="button"
+                    onClick={onToggleUsesAddress(index, "address")}
+                  >
+                    Use Addresses?
+                  </Button>
+                ) : null}
+              </>
+            )}
 
             {formData.stages.length <= 1 ? null : (
               <Button
@@ -395,29 +590,20 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
                 Remove Stage
               </Button>
             )}
+
+            <Button
+              className="w-full"
+              variant={"secondary"}
+              type="button"
+              onClick={onInsertAfter(index)}
+            >
+              Add Stage
+            </Button>
           </div>
         ))}
-        <Button
-          onClick={handleAddStage}
-          className="w-full"
-          variant={"secondary"}
-          type="button"
-        >
-          Add Stage
-        </Button>
-
-        <Button className="w-full" variant={"ibm_blue"} type="submit">
+        <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
-
-        {!getContent && <Button
-          onClick={handleUploadPage}
-          className="w-full"
-          variant={"ibm_green"}
-          type="button"
-        >
-          Upload file
-        </Button>}
       </form>
 
       {showMessage && (
@@ -432,7 +618,6 @@ const Calculator = ({ isCreateProject, getContent }: CalculatorProps) => {
       )}
     </div>
   );
-
 };
 
 export default Calculator;

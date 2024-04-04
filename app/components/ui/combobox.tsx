@@ -14,26 +14,26 @@ import {
 } from "./command.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.tsx";
 
-interface ComboboxOption {
+export interface ComboboxOption {
   value: string;
   label: string;
 }
 
 interface ComboboxProps {
   options: ComboboxOption[];
+  defaultOption: ComboboxOption;
   type: string;
-  typeFromFile: string;
-  onChangeTransport: (name: string, value: string) => void;
+  onChange: (name: string, value: string) => void;
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
   options,
+  defaultOption,
   type,
-  typeFromFile,
-  onChangeTransport,
-}) => {
+  onChange,
+}: ComboboxProps) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(defaultOption.value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -44,10 +44,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {typeFromFile ? typeFromFile :
-            (value
-              ? options.find((option) => option.value === value)?.label
-              : "Select transport form...")}
+          {options.find((option) => option.value === value)?.label}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -62,7 +59,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
                 value={option.value}
                 onSelect={(currentValue: string) => {
                   setValue(currentValue === value ? "" : currentValue);
-                  onChangeTransport(type, currentValue);
+                  onChange(type, currentValue);
 
                   setOpen(false);
                 }}
