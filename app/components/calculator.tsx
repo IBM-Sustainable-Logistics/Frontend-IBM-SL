@@ -1,3 +1,4 @@
+import { inspect } from "util"
 import React, { useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
@@ -9,8 +10,6 @@ import {
   Stage,
   TransportMethod,
   TruckTransportMethod,
-} from "../lib/Transport.ts";
-import {
   getTransportMethodLabel,
   isTruckTransportMethod,
   transportMethods,
@@ -157,11 +156,6 @@ const Calculator = ({
       });
     };
 
-  interface EventTarget {
-    name: string;
-    value: string;
-  }
-
   /**
    * Given an index of a stage and whether it should use
    * the from or to address, returns an auto-suggest
@@ -260,6 +254,27 @@ const Calculator = ({
   /**
    * TODO
    */
+  const onSuggestionSelected = (index: number, fromOrTo: "from" | "to") => (_: any, { suggestion }: { suggestion: Address }) => {
+    setFormData((old: FormData): FormData => {
+      const stage = { ...old.stages[index] };
+
+      if (!stage.usesAddress) throw new Error("Stage uses distance");
+
+      if (fromOrTo === "from")
+        stage.from = suggestion;
+      else
+        stage.to = suggestion;
+
+      return {
+        ...old,
+        stages: old.stages.with(index, stage),
+      };
+    });
+  };
+
+  /**
+   * TODO
+   */
   const renderSuggestion = (place: "city" | "country") =>
   (
     suggestion: Address,
@@ -293,6 +308,10 @@ const Calculator = ({
     );
   };
 
+  interface EventTarget {
+    value?: string;
+  }
+
   /**
    * Given an index of a stage, whether it refers to the
    * from or to address, and whether it the city input or
@@ -304,8 +323,10 @@ const Calculator = ({
    */
   const onAddressChange =
     (index: number, fromOrTo: "from" | "to", place: "city" | "country") =>
-    (e: React.ChangeEvent<HTMLInputElement>): void => {
-      const { value: inputValue } = e.target as EventTarget;
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      const { value: inputValue } = event.target as EventTarget;
+
+      if (inputValue === undefined) return;
 
       setFormData((old: FormData): FormData => {
         const stage = { ...old.stages[index] };
@@ -617,6 +638,7 @@ const Calculator = ({
                       "from",
                     )}
                     onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "from")}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.city}
                     renderSuggestion={renderSuggestion("city")}
@@ -642,6 +664,7 @@ const Calculator = ({
                       "from",
                     )}
                     onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "from")}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.country}
                     renderSuggestion={renderSuggestion("country")}
@@ -671,6 +694,7 @@ const Calculator = ({
                       "to",
                     )}
                     onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "to")}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.city}
                     renderSuggestion={renderSuggestion("city")}
@@ -696,6 +720,7 @@ const Calculator = ({
                       "to",
                     )}
                     onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "to")}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.country}
                     renderSuggestion={renderSuggestion("country")}
