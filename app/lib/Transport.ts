@@ -1,3 +1,4 @@
+import { Json } from "./utils/types.ts";
 
 export const truckTransportMethods = [
     "truck",
@@ -40,9 +41,18 @@ export type Stage = {
     to: Address,
 };
 
+
+export type TransportListItem2 = {
+    to: string,
+    from: string,
+    distance: number,
+    transportMethod: string
+}
+
 export interface project {
     created_at: string;
     description: string | null;
+    emissions: emissions;
     id: string;
     title: string;
     user_id: string;
@@ -50,5 +60,13 @@ export interface project {
 
 export interface CalculatorInstance {
     id: number;
+}
+
+export interface emissions {
+    stages: {
+        kg: number | null;
+        transportMethod: string |null ;
+    }[],
+    totalKg: number | null
 }
 

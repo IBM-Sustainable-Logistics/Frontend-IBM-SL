@@ -18,14 +18,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   const userId = serverSession.user.id;
-  console.log("userId", userId);
+
+  console.log(projects);
 
   return json({ success: true, projects, userId }, { headers });
 };
 
 const ProjectsPage = () => {
   const { projects, userId } = useLoaderData<typeof loader>();
-  console.log("userId", userId);
 
   return (
     <div className="max-h-lvh">
