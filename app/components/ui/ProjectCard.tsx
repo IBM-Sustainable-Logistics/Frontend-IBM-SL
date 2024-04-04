@@ -38,7 +38,7 @@ const ProjectCard = ({
   id: string;
   title: string;
   description: string | null;
-  emissions: emissions;
+  emissions: emissions | null;
 }) => {
   const fetcher = useFetcher();
 
@@ -65,7 +65,7 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {emissions.totalKg} kg</p>
+        <p>Estimation amount: {emissions ? emissions.totalKg : 0} kg</p>
       </CardContent>
       <CardFooter className="flex justify-between gap-4">
         <Dialog>
@@ -120,19 +120,21 @@ const ProjectCard = ({
             </DialogHeader>
             {/* Content for the dialog's form will go here */}
             <Accordion type="single" collapsible>
-              {emissions.stages.map((s, index) => (
-                <>
-                  <AccordionItem value={"item " + index}>
-                    <AccordionTrigger>
-                      {/* We need to replace this with the transportation method */}
-                      {"Transport type" + " " + s.transportMethod}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      {"Emissions estimated at: " + s.kg} kg
-                    </AccordionContent>
-                  </AccordionItem>
-                </>
-              ))}
+              {emissions
+                ? emissions.stages.map((s, index) => (
+                    <>
+                      <AccordionItem value={"item " + index}>
+                        <AccordionTrigger>
+                          {/* We need to replace this with the transportation method */}
+                          {"Transport type" + " " + s.transportMethod}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {"Emissions estimated at: " + s.kg} kg
+                        </AccordionContent>
+                      </AccordionItem>
+                    </>
+                  ))
+                : "none"}
             </Accordion>
             {/* You can add inputs and state handling as needed */}
           </DialogContent>

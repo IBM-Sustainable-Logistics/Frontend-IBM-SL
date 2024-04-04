@@ -64,9 +64,9 @@ export interface CalculatorInstance {
 
 export interface emissions {
     stages: {
-        kg: number;
-        transportMethod: string;
+        kg: number | null;
+        transportMethod: string |null ;
     }[],
-    totalKg: number
+    totalKg: number | null
 }
 
