@@ -75,9 +75,6 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
   };
 
   const handleCreateProject = () => {
-    // get the calculated data
-    console.log("calculators", formData);
-
     // after calculating the emissions, we can submit the form
     const project = {
       title: titleProject,
