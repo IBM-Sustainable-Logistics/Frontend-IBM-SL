@@ -139,26 +139,22 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <Button className="w-full" onClick={addCalculator}>
                       Add transport method
                     </Button>
+                    <Button
+                      className="border-black border rounded"
+                      variant="default"
+                      onClick={handleCreateProject}
+                    >
+                      Create
+                    </Button>
+                    <Button
+                      className="border-black border rounded"
+                      variant="destructive"
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 </DialogDescription>
               </DialogHeader>
-              <DialogClose asChild>
-                <Button
-                  className="border-black border rounded"
-                  variant="default"
-                  onClick={handleCreateProject}
-                >
-                  Create
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button
-                  className="border-black border rounded"
-                  variant="destructive"
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
             </DialogContent>
           </Dialog>
         </div>
