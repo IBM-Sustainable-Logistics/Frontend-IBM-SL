@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog.tsx";
-import Calculator, { FormData } from "../calculator.tsx";
+import Calculator, { FormData, defaultFormData } from "../calculator.tsx";
 import { useFetcher } from "@remix-run/react";
 import { PlusIcon } from "../../lib/Icons.tsx";
 
@@ -34,23 +34,11 @@ const Dashboard: React.FC<DashboardProps> = ({
   Projects,
   UserId,
 }: DashboardProps) => {
-  const initialFormState: FormData = {
-    stages: [
-      {
-        usesAddress: true,
-        transportMethod: "truck",
-        from: { city: "", country: "" },
-        to: { city: "", country: "" },
-        id: Math.random(),
-      },
-    ],
-    emissions: undefined,
-  };
 
   // State to keep track of the number of Calculator components
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
 
-  const [formData, setFormData] = useState<FormData>(initialFormState);
+  const [formData, setFormData] = useState<FormData>(defaultFormData());
 
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
