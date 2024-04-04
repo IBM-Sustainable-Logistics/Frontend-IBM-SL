@@ -21,38 +21,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog.tsx";
-import Calculator from "../calculator.tsx";
+import Calculator, { FormData } from "../calculator.tsx";
 import { useFetcher } from "@remix-run/react";
 import { PlusIcon } from "../../lib/Icons.tsx";
-
-type FormStage = {
-  transportMethod: string;
-  distance?: number;
-  from: string;
-  to: string;
-};
-
-type FormData = {
-  stages: FormStage[];
-  emissions: number | null;
-};
 
 interface DashboardProps {
   Projects: project[];
   UserId: string;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
+const Dashboard: React.FC<DashboardProps> = ({
+  Projects,
+  UserId,
+}: DashboardProps) => {
   const initialFormState: FormData = {
     stages: [
       {
-        transportMethod: "",
-        distance: 0,
-        from: "",
-        to: "",
+        usesAddress: true,
+        transportMethod: "truck",
+        from: { city: "", country: "" },
+        to: { city: "", country: "" },
+        id: Math.random(),
       },
     ],
-    emissions: null,
+    emissions: undefined,
   };
 
   // State to keep track of the number of Calculator components
@@ -71,7 +63,11 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
     setCalculators([...calculators, newCalculator]);
   };
   const deleteCalculator = (id: number) => {
-    setCalculators(calculators.filter((calculator) => calculator.id !== id));
+    setCalculators(
+      calculators.filter(
+        (calculator: CalculatorInstance) => calculator.id !== id
+      )
+    );
   };
 
   const handleCreateProject = () => {
@@ -97,15 +93,12 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
           />
           <Dialog>
             <DialogTrigger>
-              <Button variant="outline">
-                <div
-                  className="flex 
-            
-            items-center justify-between"
-                >
-                  <span className="mr-2">Create a project</span>
-                  <PlusIcon />
-                </div>
+              <Button
+                variant="outline"
+                className="flex items-center justify-between"
+              >
+                <span className="mr-2">Create a project</span>
+                <PlusIcon />
               </Button>
             </DialogTrigger>
             <DialogContent className="h-2/3 overflow-y-auto">
@@ -128,7 +121,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
                       className="w-full"
                       onChange={(e) => setDescriptionProject(e.target.value)}
                     />
-                    {calculators.map((calculator) => (
+                    {calculators.map((calculator: CalculatorInstance) => (
                       <div key={calculator.id} className=" w-full">
                         <Calculator
                           isCreateProject={true}
@@ -179,7 +172,6 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
                 title={p.title}
                 description={p.description}
                 emissions={p.emissions}
-                stages={p.stages}
               />
             );
           })}

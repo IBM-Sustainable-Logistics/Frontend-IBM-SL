@@ -26,20 +26,19 @@ import {
 } from "./accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
-import { TransportListItem2 } from "../../lib/Transport.ts";
+import { Stage, TransportListItem2 } from "../../lib/Transport.ts";
+import { emissions } from "../../lib/Transport.ts";
 
 const ProjectCard = ({
   id,
   title,
   description,
   emissions,
-  stages,
 }: {
   id: string;
   title: string;
   description: string | null;
-  emissions: number | null;
-  stages: TransportListItem2[];
+  emissions: emissions;
 }) => {
   const fetcher = useFetcher();
 
@@ -66,7 +65,7 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {emissions} kg</p>
+        <p>Estimation amount: {emissions.totalKg} kg</p>
       </CardContent>
       <CardFooter className="flex justify-between gap-4">
         <Dialog>
@@ -112,6 +111,31 @@ const ProjectCard = ({
               View
             </Button>
           </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>
+                <p>{description}</p>
+              </DialogDescription>
+            </DialogHeader>
+            {/* Content for the dialog's form will go here */}
+            <Accordion type="single" collapsible>
+              {emissions.stages.map((s, index) => (
+                <>
+                  <AccordionItem value={"item " + index}>
+                    <AccordionTrigger>
+                      {/* We need to replace this with the transportation method */}
+                      {"Transport type" + " " + s.transportMethod}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {"Emissions estimated at: " + s.kg} kg
+                    </AccordionContent>
+                  </AccordionItem>
+                </>
+              ))}
+            </Accordion>
+            {/* You can add inputs and state handling as needed */}
+          </DialogContent>
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
@@ -134,31 +158,6 @@ const ProjectCard = ({
               </svg>
             </Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{title}</DialogTitle>
-              <DialogDescription>
-                <p>{description}</p>
-              </DialogDescription>
-            </DialogHeader>
-            {/* Content for the dialog's form will go here */}
-            <Accordion type="single" collapsible>
-              {stages.map((s, index) => (
-                <>
-                  <AccordionItem value={"item " + index}>
-                    <AccordionTrigger>
-                      {/* We need to replace this with the transportation method */}
-                      {"Transport type" + " " + s.transportMethod}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      {"Emissions estimated at: " + emissions} kg
-                    </AccordionContent>
-                  </AccordionItem>
-                </>
-              ))}
-            </Accordion>
-            {/* You can add inputs and state handling as needed */}
-          </DialogContent>
         </Dialog>
       </CardFooter>
     </Card>

@@ -19,6 +19,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const userId = serverSession.user.id;
 
+  console.log(projects);
+
   return json({ success: true, projects, userId }, { headers });
 };
 

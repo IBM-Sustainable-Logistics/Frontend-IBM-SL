@@ -1,20 +1,45 @@
 import { Json } from "./utils/types.ts";
 
-interface TransportMethod {
-    value: string;
-    label: string;
+export const truckTransportMethods = [
+    "truck",
+    "etruck",
+] as const;
+
+export const transportMethods = [
+    ...truckTransportMethods,
+    "cargoship",
+    "aircraft",
+    "train",
+] as const;
+
+export type TruckTransportMethod = typeof truckTransportMethods[number];
+export type TransportMethod = typeof transportMethods[number];
+
+export const isTruckTransportMethod = (method: TransportMethod): boolean =>
+    truckTransportMethods.includes(method as TruckTransportMethod);
+
+export const getTransportMethodLabel = (method: TransportMethod): string => {
+    switch (method) {
+        case "truck":       return "Truck";
+        case "etruck":      return "Electric Truck";
+        case "cargoship":   return "Cargoship";
+        case "aircraft":    return "Aircraft";
+        case "train":       return "Train";
+    }
 }
 
+export type Address = { city: string, country: string };
 
-//TODO refactor at some point to 
-type TransportListItem = {
-    transport_form: string;
-    distance_km: number;
+export type Stage = {
+    usesAddress: false,
+    transportMethod: TransportMethod,
+    distance: number,
 } | {
-    transport_form: string;
-    from: string;
-    to: string;
-}
+    usesAddress: true,
+    transportMethod: TruckTransportMethod,
+    from: Address,
+    to: Address,
+};
 
 
 export type TransportListItem2 = {
@@ -27,8 +52,7 @@ export type TransportListItem2 = {
 export interface project {
     created_at: string;
     description: string | null;
-    emissions: number | null;
-    stages: TransportListItem2[];
+    emissions: emissions;
     id: string;
     title: string;
     user_id: string;
@@ -36,18 +60,13 @@ export interface project {
 
 export interface CalculatorInstance {
     id: number;
-  }
+}
 
+export interface emissions {
+    stages: {
+        kg: number;
+        transportMethod: string;
+    }[],
+    totalKg: number
+}
 
-const transportMethods: TransportMethod[] = [
-    { value: "cargoship", label: "Cargoship" },
-    { value: "aircraft", label: "Aircraft" },
-    { value: "train", label: "Train" },
-    { value: "truck", label: "Truck" },
-    { value: "etruck", label: "Electric Truck" },
-];
-
-
-export { transportMethods };
-
-export type { TransportMethod, TransportListItem  };
