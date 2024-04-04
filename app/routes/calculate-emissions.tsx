@@ -9,10 +9,6 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
     request,
   });
 
-  if (serverSession) {
-    console.log(serverSession, { headers });
-  }
-
   return json({ success: true }, { headers });
 };
 
