@@ -476,6 +476,7 @@ const Calculator = ({
                     id={String(stage.id)}
                   />
                   <Input
+                    value={stage.from.city}
                     type="string"
                     id="from"
                     name="from"
@@ -484,6 +485,7 @@ const Calculator = ({
                     onChange={onAddressChange(index, "city")}
                   />
                   <Input
+                    value={stage.from.country}
                     type="string"
                     id="from"
                     name="from"
@@ -496,6 +498,7 @@ const Calculator = ({
                     Destination Address:
                   </Label>
                   <Input
+                    value={stage.to.city}
                     type="string"
                     id="to"
                     name="to"
@@ -504,6 +507,7 @@ const Calculator = ({
                     onChange={onAddressChange(index, "city")}
                   />
                   <Input
+                    value={stage.to.country}
                     type="string"
                     id="to"
                     name="to"
@@ -513,16 +517,14 @@ const Calculator = ({
                   />
 
                   {isTruckTransportMethod(stage.transportMethod)
-                    ? (<>
-                        <Button
-                          className="w-full"
-                          variant={"secondary"}
-                          type="button"
-                          onClick={onToggleUsesAddress(index, "distance")}
-                        >
-                          Use Distance?
-                        </Button>
-                      </>)
+                    ? (<Button
+                        className="w-full"
+                        variant={"secondary"}
+                        type="button"
+                        onClick={onToggleUsesAddress(index, "distance")}
+                      >
+                        Use Distance?
+                      </Button>)
                     : null
                   }
                 </>)
@@ -539,16 +541,14 @@ const Calculator = ({
                   />
 
                   {isTruckTransportMethod(stage.transportMethod)
-                    ? (<>
-                        <Button
-                          className="w-full"
-                          variant={"secondary"}
-                          type="button"
-                          onClick={onToggleUsesAddress(index, "address")}
-                        >
-                          Use Addresses?
-                        </Button>
-                      </>)
+                    ? (<Button
+                        className="w-full"
+                        variant={"secondary"}
+                        type="button"
+                        onClick={onToggleUsesAddress(index, "address")}
+                      >
+                        Use Addresses?
+                      </Button>)
                     : null
                   }
                 </>)
