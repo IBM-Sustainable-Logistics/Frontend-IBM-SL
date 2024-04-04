@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import Calculator from "../components/calculator.tsx";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
+import { LoaderFunctionArgs, json } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
