@@ -33,8 +33,7 @@ const CalculateEmissionsPage = () => {
       <Calculator
         isCreateProject={false}
         formData={formData}
-        setFormData={setFormData}
-      />
+        setFormData={setFormData} />
     </div>
   );
 };

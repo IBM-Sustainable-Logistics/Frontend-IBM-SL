@@ -10,8 +10,8 @@ import {
 } from "app/components/ui/card"
 import { Label } from "app/components/ui/label"
 
-import { useState } from "react";
-import Calculator from "app/components/calculator";
+import { SetStateAction, useState } from "react";
+import Calculator, { FormData } from "app/components/calculator";
 
 const UploadFile = () => {
 
@@ -163,6 +163,44 @@ const UploadFile = () => {
 
   }
 
+  // If user has uploaded a file, then we want to split it up before proceeding
+  var contentSplit;
+  const contentMap: { [key: string]: any } = {};
+
+  if (getContent && getContent.length > 0) {
+    console.log(getContent);
+
+    if (getContent && getContent.length > 0) {
+      contentSplit = getContent.split('\n');
+
+      contentSplit.forEach(content => {
+        var tmp = content.split(':');
+        var key = tmp[0].trim();
+        var value = tmp[1].replace(/,\s*$/, "").trim();
+        var value = tmp[1].replace(/,\s*$/, "").replaceAll("\"", "").trim();
+
+        contentMap[key] = value;
+
+        console.log("Received " + key + ": " + contentMap[key])
+      })
+    }
+  }
+
+  const initialFormState: FormData = {
+    stages: [
+      {
+        usesAddress: true,
+        transportMethod: contentMap["Transport Method"],
+        from: { city: contentMap["Origin City"], country: contentMap["Origin Country"] },
+        to: { city: contentMap["Destination City"], country: contentMap["Destination Country"] },
+        id: Math.random(),
+      },
+    ],
+    emissions: undefined,
+  };
+
+  const [formData, setFormData] = useState<FormData>(initialFormState);
+
   return (
     <div>
       {!fileIsSent &&
@@ -208,7 +246,9 @@ const UploadFile = () => {
       }
       {fileIsSent &&
         <div className=' min-h-screen flex items-center justify-center'>
-          <Calculator isCreateProject={false} getContent={getContent}/>
+          <Calculator isCreateProject={false}
+            formData={formData}
+            setFormData={setFormData} />
         </div>
       }
     </div>
