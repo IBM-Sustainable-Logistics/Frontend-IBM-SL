@@ -28,7 +28,7 @@ export async function getEstimates(){
 
 export async function getProjects() {
     const { data, error } = await supabase
-        .from('projects').select(' id, created_at, title, description,user_id, description, emissions: calculation->emissions, distance: calculation->stages');
+        .from('projects').select(' id, created_at, title, description,user_id, description, emissions: calculation->emissions, stages: calculation->stages');
 
     if (error) {
         console.error("Error fetching projects:", error);

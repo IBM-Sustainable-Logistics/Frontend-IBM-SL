@@ -23,6 +23,7 @@ import {
 } from "../ui/dialog.tsx";
 import Calculator from "../calculator.tsx";
 import { useFetcher } from "@remix-run/react";
+import { PlusIcon } from "../../lib/Icons.tsx";
 
 type FormStage = {
   transportMethod: string;
@@ -106,6 +107,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
             items-center justify-between"
                 >
                   <span className="mr-2">Create a project</span>
+                  <PlusIcon />
                 </div>
               </Button>
             </DialogTrigger>
@@ -180,6 +182,7 @@ const Dashboard: React.FC<DashboardProps> = ({ Projects, UserId }) => {
                 title={p.title}
                 description={p.description}
                 emissions={p.emissions}
+                stages={p.stages}
               />
             );
           })}

@@ -5,6 +5,8 @@ interface TransportMethod {
     label: string;
 }
 
+
+//TODO refactor at some point to 
 type TransportListItem = {
     transport_form: string;
     distance_km: number;
@@ -14,10 +16,19 @@ type TransportListItem = {
     to: string;
 }
 
+
+export type TransportListItem2 = {
+    to: string,
+    from: string,
+    distance: number,
+    transportMethod: string
+}
+
 export interface project {
     created_at: string;
     description: string | null;
     emissions: number | null;
+    stages: TransportListItem2[];
     id: string;
     title: string;
     user_id: string;
