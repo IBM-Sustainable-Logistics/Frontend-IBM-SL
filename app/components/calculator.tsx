@@ -258,14 +258,38 @@ const Calculator = ({
     };
 
   /**
-   * Given a suggestions, returns how the suggestion should
-   * be displayed in the auto-suggest.
+   * TODO
    */
-  const renderSuggestion = (suggestion: Address) => {
+  const renderSuggestion = (place: "city" | "country") =>
+  (
+    suggestion: Address,
+    { query: inputValue, isHighlighted }: {
+      query: string;
+      isHighlighted: boolean;
+    },
+  ) => {
+    const city = place === "city"
+      ? (
+        <>
+          <b>{inputValue}</b>
+          {suggestion.city.slice(inputValue.length)}
+        </>
+      )
+      : <>{suggestion.city}</>;
+
+    const country = place === "country"
+      ? (
+        <>
+          <b>{inputValue}</b>
+          {suggestion.country.slice(inputValue.length)}
+        </>
+      )
+      : <>{suggestion.country}</>;
+
     return (
-      <>
-        {suggestion.city + ", " + suggestion.country}
-      </>
+      <span className={isHighlighted ? "bg-blue-200" : ""}>
+        {city}, {country}
+      </span>
     );
   };
 
@@ -588,11 +612,14 @@ const Calculator = ({
                   </Label>
                   <AutoSuggest
                     suggestions={suggestions as Address[]}
-                    onSuggestionsFetchRequested={onSuggestionsRequested(index, "from")}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(
+                      index,
+                      "from",
+                    )}
                     onSuggestionsClearRequested={() => setSuggestions([])}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.city}
-                    renderSuggestion={renderSuggestion}
+                    renderSuggestion={renderSuggestion("city")}
                     inputProps={{
                       value: stage.from.city,
                       type: "string",
@@ -617,7 +644,7 @@ const Calculator = ({
                     onSuggestionsClearRequested={() => setSuggestions([])}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.country}
-                    renderSuggestion={renderSuggestion}
+                    renderSuggestion={renderSuggestion("country")}
                     inputProps={{
                       value: stage.from.country,
                       type: "string",
@@ -646,7 +673,7 @@ const Calculator = ({
                     onSuggestionsClearRequested={() => setSuggestions([])}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.city}
-                    renderSuggestion={renderSuggestion}
+                    renderSuggestion={renderSuggestion("city")}
                     inputProps={{
                       value: stage.to.city,
                       type: "string",
@@ -671,7 +698,7 @@ const Calculator = ({
                     onSuggestionsClearRequested={() => setSuggestions([])}
                     getSuggestionValue={(suggestion: Address) =>
                       suggestion.country}
-                    renderSuggestion={renderSuggestion}
+                    renderSuggestion={renderSuggestion("country")}
                     inputProps={{
                       value: stage.to.country,
                       type: "string",
