@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
+import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
-import { Stage, TransportMethod, TruckTransportMethod } from "../lib/Transport.ts";
+import { Address, Stage, TransportMethod, TruckTransportMethod } from "../lib/Transport.ts";
 import { transportMethods, isTruckTransportMethod, getTransportMethodLabel } from "../lib/Transport.ts";
 
 /* Termonology:
@@ -60,6 +61,7 @@ const Calculator = ({
   const [message,      setMessage]      = useState("");
   const [showMessage,  setShowMessage]  = useState(false);
   const [showError,    setShowError]    = useState(false);
+  const [suggestions,  setSuggestions]: [Address[], any]  = useState([]);
 
   /**
    * Given an index of a stage, returns a combobox onChange
@@ -67,17 +69,13 @@ const Calculator = ({
    */
   const onTransportMethodChange = (index: number) =>
     (_comboboxType: string, comboboxValue: TransportMethod): void => {
-      console.log("changing transport method to", comboboxValue);
-
       setFormData((old: FormData): FormData => {
         const stage: Stage = old.stages[index];
 
         // if the old stage used addresses
         if (stage.usesAddress) {
-          console.log("stage uses address");
           // and if the new transport method allows for addresses
           if (isTruckTransportMethod(comboboxValue)) {
-            console.log("method allows address");
             // then keep the addresses
             return {
               ...old,
@@ -92,7 +90,6 @@ const Calculator = ({
           }
           // but if the new transport method does not allow for addresses
           else {
-            console.log("method does not allow address");
             // then use default distance of 0
             return {
               ...old,
@@ -107,7 +104,6 @@ const Calculator = ({
         }
         // or if the old stage used distance
         else {
-          console.log("stage does not use address");
           // then keep the distance
           return {
             ...old,
@@ -123,6 +119,48 @@ const Calculator = ({
     };
 
   interface EventTarget { name: string, value: string }
+
+  /**
+   * Given an index of a stage, returns an auto-suggest
+   * onSuggestionsFetchRequested that updates the current
+   * suggestions.
+   */
+  const onSuggestionsRequested = (index: number) =>
+    async () => {
+      const stage = formData.stages[index];
+
+      if (!stage.usesAddress)
+        throw new Error("Stage uses distance");
+
+      type Input = {
+        city: string,
+        country?: string,
+      };
+
+      const input: Input = {
+        city: stage.from.city,
+        country: stage.from.country,
+      };
+
+      const response = await fetch("/api/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      if (!response.ok) {
+        console.error("Error! Got response code: " + response.status + " " + await response.text());
+      }
+
+      type Output = {
+        city: string,
+        country: string,
+      }[];
+
+      const output: Output = await response.json();
+
+      setSuggestions((old: Address[]): Address[] => output);
+    };
 
   /**
    * Given an index of a stage, returns an input onChange
@@ -249,7 +287,7 @@ const Calculator = ({
    */
   const onInsertAfter = (index: number | -1) =>
     () => {
-      console.log("inserting after", index);
+      const id = Math.random();
 
       setFormData((old: FormData): FormData => {
         // if index is -1, insert as first stage
@@ -262,7 +300,7 @@ const Calculator = ({
                 transportMethod: "truck",
                 from: { city: "", country: "" },
                 to: { city: "", country: "" },
-                id: Math.random(),
+                id: id,
               },
               ...old.stages,
             ],
@@ -274,15 +312,15 @@ const Calculator = ({
           ? {
             usesAddress: true,
             transportMethod: beforeStage.transportMethod,
-            from: beforeStage.to,
+            from: { city: beforeStage.to.city, country: beforeStage.to.country },
             to: { city: "", country: "" },
-            id: Math.random(),
+            id: id,
           }
           : {
             usesAddress: false,
             transportMethod: beforeStage.transportMethod,
             distance: 0,
-            id: Math.random(),
+            id: id,
           };
 
         return {
@@ -349,7 +387,7 @@ const Calculator = ({
         setShowError(true);
         setShowMessage(false);
         setErrorMessage("Error! Please try again");
-        throw new Error("Error! Got response code: " + response.status + " " + await response.text());
+        console.error("Error! Got response code: " + response.status + " " + await response.text());
       }
 
       type Output = {
@@ -358,6 +396,7 @@ const Calculator = ({
       };
 
       const output: Output = await response.json();
+
       setFormData((old: FormData): FormData => ({
         ...old,
         emissions: {
@@ -409,6 +448,7 @@ const Calculator = ({
 
             <Combobox
               options={transportMethodOptions}
+              defaultOption={transportMethodOptions.find((option) => option.value === "truck")}
               type="transportType"
               onChange={onTransportMethodChange(index)}
             />
@@ -418,6 +458,23 @@ const Calculator = ({
                   <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Origin Address:
                   </Label>
+                  <AutoSuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(index)}
+                    onSuggestionsClearRequested={() => setSuggestions([])}
+                    getSuggestionValue={(suggestion: Address) => suggestion.city}
+                    renderSuggestion={(suggestion: Address) => suggestion.city}
+                    inputProps={{
+                      "value": stage.from.city,
+                      "type": "string",
+                      "id": "from",
+                      "name": "from",
+                      "className": "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100",
+                      "placeholder": "City",
+                      onChange: onAddressChange(index, "city"),
+                    }}
+                    id={String(stage.id)}
+                  />
                   <Input
                     type="string"
                     id="from"

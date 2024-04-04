@@ -7,9 +7,10 @@
     "@remix-run/server-runtime": "https://esm.sh/@remix-run/server-runtime@1.16.0",
     "isbot": "https://esm.sh/isbot@4.1.0",
     "react": "https://esm.sh/react@18.2.0",
-    "react-dom": "https://esm.sh/react-dom@^18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
     "react-dom/server": "https://esm.sh/react-dom@18.2.0/server",
+    "react-autosuggest": "https://esm.sh/react-autosuggest@10.1.0",
     "@supabase/ssr": "https://esm.sh/@supabase/ssr@0.1.0"
   }
 }

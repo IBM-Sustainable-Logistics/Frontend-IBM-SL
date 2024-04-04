@@ -21,17 +21,19 @@ export interface ComboboxOption {
 
 interface ComboboxProps {
   options: ComboboxOption[];
+  defaultOption: ComboboxOption;
   type: string;
   onChange: (name: string, value: string) => void;
 }
 
 export const Combobox: React.FC<ComboboxProps> = ({
   options,
+  defaultOption,
   type,
   onChange,
 }: ComboboxProps) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(defaultOption.value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -42,9 +44,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
-            : "Select transport form..."}
+          {options.find((option) => option.value === value)?.label}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
