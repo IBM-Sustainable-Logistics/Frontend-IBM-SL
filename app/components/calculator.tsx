@@ -4,6 +4,7 @@ import { Label } from "./ui/label.tsx";
 import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
+import { Link } from "@remix-run/react";
 import {
   Address,
   Stage,
@@ -41,14 +42,14 @@ export interface Keyed {
 export type FormData = {
   stages: (Stage & Keyed)[];
   emissions:
-    | {
-        totalKg: number;
-        stages: {
-          kg: number;
-          transportMethod: TransportMethod;
-        }[];
-      }
-    | undefined;
+  | {
+    totalKg: number;
+    stages: {
+      kg: number;
+      transportMethod: TransportMethod;
+    }[];
+  }
+  | undefined;
 };
 
 const transportMethodOptions: ComboboxOption[] = transportMethods.map(
@@ -81,55 +82,55 @@ const Calculator = ({
    */
   const onTransportMethodChange =
     (index: number) =>
-    (_comboboxType: string, comboboxValue: TransportMethod): void => {
-      setFormData((old: FormData): FormData => {
-        const stage: Stage = old.stages[index];
+      (_comboboxType: string, comboboxValue: TransportMethod): void => {
+        setFormData((old: FormData): FormData => {
+          const stage: Stage = old.stages[index];
 
-        // if the old stage used addresses
-        if (stage.usesAddress) {
-          // and if the new transport method allows for addresses
-          if (isTruckTransportMethod(comboboxValue)) {
-            // then keep the addresses
-            return {
-              ...old,
-              stages: old.stages.with(index, {
-                usesAddress: true,
-                transportMethod: comboboxValue as TruckTransportMethod,
-                from: stage.from,
-                to: stage.to,
-                id: old.stages[index].id,
-              }),
-            };
+          // if the old stage used addresses
+          if (stage.usesAddress) {
+            // and if the new transport method allows for addresses
+            if (isTruckTransportMethod(comboboxValue)) {
+              // then keep the addresses
+              return {
+                ...old,
+                stages: old.stages.with(index, {
+                  usesAddress: true,
+                  transportMethod: comboboxValue as TruckTransportMethod,
+                  from: stage.from,
+                  to: stage.to,
+                  id: old.stages[index].id,
+                }),
+              };
+            }
+            // but if the new transport method does not allow for addresses
+            else {
+              // then use default distance of 0
+              return {
+                ...old,
+                stages: old.stages.with(index, {
+                  usesAddress: false,
+                  transportMethod: comboboxValue,
+                  distance: 0,
+                  id: old.stages[index].id,
+                }),
+              };
+            }
           }
-          // but if the new transport method does not allow for addresses
+          // or if the old stage used distance
           else {
-            // then use default distance of 0
+            // then keep the distance
             return {
               ...old,
               stages: old.stages.with(index, {
                 usesAddress: false,
                 transportMethod: comboboxValue,
-                distance: 0,
+                distance: stage.distance,
                 id: old.stages[index].id,
               }),
             };
           }
-        }
-        // or if the old stage used distance
-        else {
-          // then keep the distance
-          return {
-            ...old,
-            stages: old.stages.with(index, {
-              usesAddress: false,
-              transportMethod: comboboxValue,
-              distance: stage.distance,
-              id: old.stages[index].id,
-            }),
-          };
-        }
-      });
-    };
+        });
+      };
 
   interface EventTarget {
     name: string;
@@ -165,9 +166,9 @@ const Calculator = ({
     if (!response.ok) {
       console.error(
         "Error! Got response code: " +
-          response.status +
-          " " +
-          (await response.text())
+        response.status +
+        " " +
+        (await response.text())
       );
     }
 
@@ -190,30 +191,30 @@ const Calculator = ({
    */
   const onAddressChange =
     (index: number, place: "city" | "country") =>
-    (e: React.ChangeEvent<HTMLInputElement>): void => {
-      const { name: inputName, value: inputValue } = e.target as EventTarget;
+      (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const { name: inputName, value: inputValue } = e.target as EventTarget;
 
-      setFormData((old: FormData): FormData => {
-        const stage: Stage = { ...old.stages[index] };
+        setFormData((old: FormData): FormData => {
+          const stage: Stage = { ...old.stages[index] };
 
-        if (!stage.usesAddress) throw new Error("Stage uses distance");
+          if (!stage.usesAddress) throw new Error("Stage uses distance");
 
-        // check which address to update
-        const addressToUpdate = inputName === "from" ? stage.from : stage.to;
+          // check which address to update
+          const addressToUpdate = inputName === "from" ? stage.from : stage.to;
 
-        // either update the city or country
-        if (place === "city") addressToUpdate.city = inputValue;
-        else addressToUpdate.country = inputValue;
+          // either update the city or country
+          if (place === "city") addressToUpdate.city = inputValue;
+          else addressToUpdate.country = inputValue;
 
-        return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            id: old.stages[index].id,
-          }),
-        };
-      });
-    };
+          return {
+            ...old,
+            stages: old.stages.with(index, {
+              ...stage,
+              id: old.stages[index].id,
+            }),
+          };
+        });
+      };
 
   /**
    * Given an index of a stage, returns an input onChange
@@ -326,21 +327,21 @@ const Calculator = ({
 
       const newStage: Stage & Keyed = beforeStage.usesAddress
         ? {
-            usesAddress: true,
-            transportMethod: beforeStage.transportMethod,
-            from: {
-              city: beforeStage.to.city,
-              country: beforeStage.to.country,
-            },
-            to: { city: "", country: "" },
-            id: id,
-          }
+          usesAddress: true,
+          transportMethod: beforeStage.transportMethod,
+          from: {
+            city: beforeStage.to.city,
+            country: beforeStage.to.country,
+          },
+          to: { city: "", country: "" },
+          id: id,
+        }
         : {
-            usesAddress: false,
-            transportMethod: beforeStage.transportMethod,
-            distance: 0,
-            id: id,
-          };
+          usesAddress: false,
+          transportMethod: beforeStage.transportMethod,
+          distance: 0,
+          id: id,
+        };
 
       return {
         ...old,
@@ -373,26 +374,26 @@ const Calculator = ({
       type Input = ({
         transport_form: string;
       } & (
-        | {
+          | {
             from: { city: string; country: string };
             to: { city: string; country: string };
           }
-        | {
+          | {
             distance_km: number;
           }
-      ))[];
+        ))[];
 
       const input: Input = formData.stages.map((stage: Stage) =>
         stage.usesAddress
           ? {
-              transport_form: stage.transportMethod,
-              from: stage.from,
-              to: stage.to,
-            }
+            transport_form: stage.transportMethod,
+            from: stage.from,
+            to: stage.to,
+          }
           : {
-              transport_form: stage.transportMethod,
-              distance_km: stage.distance,
-            }
+            transport_form: stage.transportMethod,
+            distance_km: stage.distance,
+          }
       );
 
       const response = await fetch("/api/estimate", {
@@ -407,9 +408,9 @@ const Calculator = ({
         setErrorMessage("Error! Please try again");
         console.error(
           "Error! Got response code: " +
-            response.status +
-            " " +
-            (await response.text())
+          response.status +
+          " " +
+          (await response.text())
         );
       }
 
@@ -601,9 +602,20 @@ const Calculator = ({
             </Button>
           </div>
         ))}
-        <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
+        <div className="flex flex-col gap-4">
+          <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
+        <Link to={'/upload'}>
+          <Button
+            className="w-full"
+            variant={"ibm_green"}
+            type="button"
+          >
+            Upload file
+          </Button>
+        </Link>
+          </div>
       </form>
 
       {showMessage && (
