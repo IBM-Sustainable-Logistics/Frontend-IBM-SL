@@ -28,7 +28,6 @@ const UploadFile = () => {
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop 
    */
   function dropHandler(ev: React.DragEvent<HTMLDivElement>): void {
-    console.log("File(s) dropped");
 
     // Prevent default behavior (Prevent file from being opened)
     ev.preventDefault();
@@ -39,6 +38,7 @@ const UploadFile = () => {
         // If dropped items aren't files, reject them
         if (item.kind === "file") {
           file = item.getAsFile();
+          setFile(file);
           if (file) {
             if (file.name.endsWith(".csv") || file.name.endsWith(".xls") || file.name.endsWith(".txt")) {
               setFileName(file.name);
@@ -59,6 +59,8 @@ const UploadFile = () => {
         console.log(`… file[${i}].name = ${file.name}`);
       });
     }
+
+    setOnHover(false);
   }
 
   function handleUploadClick(): void {
@@ -114,13 +116,19 @@ const UploadFile = () => {
    * Equivalent to garbage collecting
   */
   function deleteUpload(): void {
+    console.log(file);
     setFile(null);
     setFileName(null);
     setHasUploaded(false);
+
+    if (document.getElementById('fileInput') as HTMLInputElement) {
+      (document.getElementById('fileInput') as HTMLInputElement).value = '';
+    }
+
+    console.log(file);
   }
 
   function dragOverHandler(ev: React.DragEvent<HTMLDivElement>): void {
-    console.log("File(s) in drop zone");
 
     setOnHover(true);
 
