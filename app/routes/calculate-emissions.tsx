@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Calculator, { FormData } from "../components/calculator.tsx";
+import Calculator, { FormData, defaultFormData } from "../components/calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
@@ -13,18 +13,11 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const CalculateEmissionsPage = () => {
-  const initialFormState: FormData = {
-    stages: [
-      {
-        usesAddress: true,
-        transportMethod: "truck",
-        from: { city: "Copenhagen", country: "Denmark" },
-        to: { city: "Hamburg", country: "Germany" },
-        id: Math.random(),
-      },
-    ],
-    emissions: undefined,
-  };
+  const initialFormState: FormData = defaultFormData(
+    // Use these two cities as examples for the user. Maybe change later.
+    { city: "Copenhagen", country: "Denmark" },
+    { city: "Hamburg", country: "Germany" },
+  );
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
 

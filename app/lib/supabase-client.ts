@@ -63,6 +63,24 @@ export async function insertProject (
 
 }
 
+export async function updateProject(
+    projectId: string,
+    updates: Partial<{
+        title: string;
+        description: string | null;
+        calculation: string;
+    }>
+) {
+    const { error } = await supabase
+        .from('projects')
+        .update(updates)
+        .eq('id', projectId);
+    if (error) {
+        console.error("Error updating project:", error);
+    }
+    return { error };
+}
+
 
 export async function deleteProject(projectId: string) {
     const { error } = await supabase.from('projects').delete().eq('id', projectId);

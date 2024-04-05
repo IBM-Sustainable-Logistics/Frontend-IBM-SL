@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "./card.tsx";
 import { Button } from "./button.tsx";
+import { EditProjectPopUp } from "../dashboard/popups/EditProjectPopUp.tsx";
 import { useFetcher, useNavigate } from "@remix-run/react";
 import {
   Dialog,
@@ -160,6 +161,12 @@ const ProjectCard = ({
               </svg>
             </Button>
           </DialogTrigger>
+          <EditProjectPopUp
+            id={id}
+            title={title}
+            description={description}
+            emissions={emissions}
+          />
         </Dialog>
       </CardFooter>
     </Card>
