@@ -4,7 +4,7 @@ import {
 import {
   isTruckTransportMethod,
   getTransportMethodLabel,
-} from "../app/lib/Transport.ts";
+} from "../../app/lib/Transport.ts";
 
 Deno.test("isTruckTransportMethod should return true for truck transport methods", () => {
   assertEquals(isTruckTransportMethod("truck"), true);
