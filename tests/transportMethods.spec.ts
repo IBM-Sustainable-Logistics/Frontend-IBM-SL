@@ -20,4 +20,6 @@ Deno.test("getTransportMethodLabel should return the correct label for each tran
   assertEquals(getTransportMethodLabel("truck"), "Truck");
   assertEquals(getTransportMethodLabel("etruck"), "Electric Truck");
 });
+// Use the following command to run the tests:
+// deno test --allow-read --allow-net tests/transportMethods.spec.ts
 
