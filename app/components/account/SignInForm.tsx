@@ -23,6 +23,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
+  const [counter, setCounter] = useState(0);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,11 +34,48 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
     });
     try {
       if (error) {
-        setErrorMessage(error.message);
-        setShowError(true);
-        setTimeout(() => {
-          setShowError(false);
-        }, 5000);
+        setCounter(counter + 1);
+
+        if (counter === 5) {
+          setErrorMessage(
+            "You have tried to login too many times. Please try again later."
+          );
+          setShowError(true);
+
+          const url = `${window.location.origin}/reset`;
+
+          const { error } = await supabase.auth.resetPasswordForEmail(
+            formData.email,
+            {
+              redirectTo: url,
+            }
+          );
+          if (error) {
+            setErrorMessage(error.message);
+            setShowError(true);
+            setTimeout(() => {
+              setShowError(false);
+            }, 5000);
+          }
+          setTimeout(() => {
+            setShowError(false);
+            setMessage(
+              "We have sent you a password reset mail to your email. Please check your email and reset your password."
+            );
+            setShowMessage(true);
+            setCounter(0);
+          }, 4000);
+
+          setTimeout(() => {
+            setShowMessage(false);
+          }, 10000);
+        } else {
+          setErrorMessage(error.message);
+          setShowError(true);
+          setTimeout(() => {
+            setShowError(false);
+          }, 5000);
+        }
       } else {
         setShowMessage(true);
         setMessage("You are logged in now");
