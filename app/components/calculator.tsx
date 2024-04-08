@@ -1,10 +1,10 @@
-import { inspect } from "util"
 import React, { useState } from "react";
 import { Button } from "../components/ui/button.tsx";
 import { Label } from "./ui/label.tsx";
 import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
+import { Link } from "@remix-run/react";
 import {
   Address,
   Stage,
@@ -45,7 +45,7 @@ type Keyed = {
 type StageError = "no such from address" | "no such to address";
 
 type Errored = {
-  error: StageError | undefined;
+  error?: StageError;
 };
 
 export type FormData = {
@@ -96,6 +96,8 @@ const Calculator = ({
   const [error, setError] = useState(undefined);
   const [message, setMessage] = useState(undefined);
   const [suggestions, setSuggestions] = useState<Address[]>([]);
+  const [hasReceivedFile, setIsReceived] = useState(false);
+
 
   /**
    * Given an index of a stage, returns a combobox onChange
@@ -165,6 +167,7 @@ const Calculator = ({
   const onSuggestionsRequested =
     (index: number, fromOrTo: "from" | "to") =>
     async ({ value }: { value: string }) => {
+      console.log("ON SUGGEST REQUEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       const stage = formData.stages[index];
 
       if (!stage.usesAddress) throw new Error("Stage uses distance");
@@ -803,6 +806,15 @@ const Calculator = ({
             </Button>
           </div>
         ))}
+        {formData != null && <Link to={'/upload'}>
+          <Button
+            className="w-full"
+            variant={"ibm_green"}
+            type="button"
+          >
+            Upload file
+          </Button>
+        </Link>}
         <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
