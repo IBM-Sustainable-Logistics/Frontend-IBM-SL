@@ -9,7 +9,7 @@ import {
 } from "../ui/card.tsx";
 import { Button } from "../ui/button.tsx";
 import { EditProjectPopUp } from "../dashboard/popups/EditProjectPopUp.tsx";
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { Link, useFetcher, useNavigate } from "@remix-run/react";
 import {
   Dialog,
   DialogContent,
@@ -128,6 +128,10 @@ const ProjectCard = ({
                   ))
                 : "none"}
             </Accordion>
+
+            <Link to={id}>
+              <Button>Open project</Button>
+            </Link>
             {/* You can add inputs and state handling as needed */}
           </DialogContent>
         </Dialog>
