@@ -1,19 +1,22 @@
 import React from "react";
 
 import ProjectOverview from "../components/projectoverview.tsx";
-import { useLoaderData, useParams } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
+import { getProjects, getSingleProject } from "../lib/supabase-client.ts";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
-import { getProject } from "../lib/supabase-client.ts";
+import { useLoaderData, useParams } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
     request,
   });
 
-  const params = useParams();
+  const url = new URL(request.url);
+  const projectId = url.pathname.split("/").pop();
 
-  const project = await getProject(params.toString());
+  const project = await getSingleProject(projectId ? projectId : "");
+
+  console.log(project);
 
   if (!serverSession) {
     return redirect("/signin", { headers });

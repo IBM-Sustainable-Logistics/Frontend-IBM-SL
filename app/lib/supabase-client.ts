@@ -91,7 +91,7 @@ export async function deleteProject(projectId: string) {
 }
 
 
-export async function getProject(projectId: string) {
+export async function getSingleProject(projectId: string) {
     const { data, error } = await supabase
         .from('projects')
         .select(' id, created_at, title, description, user_id, description, emissions: calculation->emissions')
@@ -103,3 +103,4 @@ export async function getProject(projectId: string) {
     
     return data[0];
 }
+
