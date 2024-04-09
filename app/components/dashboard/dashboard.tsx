@@ -23,6 +23,27 @@ const Dashboard: React.FC<DashboardProps> = ({
   Projects,
   UserId,
 }: DashboardProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(Projects.length / itemsPerPage);
+
+  const projectsOnPage = Projects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   return (
     <>
       <h1 className="text-3xl font-bold my-2 text-center">My Projects</h1>
@@ -37,7 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 justify-self-stretch max-w-full gap-4">
-          {Projects.map((p, index) => {
+          {projectsOnPage.map((p, index) => {
             return (
               <ProjectCard
                 key={index}
@@ -54,16 +75,26 @@ const Dashboard: React.FC<DashboardProps> = ({
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious href="#" />
+                <PaginationPrevious
+                  href="#"
+                  size={"default"}
+                  onClick={handlePreviousPage}
+                />
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
+                <PaginationLink href="#" size={"default"}>
+                  {currentPage}
+                </PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationEllipsis />
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href="#" />
+                <PaginationNext
+                  href="#"
+                  size={"default"}
+                  onClick={handleNextPage}
+                />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
