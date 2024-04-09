@@ -6,8 +6,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card.tsx";
-import { Button } from "./button.tsx";
+} from "../ui/card.tsx";
+import { Button } from "../ui/button.tsx";
 import { EditProjectPopUp } from "../dashboard/popups/EditProjectPopUp.tsx";
 import { useFetcher, useNavigate } from "@remix-run/react";
 import {
@@ -18,13 +18,13 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "./dialog.tsx";
+} from "../ui/dialog.tsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./accordion.tsx";
+} from "../ui/accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
 import { Stage, TransportListItem2 } from "../../lib/Transport.ts";
@@ -49,14 +49,9 @@ const ProjectCard = ({
     };
     fetcher.submit(formData, { method: "DELETE", action: "/api/project" });
   };
-  const navToProj = useNavigate();
-
-  const openProject = () => {
-    navToProj(`/projects/${title.replace(/\s/g, "_")}`);
-  };
 
   return (
-    <Card className="min-h-32 bg-white shadow-md rounded-lg p-4">
+    <Card className="min-h-32 bg-white shadow-md rounded-lg ">
       <CardHeader>
         <CardTitle>
           <h1>{title}</h1>
@@ -104,11 +99,7 @@ const ProjectCard = ({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="border-black border rounded"
-              onClick={openProject}
-            >
+            <Button variant="outline" className="border-black border rounded">
               View
             </Button>
           </DialogTrigger>
