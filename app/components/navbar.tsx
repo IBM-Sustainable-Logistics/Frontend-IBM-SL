@@ -30,6 +30,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    setIsOpen(false);
   };
 
   const navElem = [
