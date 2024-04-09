@@ -48,10 +48,10 @@ export default function App() {
   const { supabase } = useSupabase({ env, serverSession });
 
   return (
-    <html lang='en'>
+    <html lang="en">
       <head>
-        <meta charSet='utf-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
@@ -62,7 +62,6 @@ export default function App() {
         <Scripts />
         <LiveReload port={8002} />
       </body>
-      <Footer />
     </html>
   );
 }
