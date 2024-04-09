@@ -49,14 +49,9 @@ const ProjectCard = ({
     };
     fetcher.submit(formData, { method: "DELETE", action: "/api/project" });
   };
-  const navToProj = useNavigate();
-
-  const openProject = () => {
-    navToProj(`/projects/${title.replace(/\s/g, "_")}`);
-  };
 
   return (
-    <Card className="min-h-32 bg-white shadow-md rounded-lg p-4">
+    <Card className="min-h-32 bg-white shadow-md rounded-lg ">
       <CardHeader>
         <CardTitle>
           <h1>{title}</h1>
@@ -104,11 +99,7 @@ const ProjectCard = ({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="border-black border rounded"
-              onClick={openProject}
-            >
+            <Button variant="outline" className="border-black border rounded">
               View
             </Button>
           </DialogTrigger>
