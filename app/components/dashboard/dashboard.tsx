@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button.tsx";
-import { ProjectCard } from "../ui/ProjectCard.tsx";
+import { ProjectCard } from "./ProjectCard.tsx";
 import { Input } from "../ui/input.tsx";
 import {
   Pagination,
@@ -24,10 +24,20 @@ const Dashboard: React.FC<DashboardProps> = ({
   UserId,
 }: DashboardProps) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 6;
-  const totalPages = Math.ceil(Projects.length / itemsPerPage);
 
-  const projectsOnPage = Projects.slice(
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredProjects = Projects.filter((project) =>
+    project.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
+  const projectsOnPage = filteredProjects.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -53,6 +63,8 @@ const Dashboard: React.FC<DashboardProps> = ({
             type="text"
             placeholder="Search for a project"
             className="w-full"
+            value={searchTerm}
+            onChange={handleSearch}
           />
           <CreateProject UserId={UserId} />
         </div>

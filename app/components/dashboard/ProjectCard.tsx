@@ -6,8 +6,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card.tsx";
-import { Button } from "./button.tsx";
+} from "../ui/card.tsx";
+import { Button } from "../ui/button.tsx";
 import { EditProjectPopUp } from "../dashboard/popups/EditProjectPopUp.tsx";
 import { useFetcher, useNavigate } from "@remix-run/react";
 import {
@@ -18,13 +18,13 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "./dialog.tsx";
+} from "../ui/dialog.tsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./accordion.tsx";
+} from "../ui/accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
 import { Stage, TransportListItem2 } from "../../lib/Transport.ts";
