@@ -16,7 +16,7 @@ import {
 } from "../../ui/dialog.tsx";
 import { Button } from "../../ui/button.tsx";
 import Calculator, { defaultFormData, FormData } from "../../calculator.tsx";
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { Label } from "../../ui/label.tsx";
 
 interface Props {
@@ -82,7 +82,15 @@ export const EditProjectPopUp: React.FC<Props> = ({
             onChange={(e) => setDescriptionProject(e.target.value)}
           />
 
-          <Label>calculator coming soon</Label>
+          <Label>To edit calculations open project</Label>
+          <DialogClose asChild>
+            <Link
+              className="h-10 inline-flex items-center justify-center whitespace-nowrap  text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]"
+              to={id}
+            >
+              Open project
+            </Link>
+          </DialogClose>
 
           <DialogClose asChild>
             <Button
@@ -93,6 +101,7 @@ export const EditProjectPopUp: React.FC<Props> = ({
               update
             </Button>
           </DialogClose>
+
           <DialogClose asChild>
             <Button
               className="border-black border rounded"
