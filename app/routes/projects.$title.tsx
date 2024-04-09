@@ -32,7 +32,7 @@ const ProjectById = () => {
 
   return (
     <div className="max-h-lvh">
-      <ProjectOverview />
+      <ProjectOverview project={project} />
     </div>
   );
 };
