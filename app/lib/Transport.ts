@@ -52,7 +52,7 @@ export type TransportListItem2 = {
 export interface project {
     created_at: string;
     description: string | null;
-    emissions: emissions;
+    emissions: emissions | null;
     id: string;
     title: string;
     user_id: string;
