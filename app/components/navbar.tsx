@@ -15,8 +15,6 @@ import type {
   Session,
   SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2.39.7";
-import { Database } from "../lib/utils/types.ts";
-import { SignOut } from "../routes/stateful/signout.tsx";
 
 interface NavBar {
   serverSession: Session | null;
@@ -32,6 +30,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    setIsOpen(false);
   };
 
   const navElem = [
@@ -46,10 +45,6 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
     {
       value: "Data Visualization",
       href: "/data-visualization",
-    },
-    {
-      value: "Item One",
-      href: "/link1",
     },
   ];
 
@@ -132,14 +127,33 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
                     <Button
                       key={index}
                       className="w-full justify-start font-normal bg-slate-50 text-black"
+                      onClick={() => setIsOpen(false)}
                     >
                       {item.value}
                     </Button>
                   </Link>
                 ))}
                 <div className="flex gap-4 justify-center items-center">
-                  <Button variant={"default"}>sign in</Button>
-                  <Button variant={"default"}>sign up</Button>
+                  {serverSession ? (
+                    <Button onClick={handleSignOut}>Sign out</Button>
+                  ) : (
+                    <>
+                      <Link to={"/signin"}>
+                        <Button
+                          className="lg:block"
+                          variant="default"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Sign In
+                        </Button>{" "}
+                      </Link>
+                      <Link to={"/signup"} onClick={() => setIsOpen(false)}>
+                        <Button className="lg:block" variant="default">
+                          Sign Up
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </ScrollArea>

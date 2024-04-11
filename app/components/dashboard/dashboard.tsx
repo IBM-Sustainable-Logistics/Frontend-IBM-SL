@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button.tsx";
-import { ProjectCard } from "../ui/ProjectCard.tsx";
+import { ProjectCard } from "./ProjectCard.tsx";
 import { Input } from "../ui/input.tsx";
 import {
   Pagination,
@@ -11,19 +11,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination.tsx";
-import { CalculatorInstance, project } from "../../lib/Transport.ts";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog.tsx";
-import Calculator, { FormData, defaultFormData } from "../calculator.tsx";
-import { useFetcher } from "@remix-run/react";
-import { PlusIcon } from "../../lib/Icons.tsx";
+import { project } from "../../lib/Transport.ts";
+import CreateProject from "./dialogs/createproject.tsx";
 
 interface DashboardProps {
   Projects: project[];
@@ -34,39 +23,35 @@ const Dashboard: React.FC<DashboardProps> = ({
   Projects,
   UserId,
 }: DashboardProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 6;
 
-  // State to keep track of the number of Calculator components
-  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
-
-  const [formData, setFormData] = useState<FormData>(defaultFormData());
-
-  const [titleProject, setTitleProject] = useState("");
-  const [descriptionProject, setDescriptionProject] = useState("");
-  const fetcher = useFetcher();
-
-  const addCalculator = () => {
-    const newCalculator = {
-      id: Date.now(), // Using the current timestamp as a unique ID
-    };
-    setCalculators([...calculators, newCalculator]);
-  };
-  const deleteCalculator = (id: number) => {
-    setCalculators(
-      calculators.filter(
-        (calculator: CalculatorInstance) => calculator.id !== id
-      )
-    );
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
-  const handleCreateProject = () => {
-    // after calculating the emissions, we can submit the form
-    const project = {
-      title: titleProject,
-      descriptionProject: descriptionProject,
-      userId: UserId,
-      calc: JSON.stringify(formData),
-    };
-    fetcher.submit(project, { method: "POST", action: "/api/project" });
+  const filteredProjects = Projects.filter((project) =>
+    project.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
+  const projectsOnPage = filteredProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -78,81 +63,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             type="text"
             placeholder="Search for a project"
             className="w-full"
+            value={searchTerm}
+            onChange={handleSearch}
           />
-          <Dialog>
-            <DialogTrigger>
-              <Button
-                variant="outline"
-                className="flex items-center justify-between"
-              >
-                <span className="mr-2">Create a project</span>
-                <PlusIcon />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="h-2/3 overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create a project</DialogTitle>
-                <DialogDescription>
-                  <div
-                    className="flex flex-col gap-4"
-                    style={{ maxHeight: "90vh" }}
-                  >
-                    <Input
-                      type="text"
-                      placeholder="Title"
-                      className="w-full"
-                      onChange={(e) => setTitleProject(e.target.value)}
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Description"
-                      className="w-full"
-                      onChange={(e) => setDescriptionProject(e.target.value)}
-                    />
-                    {calculators.map((calculator: CalculatorInstance) => (
-                      <div key={calculator.id} className=" w-full">
-                        <Calculator
-                          isCreateProject={true}
-                          formData={formData}
-                          setFormData={setFormData}
-                        />
-                        <Button
-                          variant="destructive"
-                          onClick={() => deleteCalculator(calculator.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    ))}
-                    <Button className="w-full" onClick={addCalculator}>
-                      Add transport method
-                    </Button>
-                    <DialogClose asChild>
-                      <Button
-                        className="border-black border rounded"
-                        variant="default"
-                        onClick={handleCreateProject}
-                      >
-                        Create
-                      </Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <Button
-                        className="border-black border rounded"
-                        variant="destructive"
-                      >
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                  </div>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <CreateProject UserId={UserId} />
         </div>
 
-        <div className="grid grid-cols-3 justify-self-stretch max-w-full gap-4">
-          {Projects.map((p, index) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 justify-self-stretch max-w-full gap-4">
+          {projectsOnPage.map((p, index) => {
             return (
               <ProjectCard
                 key={index}
@@ -169,16 +87,26 @@ const Dashboard: React.FC<DashboardProps> = ({
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious href="#" />
+                <PaginationPrevious
+                  href="#"
+                  size={"default"}
+                  onClick={handlePreviousPage}
+                />
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
+                <PaginationLink href="#" size={"default"}>
+                  {currentPage}
+                </PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationEllipsis />
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href="#" />
+                <PaginationNext
+                  href="#"
+                  size={"default"}
+                  onClick={handleNextPage}
+                />
               </PaginationItem>
             </PaginationContent>
           </Pagination>

@@ -60,7 +60,6 @@ export const Combobox: React.FC<ComboboxProps> = ({
                 onSelect={(currentValue: string) => {
                   setValue(currentValue === value ? "" : currentValue);
                   onChange(type, currentValue);
-
                   setOpen(false);
                 }}
               >
