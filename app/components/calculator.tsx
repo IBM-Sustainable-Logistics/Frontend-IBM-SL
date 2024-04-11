@@ -51,14 +51,14 @@ type Errored = {
 export type FormData = {
   stages: (Stage & Keyed & Errored)[];
   emissions:
-    | {
-      totalKg: number;
-      stages: {
-        kg: number;
-        transportMethod: TransportMethod;
-      }[];
-    }
-    | undefined;
+  | {
+    totalKg: number;
+    stages: {
+      kg: number;
+      transportMethod: TransportMethod;
+    }[];
+  }
+  | undefined;
 };
 
 export const defaultFormData = (from?: Address, to?: Address): FormData => ({
@@ -122,7 +122,7 @@ const Calculator = ({
                 to: stage.to,
                 key: stage.key,
                 error: stage.error === "no such from address" ||
-                    stage.error === "no such to address"
+                  stage.error === "no such to address"
                   ? stage.error
                   : undefined,
               }),
@@ -166,93 +166,93 @@ const Calculator = ({
    */
   const onSuggestionsRequested =
     (index: number, fromOrTo: "from" | "to") =>
-    async ({ value }: { value: string }) => {
-      console.log("ON SUGGEST REQUEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      const stage = formData.stages[index];
+      async ({ value }: { value: string }) => {
+        console.log("ON SUGGEST REQUEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        const stage = formData.stages[index];
 
-      if (!stage.usesAddress) throw new Error("Stage uses distance");
+        if (!stage.usesAddress) throw new Error("Stage uses distance");
 
-      setError(undefined);
+        setError(undefined);
 
-      if (value.length === 0) {
-        setSuggestions([]);
-        return;
-      }
+        if (value.length === 0) {
+          setSuggestions([]);
+          return;
+        }
 
-      /** The json schema that the back-end uses for the input. */
-      type Input = {
-        city: string;
-        country?: string;
-      };
+        /** The json schema that the back-end uses for the input. */
+        type Input = {
+          city: string;
+          country?: string;
+        };
 
-      const address: Address = fromOrTo === "from" ? stage.from : stage.to;
+        const address: Address = fromOrTo === "from" ? stage.from : stage.to;
 
-      const input: Input = {
-        city: address.city,
-        country: address.country,
-      };
+        const input: Input = {
+          city: address.city,
+          country: address.country,
+        };
 
-      const response = await fetch("/api/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      });
+        const response = await fetch("/api/suggest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(input),
+        });
 
-      if (!response.ok) {
-        console.error(
-          "Error! Got response code: " +
+        if (!response.ok) {
+          console.error(
+            "Error! Got response code: " +
             response.status +
             " " +
             (await response.text()),
-        );
-      }
+          );
+        }
 
-      /** The json schema that the back-end uses for the output. */
-      type Output = {
-        city: string;
-        country: string;
-      }[];
+        /** The json schema that the back-end uses for the output. */
+        type Output = {
+          city: string;
+          country: string;
+        }[];
 
-      const output: Output = await response.json();
+        const output: Output = await response.json();
 
-      if (output.length === 0) {
+        if (output.length === 0) {
+          setFormData((old: FormData): FormData => {
+            const stage = { ...old.stages[index] };
+
+            if (!stage.usesAddress) throw new Error("Stage uses distance");
+
+            return {
+              ...old,
+              stages: old.stages.with(index, {
+                ...stage,
+                error: fromOrTo === "from"
+                  ? "no such from address"
+                  : "no such to address",
+              }),
+            };
+          });
+
+          setSuggestions([]);
+          return;
+        }
+
         setFormData((old: FormData): FormData => {
-          const stage = { ...old.stages[index] };
-
-          if (!stage.usesAddress) throw new Error("Stage uses distance");
+          const stage = old.stages[index];
 
           return {
             ...old,
             stages: old.stages.with(index, {
               ...stage,
-              error: fromOrTo === "from"
-                ? "no such from address"
-                : "no such to address",
+              error: stage.error === "no such from address" ||
+                stage.error === "no such to address"
+                ? undefined
+                : stage.error,
             }),
           };
         });
 
-        setSuggestions([]);
-        return;
-      }
-
-      setFormData((old: FormData): FormData => {
-        const stage = old.stages[index];
-
-        return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            error: stage.error === "no such from address" ||
-                stage.error === "no such to address"
-              ? undefined
-              : stage.error,
-          }),
-        };
-      });
-
-      setSuggestions(output);
-    };
+        setSuggestions(output);
+      };
 
   /**
    * TODO
@@ -279,37 +279,37 @@ const Calculator = ({
    * TODO
    */
   const renderSuggestion = (place: "city" | "country") =>
-  (
-    suggestion: Address,
-    { query: inputValue, isHighlighted }: {
-      query: string;
-      isHighlighted: boolean;
-    },
-  ) => {
-    const city = place === "city"
-      ? (
-        <>
-          <b>{inputValue}</b>
-          {suggestion.city.slice(inputValue.length)}
-        </>
-      )
-      : <>{suggestion.city}</>;
+    (
+      suggestion: Address,
+      { query: inputValue, isHighlighted }: {
+        query: string;
+        isHighlighted: boolean;
+      },
+    ) => {
+      const city = place === "city"
+        ? (
+          <>
+            <b>{inputValue}</b>
+            {suggestion.city.slice(inputValue.length)}
+          </>
+        )
+        : <>{suggestion.city}</>;
 
-    const country = place === "country"
-      ? (
-        <>
-          <b>{inputValue}</b>
-          {suggestion.country.slice(inputValue.length)}
-        </>
-      )
-      : <>{suggestion.country}</>;
+      const country = place === "country"
+        ? (
+          <>
+            <b>{inputValue}</b>
+            {suggestion.country.slice(inputValue.length)}
+          </>
+        )
+        : <>{suggestion.country}</>;
 
-    return (
-      <span className={isHighlighted ? "bg-blue-200" : ""}>
-        {city}, {country}
-      </span>
-    );
-  };
+      return (
+        <span className={isHighlighted ? "bg-blue-200" : ""}>
+          {city}, {country}
+        </span>
+      );
+    };
 
   interface EventTarget {
     value?: string;
@@ -326,36 +326,36 @@ const Calculator = ({
    */
   const onAddressChange =
     (index: number, fromOrTo: "from" | "to", place: "city" | "country") =>
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
-      const { value: inputValue } = event.target as EventTarget;
+      (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const { value: inputValue } = event.target as EventTarget;
 
-      if (inputValue === undefined) return;
+        if (inputValue === undefined) return;
 
-      setFormData((old: FormData): FormData => {
-        const stage = { ...old.stages[index] };
+        setFormData((old: FormData): FormData => {
+          const stage = { ...old.stages[index] };
 
-        if (!stage.usesAddress) throw new Error("Stage uses distance");
+          if (!stage.usesAddress) throw new Error("Stage uses distance");
 
-        // check which address to update
-        const addressToUpdate = fromOrTo === "from" ? stage.from : stage.to;
+          // check which address to update
+          const addressToUpdate = fromOrTo === "from" ? stage.from : stage.to;
 
-        // either update the city or country
-        if (place === "city") addressToUpdate.city = inputValue;
-        else addressToUpdate.country = inputValue;
+          // either update the city or country
+          if (place === "city") addressToUpdate.city = inputValue;
+          else addressToUpdate.country = inputValue;
 
-        return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            error: inputValue.length > 0 &&
+          return {
+            ...old,
+            stages: old.stages.with(index, {
+              ...stage,
+              error: inputValue.length > 0 &&
                 (stage.error === "no such from address" ||
                   stage.error === "no such to address")
-              ? stage.error
-              : undefined,
-          }),
-        };
-      });
-    };
+                ? stage.error
+                : undefined,
+            }),
+          };
+        });
+      };
 
   /**
    * Given an index of a stage, returns an input onChange
@@ -559,9 +559,9 @@ const Calculator = ({
         setMessage(undefined);
         console.error(
           "Error! Got response code: " +
-            response.status +
-            " " +
-            (await response.text()),
+          response.status +
+          " " +
+          (await response.text()),
         );
       }
 
@@ -807,8 +807,7 @@ const Calculator = ({
           </div>
         ))}
         {formData != null && <Link to={'/upload'}>
-          <Button
-            className="w-full"
+          <Button className="w-full mt-5"
             variant={"ibm_green"}
             type="button"
           >
