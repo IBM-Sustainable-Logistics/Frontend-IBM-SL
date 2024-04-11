@@ -30,28 +30,11 @@ export const EditProjectPopUp: React.FC<Props> = ({
   id,
   title,
   description,
-  emissions,
 }) => {
-  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
-  const [formData, setFormData] = useState<FormData>(defaultFormData());
   const [titleProject, setTitleProject] = useState(title);
   const [descriptionProject, setDescriptionProject] = useState(description);
 
   const fetcher = useFetcher();
-
-  const addCalculator = () => {
-    const newCalculator = {
-      id: Date.now(), // Using the current timestamp as a unique ID
-    };
-    setCalculators([...calculators, newCalculator]);
-  };
-  const deleteCalculator = (id: number) => {
-    setCalculators(
-      calculators.filter(
-        (calculator: CalculatorInstance) => calculator.id !== id
-      )
-    );
-  };
 
   const handleUpdateProject = () => {
     // after calculating the emissions, we can submit the form
@@ -59,7 +42,6 @@ export const EditProjectPopUp: React.FC<Props> = ({
       projId: id,
       title: titleProject,
       descriptionProject: descriptionProject as string,
-      calc: JSON.stringify(formData),
     };
     fetcher.submit(project, { method: "PATCH", action: "/api/project" });
   };
