@@ -113,7 +113,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           ))}
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Calcultor getting updated</Button>
+          <Button className="w-full">Calculator getting updated</Button>
         </CardFooter>
       </Card>
     </div>
