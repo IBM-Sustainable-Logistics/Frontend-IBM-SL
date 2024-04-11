@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table.tsx";
+import tree from "../assets/tree.svg";
 
 interface Props {
   project: project;
@@ -58,6 +59,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         <CardHeader>
           <CardTitle>{project.title}</CardTitle>
           <CardDescription>{project.description}</CardDescription>
+          <img src={tree} alt="IBM Logo" className="h-40" />
         </CardHeader>
         <CardContent>
           <Table>
@@ -111,7 +113,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           ))}
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={addCalculator}></Button>
+          <Button className="w-full">Calcultor getting updated</Button>
         </CardFooter>
       </Card>
     </div>
