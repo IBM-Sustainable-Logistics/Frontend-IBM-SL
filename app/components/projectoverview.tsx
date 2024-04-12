@@ -93,10 +93,14 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                           {stage.usesAddress ? "" : stage.distance}
                         </TableCell>
                         <TableCell>
-                          {stage.usesAddress ? stage.from.city : ""}
+                          {stage.usesAddress
+                            ? stage.from.city + " " + stage.from.country
+                            : ""}
                         </TableCell>
                         <TableCell>
-                          {stage.usesAddress ? stage.from.country : ""}
+                          {stage.usesAddress
+                            ? stage.to.city + " " + stage.to.country
+                            : ""}
                         </TableCell>
                         <TableCell>
                           {" "}
