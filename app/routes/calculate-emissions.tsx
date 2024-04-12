@@ -15,8 +15,8 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 const CalculateEmissionsPage = () => {
   const initialFormState: FormData = defaultFormData(
     // Use these two cities as examples for the user. Maybe change later.
-    { city: "Copenhagen", country: "Denmark" },
-    { city: "Hamburg", country: "Germany" },
+    { city: "", country: "" },
+    { city: "", country: "" },
   );
 
   const [formData, setFormData] = useState<FormData>(initialFormState);

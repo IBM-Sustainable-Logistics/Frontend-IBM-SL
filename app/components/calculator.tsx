@@ -12,6 +12,7 @@ import {
   getTransportMethodLabel,
   isTruckTransportMethod,
   transportMethods,
+  truckTransportMethods,
 } from "../lib/Transport.ts";
 
 /* Termonology:
@@ -74,7 +75,7 @@ export const defaultFormData = (from?: Address, to?: Address): FormData => ({
   emissions: undefined,
 });
 
-const transportMethodOptions: ComboboxOption[] = transportMethods.map(
+const transportMethodOptions: ComboboxOption[] = truckTransportMethods.map(
   (method) => ({
     value: method,
     label: getTransportMethodLabel(method),
