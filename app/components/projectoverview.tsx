@@ -71,25 +71,44 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
               <TableRow>
                 <TableHead className="w-[100px]">Transport Form</TableHead>
                 <TableHead>Distance</TableHead>
+                <TableHead>From</TableHead>
+                <TableHead>To</TableHead>
                 <TableHead className="text-right">
                   Amount of co2 in kg
                 </TableHead>
               </TableRow>
             </TableHeader>
             {project.emissions ? (
-              project.emissions.stages.map((emision) => (
-                <>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">
-                        {emision.transportMethod}
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell className="text-right">{emision.kg}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </>
-              ))
+              <>
+                <TableBody>
+                  {project.stages.map((stage, index) => (
+                    <>
+                      <TableRow>
+                        <TableCell>
+                          {project.emissions
+                            ? project.emissions.stages[index].transportMethod
+                            : ""}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress ? "" : stage.distance}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress ? stage.from.city : ""}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress ? stage.from.country : ""}
+                        </TableCell>
+                        <TableCell>
+                          {" "}
+                          {project.emissions
+                            ? project.emissions.stages[index].kg
+                            : ""}
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ))}
+                </TableBody>
+              </>
             ) : (
               <TableBody>
                 <TableRow>no calculations</TableRow>
@@ -113,7 +132,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           ))}
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Calculator getting updated</Button>
+          <Button className="w-full">Calcultor getting updated</Button>
         </CardFooter>
       </Card>
     </div>

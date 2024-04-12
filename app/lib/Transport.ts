@@ -53,6 +53,7 @@ export interface project {
     created_at: string;
     description: string | null;
     emissions: emissions | null;
+    stages: stages;
     id: string;
     title: string;
     user_id: string;
@@ -65,8 +66,10 @@ export interface CalculatorInstance {
 export interface emissions {
     stages: {
         kg: number | null;
-        transportMethod: string |null ;
+        transportMethod: string ;
     }[],
     totalKg: number | null
 }
+
+export type stages = Stage[];
 
