@@ -167,7 +167,6 @@ const Calculator = ({
   const onSuggestionsRequested =
     (index: number, fromOrTo: "from" | "to") =>
       async ({ value }: { value: string }) => {
-        console.log("ON SUGGEST REQUEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         const stage = formData.stages[index];
 
         if (!stage.usesAddress) throw new Error("Stage uses distance");

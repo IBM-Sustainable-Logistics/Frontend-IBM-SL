@@ -22,11 +22,12 @@ const UploadFile = () => {
   var [fileName, setFileName] = useState<string | null>(null);
   var [file, setFile] = useState<File | null>(null);
   const [getContent, setContent] = useState<string>("");
+  var [fileEnd, setFileEnd] = useState<string>("");
 
-    // If user has uploaded a file, then we want to split it up before proceeding
-    var contentSplit;
-    type ContentMap = { [key: string]: any };
-    const contentMap: ContentMap = {};
+  // If user has uploaded a file, then we want to split it up before proceeding
+  var contentSplit;
+  type ContentMap = { [key: string]: any };
+  const contentMap: ContentMap = {};
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -93,7 +94,6 @@ const UploadFile = () => {
             setHasUploaded(false);
             fileInput.value = "";
           } else {
-            readGivenFile();
             setHasUploaded(true);
           }
         }
@@ -116,12 +116,17 @@ const UploadFile = () => {
       }
     };
     if (file != null) {
-      console.log(file)
-      fileReader.readAsText(file);
-      
-      setIsSent(true);
+      console.log(file.size);
+      if (file.size < 1048576) {
+        console.log(file)
+        fileReader.readAsText(file);
+
+        setIsSent(true);
+        readFile();
+      } else {
+        alert("Please upload a file less than 15 MB!");
+      }
     }
-    readFile();
   }
 
   /**
@@ -157,98 +162,100 @@ const UploadFile = () => {
    */
   async function readFile(): Promise<void> {
     if (file) {
-      return new Promise<void>((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.onload = function (event) {
-          if (event.target && event.target.result) {
-            setContent(event.target.result as string);
+      if(file.name.endsWith(".txt")){
+        return new Promise<void>((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.onload = function (event) {
+            if (event.target && event.target.result) {
+              setContent(event.target.result as string);
 
-            contentSplit = getContent.split("\n");
+              contentSplit = getContent.split("\n");
 
-            contentSplit.forEach((content: ContentMap) => {
-              var tmp = content.split(":");
-              var key = tmp[0].trim();
-              var value = tmp[1].replace(/,\s*$/, "").trim();
-              var value = tmp[1].replace(/,\s*$/, "").replaceAll('"', "").trim();
-          
-              contentMap[key] = value;
-          
-              console.log("Received " + key + ": " + contentMap[key]);
-              console.log(typeof contentMap[key]);
-            });
-          
-            const transportMethod = contentMap["Transport Method"];
-            const fromCity = contentMap["Origin City"];
-            const toCity = contentMap["Destination City"];
-            const fromCountry = contentMap["Origin Country"];
-            const toCountry = contentMap["Destination Country"];
-          
-            console.log("HELLOOOOOOOOO");
-            console.log(transportMethod);
-            console.log(fromCity);
-            console.log(toCity);
-            console.log(fromCountry);
-            console.log(toCountry);          
+              contentSplit.forEach((content: ContentMap) => {
+                var tmp = content.split(":");
+                var key = tmp[0].trim();
+                var value = tmp[1].replace(/,\s*$/, "").trim();
+                var value = tmp[1].replace(/,\s*$/, "").replaceAll('"', "").trim();
 
-            setIsSent(true);
-            resolve();
-          } else {
-            alert("Unable to read file! Please try again.");
-            reject(new Error("Failed to read file contents"));
-          }
-        };
+                contentMap[key] = value;
 
-        fileReader.onerror = function (_event) {
-          reject(new Error("Error reading file: " + fileReader.error));
-        };
-        fileReader.readAsText(file as Blob);
-      });
+                console.log("Received " + key + ": " + contentMap[key]);
+                console.log(typeof contentMap[key]);
+              });
+
+              const transportMethod = contentMap["Transport Method"];
+              const fromCity = contentMap["Origin City"];
+              const toCity = contentMap["Destination City"];
+              const fromCountry = contentMap["Origin Country"];
+              const toCountry = contentMap["Destination Country"];
+
+              setIsSent(true);
+              resolve();
+            } else {
+              alert("Unable to read file! Please try again.");
+              reject(new Error("Failed to read file contents"));
+            }
+          };
+
+          fileReader.onerror = function (_event) {
+            reject(new Error("Error reading file: " + fileReader.error));
+          };
+          fileReader.readAsText(file as Blob);
+        });
+      }
+      else if (file.name.endsWith(".csv")){
+        ReadCSV();
+      }
+      else if(file.name.endsWith(".xls")){
+        ReadExcel();
+      }
     } else {
       throw new Error("Unable to read file!");
     }
   }
 
   var initialFormState: FormData;
-  if(getContent.length > 0)
-    {initialFormState = {
-    stages: [
-      {
-        usesAddress: true,
-        transportMethod: contentMap["Transport Method"],
-        from: {
-          city: contentMap["Origin City"],
-          country: contentMap["Origin Country"],
+  if (getContent.length > 0) {
+    initialFormState = {
+      stages: [
+        {
+          usesAddress: true,
+          transportMethod: contentMap["Transport Method"],
+          from: {
+            city: contentMap["Origin City"],
+            country: contentMap["Origin Country"],
+          },
+          to: {
+            city: contentMap["Destination City"],
+            country: contentMap["Destination Country"],
+          },
+          key: Math.random(),
         },
-        to: {
-          city: contentMap["Destination City"],
-          country: contentMap["Destination Country"],
-        },
-        key: Math.random(),
-      },
-    ],
-    emissions: undefined,
-  };
-} else {
-  {initialFormState = {
-    stages: [
-      {
-        usesAddress: true,
-        transportMethod: "truck",
-        from: {
-          city: "",
-          country: "",
-        },
-        to: {
-          city: "",
-          country: "",
-        },
-        key: Math.random(),
-      },
-    ],
-    emissions: undefined,
-  };
-}
-}
+      ],
+      emissions: undefined,
+    };
+  } else {
+    {
+      initialFormState = {
+        stages: [
+          {
+            usesAddress: true,
+            transportMethod: "truck",
+            from: {
+              city: "",
+              country: "",
+            },
+            to: {
+              city: "",
+              country: "",
+            },
+            key: Math.random(),
+          },
+        ],
+        emissions: undefined,
+      };
+    }
+  }
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
 
@@ -330,3 +337,11 @@ const UploadFile = () => {
   );
 };
 export default UploadFile;
+function ReadCSV() {
+  throw new Error("Function not implemented.");
+}
+
+function ReadExcel() {
+  throw new Error("Function not implemented.");
+}
+
