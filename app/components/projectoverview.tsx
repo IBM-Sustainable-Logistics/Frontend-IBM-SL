@@ -71,25 +71,48 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
               <TableRow>
                 <TableHead className="w-[100px]">Transport Form</TableHead>
                 <TableHead>Distance</TableHead>
+                <TableHead>From</TableHead>
+                <TableHead>To</TableHead>
                 <TableHead className="text-right">
                   Amount of co2 in kg
                 </TableHead>
               </TableRow>
             </TableHeader>
             {project.emissions ? (
-              project.emissions.stages.map((emision) => (
-                <>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">
-                        {emision.transportMethod}
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell className="text-right">{emision.kg}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </>
-              ))
+              <>
+                <TableBody>
+                  {project.stages.map((stage, index) => (
+                    <>
+                      <TableRow>
+                        <TableCell>
+                          {project.emissions
+                            ? project.emissions.stages[index].transportMethod
+                            : ""}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress ? "" : stage.distance}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress
+                            ? stage.from.city + " " + stage.from.country
+                            : ""}
+                        </TableCell>
+                        <TableCell>
+                          {stage.usesAddress
+                            ? stage.to.city + " " + stage.to.country
+                            : ""}
+                        </TableCell>
+                        <TableCell>
+                          {" "}
+                          {project.emissions
+                            ? project.emissions.stages[index].kg
+                            : ""}
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ))}
+                </TableBody>
+              </>
             ) : (
               <TableBody>
                 <TableRow>no calculations</TableRow>
