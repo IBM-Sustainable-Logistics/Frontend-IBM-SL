@@ -12,6 +12,7 @@ import { Label } from "app/components/ui/label";
 
 import { SetStateAction, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
+import * as d3 from 'd3';
 
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -45,8 +46,7 @@ const UploadFile = () => {
           setFile(file);
           if (file) {
             if (
-              file.name.endsWith(".csv") || file.name.endsWith(".xls") ||
-              file.name.endsWith(".txt")
+              file.name.endsWith(".csv") || file.name.endsWith(".xls")
             ) {
               setFileName(file.name);
               console.log(`… file[${i}].name = ${file.name}`);
@@ -86,8 +86,7 @@ const UploadFile = () => {
 
           if (
             !filename.toLowerCase().endsWith(".csv") &&
-            !filename.toLowerCase().endsWith(".xls") &&
-            !filename.toLowerCase().endsWith(".txt")
+            !filename.toLowerCase().endsWith(".xls")
           ) {
             console.log(`file rejected: ${file.name}`);
             alert("Not in a valid .csv/.xls format!");
@@ -117,7 +116,8 @@ const UploadFile = () => {
     };
     if (file != null) {
       console.log(file.size);
-      if (file.size < 1048576) {
+      // File size limit is 15MB
+      if (file.size <= 1048576) {
         console.log(file)
         fileReader.readAsText(file);
 
@@ -162,55 +162,14 @@ const UploadFile = () => {
    */
   async function readFile(): Promise<void> {
     if (file) {
-      if(file.name.endsWith(".txt")){
-        return new Promise<void>((resolve, reject) => {
-          const fileReader = new FileReader();
-          fileReader.onload = function (event) {
-            if (event.target && event.target.result) {
-              setContent(event.target.result as string);
-
-              contentSplit = getContent.split("\n");
-
-              contentSplit.forEach((content: ContentMap) => {
-                var tmp = content.split(":");
-                var key = tmp[0].trim();
-                var value = tmp[1].replace(/,\s*$/, "").trim();
-                var value = tmp[1].replace(/,\s*$/, "").replaceAll('"', "").trim();
-
-                contentMap[key] = value;
-
-                console.log("Received " + key + ": " + contentMap[key]);
-                console.log(typeof contentMap[key]);
-              });
-
-              const transportMethod = contentMap["Transport Method"];
-              const fromCity = contentMap["Origin City"];
-              const toCity = contentMap["Destination City"];
-              const fromCountry = contentMap["Origin Country"];
-              const toCountry = contentMap["Destination Country"];
-
-              setIsSent(true);
-              resolve();
-            } else {
-              alert("Unable to read file! Please try again.");
-              reject(new Error("Failed to read file contents"));
-            }
-          };
-
-          fileReader.onerror = function (_event) {
-            reject(new Error("Error reading file: " + fileReader.error));
-          };
-          fileReader.readAsText(file as Blob);
-        });
+      if (file.name.endsWith(".csv")) {
+        ReadCSV(file);
       }
-      else if (file.name.endsWith(".csv")){
-        ReadCSV();
-      }
-      else if(file.name.endsWith(".xls")){
-        ReadExcel();
+      else if (file.name.endsWith(".xls")) {
+        ReadExcel(file);
       }
     } else {
-      throw new Error("Unable to read file!");
+      throw new Error("Unsupported file extension!");
     }
   }
 
@@ -336,12 +295,22 @@ const UploadFile = () => {
     </div>
   );
 };
+
+function ReadCSV(file: File) {
+  const filereader = new FileReader();
+
+  filereader.onload = function (_ev) {
+    const readfilecont = filereader.result as string;
+    const csvData = d3.csvParse(readfilecont);
+    document.write(JSON.stringify(csvData));
+    console.log(csvData);
+  };
+
+  filereader.readAsText(file);
+}
+
+function ReadExcel(file: File) {
+  const filereader = new FileReader();
+}
+
 export default UploadFile;
-function ReadCSV() {
-  throw new Error("Function not implemented.");
-}
-
-function ReadExcel() {
-  throw new Error("Function not implemented.");
-}
-

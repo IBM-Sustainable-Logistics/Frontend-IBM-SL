@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
+    "d3": "^7.9.0",
     "deno": "^0.1.1",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.8",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@playwright/test": "^1.42.1",
     "@remix-run/dev": "^2.5.1",
+    "@types/d3": "^7.4.3",
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.60",
     "@types/react-autosuggest": "^10.1.11",
