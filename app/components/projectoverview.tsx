@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "./ui/table.tsx";
 import tree from "../assets/tree.svg";
+import DataVisualization from "./DataVisualization.tsx";
 
 interface Props {
   project: project;
@@ -141,6 +142,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
               </TableBody>
             )}
           </Table>
+          <DataVisualization project={project} />
+
           {calculators.map((calculator: CalculatorInstance) => (
             <div key={calculator.id} className=" w-full">
               <Calculator
