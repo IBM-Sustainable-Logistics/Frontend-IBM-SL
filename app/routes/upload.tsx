@@ -237,6 +237,8 @@ const UploadFile = () => {
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
 
+  console.log(initialFormState);
+
   return (
     <div>
       {!fileIsSent &&
