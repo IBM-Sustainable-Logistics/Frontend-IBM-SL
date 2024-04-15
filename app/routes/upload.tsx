@@ -10,7 +10,7 @@ import {
 } from "app/components/ui/card";
 import { Label } from "app/components/ui/label";
 
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
 import * as d3 from 'd3';
 
@@ -22,8 +22,7 @@ const UploadFile = () => {
   const [fileIsSent, setIsSent] = useState(false);
   var [fileName, setFileName] = useState<string | null>(null);
   var [file, setFile] = useState<File | null>(null);
-  const [getContent, setContent] = useState<string>("");
-  var [fileEnd, setFileEnd] = useState<string>("");
+  const dataMap = new Map();
 
   // If user has uploaded a file, then we want to split it up before proceeding
   var contentSplit;
@@ -103,26 +102,15 @@ const UploadFile = () => {
   /**
    * Read the content of the file using the FileReader API
    */
-  function readGivenFile() {
-    var fileReader = new FileReader();
-
-    console.log(fileReader)
-
-    fileReader.onload = (event) => {
-      if (event.target && event.target.result) {
-        const getContentAsString = event.target.result as string;
-        setContent(getContentAsString);
-      }
-    };
+  async function readGivenFile() {
     if (file != null) {
-      console.log(file.size);
+      console.log("File size: " + file.size);
       // File size limit is 15MB
       if (file.size <= 1048576) {
-        console.log(file)
-        fileReader.readAsText(file);
+        console.log(file);
 
         setIsSent(true);
-        readFile();
+        await readFile();
       } else {
         alert("Please upload a file less than 15 MB!");
       }
@@ -158,12 +146,43 @@ const UploadFile = () => {
   }
 
   /**
+   * Read the CSV-file uploaded by the user. 
+   * @param file the file, of type CSV, to be read.
+   */
+  async function ReadCSV(file: File) {
+    const filereader = new FileReader();
+
+    filereader.onload = function (_ev) {
+      const readfilecont = filereader.result as string;
+      const csvData = d3.dsvFormat(";").parse(readfilecont);
+      const csvDataAsJSON = JSON.stringify(csvData);
+
+      // Structure the data into readable array
+      const jsonObj = JSON.parse(csvDataAsJSON.slice(1, -1));
+
+      // Iterate over each data in csv and save to a local map
+      for (const entry in jsonObj) {
+        if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
+          dataMap.set(entry, jsonObj[entry]);
+        }
+      }
+
+    };
+
+    filereader.readAsText(file);
+  }
+
+  function ReadExcel(file: File) {
+    const filereader = new FileReader();
+  }
+
+  /**
    * Read the user-provided file, of type .csv and .xls
    */
   async function readFile(): Promise<void> {
     if (file) {
       if (file.name.endsWith(".csv")) {
-        ReadCSV(file);
+        await ReadCSV(file);
       }
       else if (file.name.endsWith(".xls")) {
         ReadExcel(file);
@@ -174,46 +193,46 @@ const UploadFile = () => {
   }
 
   var initialFormState: FormData;
-  if (getContent.length > 0) {
+
+  try {
     initialFormState = {
       stages: [
         {
           usesAddress: true,
-          transportMethod: contentMap["Transport Method"],
+          transportMethod: "truck",
           from: {
-            city: contentMap["Origin City"],
-            country: contentMap["Origin Country"],
+            city: dataMap.get("Origin city"),
+            country: dataMap.get("Origin country"),
           },
           to: {
-            city: contentMap["Destination City"],
-            country: contentMap["Destination Country"],
+            city: dataMap.get("Destination city"),
+            country: dataMap.get("Destination city"),
           },
           key: Math.random(),
         },
       ],
       emissions: undefined,
     };
-  } else {
-    {
-      initialFormState = {
-        stages: [
-          {
-            usesAddress: true,
-            transportMethod: "truck",
-            from: {
-              city: "",
-              country: "",
-            },
-            to: {
-              city: "",
-              country: "",
-            },
-            key: Math.random(),
+  } catch (error) {
+
+    initialFormState = {
+      stages: [
+        {
+          usesAddress: true,
+          transportMethod: "truck",
+          from: {
+            city: "",
+            country: "",
           },
-        ],
-        emissions: undefined,
-      };
-    }
+          to: {
+            city: "",
+            country: "",
+          },
+          key: Math.random(),
+        },
+      ],
+      emissions: undefined,
+    };
   }
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
@@ -295,22 +314,5 @@ const UploadFile = () => {
     </div>
   );
 };
-
-function ReadCSV(file: File) {
-  const filereader = new FileReader();
-
-  filereader.onload = function (_ev) {
-    const readfilecont = filereader.result as string;
-    const csvData = d3.csvParse(readfilecont);
-    document.write(JSON.stringify(csvData));
-    console.log(csvData);
-  };
-
-  filereader.readAsText(file);
-}
-
-function ReadExcel(file: File) {
-  const filereader = new FileReader();
-}
 
 export default UploadFile;
