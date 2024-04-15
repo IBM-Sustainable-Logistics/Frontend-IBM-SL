@@ -87,7 +87,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <Table>
             <TableCaption>
               Emissions in total:{" "}
-              {project.emissions ? project.emissions.emissions?.totalKg : 0}
+              {project.emissions ? project.emissions?.totalKg : 0}
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -160,7 +160,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         <CardFooter>
           <div className=" flex gap-4 flex-col w-full">
             <Button onClick={addCalculator} className="w-full">
-              Add a new Calculator
+              Update calculations
             </Button>
             <Button
               className="border-black border rounded"
