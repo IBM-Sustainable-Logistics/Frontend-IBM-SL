@@ -78,7 +78,7 @@ export const defaultFormData = (from?: Address, to?: Address): FormData => ({
 
 export const loadFormData = (
   stages: Stage[],
-  emissions: FormData.emissions
+  emissions: FormData["emissions"]
 ): FormData => ({
   stages: stages.map((stage, index) => ({
     ...stage,
@@ -782,6 +782,7 @@ const Calculator = ({
                 <Input
                   type="number"
                   id="distance"
+                  value={stage.distance}
                   name="distance"
                   className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
                   onChange={onDistanceChange(index)}
