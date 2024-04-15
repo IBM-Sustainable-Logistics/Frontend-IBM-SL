@@ -76,7 +76,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
 
   return (
     /* create a project page */
-    <div className=" flex flex-col justify-center items-center ">
+    <div className=" flex flex-col justify-center items-center ml-3 mr-3 ">
       <Card>
         <CardHeader>
           <CardTitle>{project.title}</CardTitle>
