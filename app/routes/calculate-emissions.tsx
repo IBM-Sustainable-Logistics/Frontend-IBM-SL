@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
-import Calculator, { FormData, defaultFormData } from "../components/calculator.tsx";
+import Calculator, {
+  FormData,
+  defaultFormData,
+} from "../components/calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
@@ -15,8 +18,8 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 const CalculateEmissionsPage = () => {
   const initialFormState: FormData = defaultFormData(
     // Use these two cities as examples for the user. Maybe change later.
-    { city: "", country: "" },
-    { city: "", country: "" },
+    { city: "Copenhagen", country: "" },
+    { city: "", country: "" }
   );
 
   const [formData, setFormData] = useState<FormData>(initialFormState);

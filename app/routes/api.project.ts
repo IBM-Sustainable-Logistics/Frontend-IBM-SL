@@ -91,14 +91,15 @@ export async function action({ request }: ActionFunctionArgs) {
     
       const formData = await request.formData();
       const projectId = formData.get("projId")?.toString();
-    
+      console.log(formData.get("calc"));
+
       if (!projectId) {
         return json(
             { error: "Project information missing" },
             { status: 400, headers }
         );
       }
-    
+
       const { error } = await updateProject(
         projectId,
         {
@@ -114,6 +115,10 @@ export async function action({ request }: ActionFunctionArgs) {
             { status: 500, headers }
         );
       }
+      
+    
+     
+    
   
       return json({ ok: true, error: null }, { headers });
     }   

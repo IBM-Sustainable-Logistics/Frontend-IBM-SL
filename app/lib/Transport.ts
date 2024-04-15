@@ -10,6 +10,20 @@ export const transportMethods = [
     "train",
 ] as const;
 
+
+export type FormData = {
+    stages: (Stage)[];
+    emissions:
+      | {
+        totalKg: number;
+        stages: {
+          kg: number;
+          transportMethod: TransportMethod;
+        }[];
+      }
+      | undefined;
+  };
+
 export type TruckTransportMethod = typeof truckTransportMethods[number];
 export type TransportMethod = typeof transportMethods[number];
 
