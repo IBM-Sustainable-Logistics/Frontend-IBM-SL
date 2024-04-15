@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, project } from "../lib/Transport.ts";
+import { Stage, getTransportMethodLabel, project } from "../lib/Transport.ts";
 import {
   Card,
   CardContent,
@@ -109,7 +109,15 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                       <TableRow>
                         <TableCell>
                           {project.emissions
-                            ? project.emissions.stages[index].transportMethod
+                            ? getTransportMethodLabel(
+                                project.emissions.stages[index]
+                                  .transportMethod as
+                                  | "truck"
+                                  | "etruck"
+                                  | "cargoship"
+                                  | "aircraft"
+                                  | "train"
+                              )
                             : ""}
                         </TableCell>
                         <TableCell>

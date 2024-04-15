@@ -26,18 +26,7 @@ const DataVisualization: React.FC<DataProps> = ({ project }) => {
           },
         ],
         labels: project.stages.map((stage, index) => {
-          return `Stage ${index + 1}- ${
-            stage.usesAddress
-              ? "from " +
-                stage.from.city +
-                " " +
-                stage.from.country +
-                " to  " +
-                stage.to.city +
-                " " +
-                stage.to.country
-              : stage.distance
-          } - ${stage.transportMethod}`;
+          return `Stage ${index + 1} - ${stage.transportMethod}`;
         }),
       };
 
