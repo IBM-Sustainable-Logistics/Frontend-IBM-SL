@@ -160,7 +160,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         <CardFooter>
           <div className=" flex gap-4 flex-col w-full">
             <Button onClick={addCalculator} className="w-full">
-              Update calculations
+              {calculators.length === 0
+                ? "Update calculator "
+                : "Add another calculator"}
             </Button>
             <Button
               className="border-black border rounded"
