@@ -127,45 +127,44 @@ const Calculator = ({
   const [suggestions, setSuggestions] = useState<Address[]>([]);
 
   /**
-   * Given an index of a stage, returns a combobox onChange
+   * Given an index of a route and a stage, returns a combobox onChange
    * function that updates the stage's transportMethod.
    */
   const onTransportMethodChange =
-    (index: number) => (_: string, comboboxValue: T.TransportMethod): void => {
-      setChain((old: Chain): Chain => {
-        const stage = old.stages[index];
+    (routeIndex: number, stageIndex: number) => (_: string, comboboxValue: T.TransportMethod): void => {
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
         // if the old stage used addresses
-        if (stage.usesAddress) {
+        if (oldStage.usesAddress) {
           // and if the new transport method allows for addresses
           if (T.isTruckTransportMethod(comboboxValue)) {
             // then keep the addresses
             return {
-              ...old,
-              stages: old.stages.with(index, {
-                usesAddress: true,
-                transportMethod: comboboxValue as T.TruckTransportMethod,
-                from: stage.from,
-                to: stage.to,
-                key: stage.key,
-                error:
-                  stage.error === "no such from address" ||
-                  stage.error === "no such to address"
-                    ? stage.error
-                    : undefined,
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, {
+                  ...oldStage,
+                  transportMethod: comboboxValue as T.TruckTransportMethod,
+                })
               }),
+              
             };
           } // but if the new transport method does not allow for addresses
           else {
             // then use default distance of 0
             return {
-              ...old,
-              stages: old.stages.with(index, {
-                usesAddress: false,
-                transportMethod: comboboxValue,
-                distance: 0,
-                key: old.stages[index].key,
-                error: undefined,
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, {
+                  ...oldStage,
+                  usesAddress: false,
+                  transportMethod: comboboxValue,
+                  distance: 0,
+                })
               }),
             };
           }
@@ -173,13 +172,13 @@ const Calculator = ({
         else {
           // then keep the distance
           return {
-            ...old,
-            stages: old.stages.with(index, {
-              usesAddress: false,
-              transportMethod: comboboxValue,
-              distance: stage.distance,
-              key: old.stages[index].key,
-              error: undefined,
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                transportMethod: comboboxValue,
+              })
             }),
           };
         }
@@ -358,34 +357,32 @@ const Calculator = ({
    * country part of the address should be updated.
    */
   const onAddressChange =
-    (index: number, fromOrTo: "from" | "to", place: "city" | "country") =>
+    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to", place: "city" | "country") =>
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       const { value: inputValue } = event.target as EventTarget;
 
       if (inputValue === undefined) return;
 
-      setChain((old: Chain): Chain => {
-        const stage = { ...old.stages[index] };
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
-        if (!stage.usesAddress) throw new Error("Stage uses distance");
+        if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
         // check which address to update
-        const addressToUpdate = fromOrTo === "from" ? stage.from : stage.to;
+        const addressToUpdate = (fromOrTo === "from" ? oldStage.from : oldStage.to);
+        // addressToUpdate.exists = true;
 
         // either update the city or country
         if (place === "city") addressToUpdate.city = inputValue;
         else addressToUpdate.country = inputValue;
+        oldStage.impossible = false;
 
         return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            error:
-              inputValue.length > 0 &&
-              (stage.error === "no such from address" ||
-                stage.error === "no such to address")
-                ? stage.error
-                : undefined,
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, oldStage)
           }),
         };
       });
