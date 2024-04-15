@@ -52,7 +52,7 @@ type Address = T.Address & {
 type Stage = ({
   usesAddress: false;
   transportMethod: T.TransportMethod;
-  distance: number;
+  distance: number | undefined;
 } | {
   usesAddress: true;
   transportMethod: T.TruckTransportMethod;
@@ -348,13 +348,13 @@ const Calculator = ({
   }
 
   /**
-   * Given an index of a stage, whether it refers to the
-   * from or to address, and whether it the city input or
-   * country input, returns an input onChange function that
+   * Given an index of a route and a stage, whether it refers to the
+   * "from" or "to" address, and whether it refers to the "city" input or
+   * "country" input, returns an input onChange function that
    * updates the stage's address.
    *
    * The place parameter determines whether the city or
-   * country part of the address should be updated.
+   * country input field of the address should be updated.
    */
   const onAddressChange =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to", place: "city" | "country") =>
@@ -389,31 +389,39 @@ const Calculator = ({
     };
 
   /**
-   * Given an index of a stage, returns an input onChange
+   * Given an index of a route and stage, returns an input onChange
    * function that updates the stage's distance.
    */
   const onDistanceChange =
-    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (routeIndex: number, stageIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value: inputValue } = e.target as EventTarget;
 
-      setChain((old: Chain): Chain => {
-        const stage = old.stages[index];
+      let inputNumber: number | undefined = Number(inputValue);
+      if(inputNumber < 0){
+        inputNumber = undefined;
+      }
 
-        if (stage.usesAddress) throw new Error("Stage uses addresses");
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex]; 
+
+        if (oldStage.usesAddress) throw Error("Stage uses addresses");
 
         return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            distance: Number(inputValue),
-            error: undefined,
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, {
+              ...oldStage,
+              distance: inputNumber,
+            })
           }),
         };
       });
     };
 
   /**
-   * Given an index of a stage, returns a button onClick
+   * Given an index of a route and stage, returns a button onClick
    * function that changes wether that stage uses addresses
    * or distances.
    */
