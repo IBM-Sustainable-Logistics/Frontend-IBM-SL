@@ -101,13 +101,13 @@ const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
 
 type CalculatorProps = {
   isCreateProject: boolean;
-  formData: Chain;
+  chain: Chain;
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
 const Calculator = ({
   isCreateProject,
-  formData,
+  chain,
   setChain,
 }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
@@ -461,7 +461,7 @@ const Calculator = ({
    * If the index is -1, the new stage is inserted as the
    * first stage.
    */
-  const onInsertAfter = (index: number | -1) => () => {
+  const onInsertStageAfter = (index: number | -1) => () => {
     const id = Math.random();
 
     setChain((old: Chain): Chain => {
@@ -520,16 +520,61 @@ const Calculator = ({
    * Given an index of a stage, returns a button onClick
    * function that removes the stage at the given index.
    */
-  const handleRemoveStage = (index: number) => () => {
+  const onRemoveStage = (index: number) => () => {
     setChain((old: Chain): Chain => {
       return {
         ...old,
-        stages: [...old.stages.slice(0, index), ...old.stages.slice(index + 1)],
+        stages: [
+          ...old.stages.slice(0, index),
+          ...old.stages.slice(index + 1)
+        ],
       };
     });
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onAddRoute = () => {
+    setChain((old: Chain): Chain => {
+      return {
+        ...old,
+        routes: [
+          ...old.routes,
+          {
+            name: undefined,
+            stages: [
+              {
+                usesAddress: true,
+                transportMethod: "truck",
+                from: { city: "", country: "", exists: false },
+                to: { city: "", country: "", exists: false },
+                impossible: false,
+                key: Math.random(),
+                emission: undefined,
+              },
+            ],
+            key: Math.random(),
+            emission: undefined,
+          }
+        ],
+      };
+    })
+  }
+
+  const onRemoveRoute = (index: number) => () => {
+    setChain((old: Chain): Chain => {
+      if (index < 0 || index >= old.routes.length || old.routes.length <= 1)
+        throw Error("Cannot remove route index: " + index);
+
+      return {
+        ...old,
+        routes: [
+          ...old.routes.slice(0,index),
+          ...old.routes.slice(index+1),
+        ],
+      };
+    })
+  }
+
+  const onCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -614,12 +659,12 @@ const Calculator = ({
         : "flex flex-col gap-4 "}
     >
       <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onCalculate}>
         <Button
           className="w-full"
           variant={"secondary"}
           type="button"
-          onClick={onInsertAfter(-1)}
+          onClick={onInsertStageAfter(-1)}
         >
           Add Stage
         </Button>
@@ -801,7 +846,7 @@ const Calculator = ({
 
             {formData.stages.length <= 1 ? null : (
               <Button
-                onClick={handleRemoveStage(index)}
+                onClick={onRemoveStage(index)}
                 className="w-full"
                 variant={"destructive"}
                 type="button"
@@ -814,7 +859,7 @@ const Calculator = ({
               className="w-full"
               variant={"secondary"}
               type="button"
-              onClick={onInsertAfter(index)}
+              onClick={onInsertStageAfter(index)}
             >
               Add Stage
             </Button>
