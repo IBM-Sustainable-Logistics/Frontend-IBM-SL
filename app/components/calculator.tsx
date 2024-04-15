@@ -615,11 +615,13 @@ const Calculator = ({
     <div
       className={
         isCreateProject
-          ? "justify-center items-center flex flex-col gap-4 "
-          : "flex flex-col gap-4 "
+          ? "justify-center items-center flex flex-col gap-4  font-mono"
+          : "flex flex-col gap-4 font-mono "
       }
     >
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      <h1 className=" text-primary text-4xl font-bold font-mono">
+        {isCreateProject ? "" : "Calculate Emissions"}
+      </h1>
       <form onSubmit={onSubmit}>
         <Button
           className="w-full"
