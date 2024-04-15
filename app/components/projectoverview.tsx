@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { project } from "../lib/Transport.ts";
+import { Stage, project } from "../lib/Transport.ts";
 import {
   Card,
   CardContent,
@@ -8,7 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card.tsx";
-import Calculator, { defaultFormData, FormData } from "./calculator.tsx";
+import Calculator, {
+  defaultFormData,
+  FormData,
+  loadFormData,
+} from "./calculator.tsx";
 import { CalculatorInstance, emissions } from "./../lib/Transport.ts";
 import { useFetcher } from "@remix-run/react";
 import { Button } from "./ui/button.tsx";
@@ -28,8 +32,13 @@ interface Props {
 }
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
+  const initialFormState: FormData = loadFormData(
+    project.stages as Stage[],
+    project.emissions as emissions
+  );
+
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
-  const [formData, setFormData] = useState<FormData>(defaultFormData());
+  const [formData, setFormData] = useState<FormData>(initialFormState);
   const [titleProject, setTitleProject] = useState(project.title);
   const [descriptionProject, setDescriptionProject] = useState(
     project.description
@@ -41,6 +50,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
     const newCalculator = {
       id: Date.now(), // Using the current timestamp as a unique ID
     };
+
+    console.log();
+
     setCalculators([...calculators, newCalculator]);
   };
 
@@ -50,6 +62,16 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         (calculator: CalculatorInstance) => calculator.id !== id
       )
     );
+  };
+
+  const handleUpdateProject = () => {
+    const project_ = {
+      projId: project.id,
+      title: titleProject,
+      descriptionProject: descriptionProject as string,
+      calc: JSON.stringify(formData),
+    };
+    fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
   };
 
   return (
@@ -65,12 +87,12 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <Table>
             <TableCaption>
               Emissions in total:{" "}
-              {project.emissions ? project.emissions.totalKg : 0}
+              {project.emissions ? project.emissions.emissions?.totalKg : 0}
             </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Transport Form</TableHead>
-                <TableHead>Distance</TableHead>
+                <TableHead>Distance KM</TableHead>
                 <TableHead>From</TableHead>
                 <TableHead>To</TableHead>
                 <TableHead className="text-right">
@@ -136,7 +158,18 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           ))}
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Calcultor getting updated</Button>
+          <div className=" flex gap-4 flex-col w-full">
+            <Button onClick={addCalculator} className="w-full">
+              Add a new Calculator
+            </Button>
+            <Button
+              className="border-black border rounded"
+              variant="ibm_blue"
+              onClick={handleUpdateProject}
+            >
+              update
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
