@@ -1,5 +1,3 @@
-import { Json } from "./utils/types.ts";
-
 export const truckTransportMethods = [
     "truck",
     "etruck",
@@ -28,48 +26,57 @@ export const getTransportMethodLabel = (method: TransportMethod): string => {
     }
 }
 
-export type Address = { city: string, country: string };
-
-export type Stage = {
-    usesAddress: false,
-    transportMethod: TransportMethod,
-    distance: number,
-} | {
-    usesAddress: true,
-    transportMethod: TruckTransportMethod,
-    from: Address,
-    to: Address,
+export type Address = {
+  city: string,
+  country: string,
 };
 
+export type Stage = {
+  usesAddress: false,
+  transportMethod: TransportMethod,
+  distance: number,
+} | {
+  usesAddress: true,
+  transportMethod: TruckTransportMethod,
+  from: Address,
+  to: Address,
+};
 
-export type TransportListItem2 = {
-    to: string,
-    from: string,
-    distance: number,
-    transportMethod: string
-}
+export type Route = {
+  name: string | undefined,
+  stages: Stage[],
+};
 
-export interface project {
-    created_at: string;
-    description: string | null;
-    emissions: emissions | null;
-    stages: stages;
-    id: string;
-    title: string;
-    user_id: string;
-}
+export type Chain = {
+  routes: Route[],
+};
 
-export interface CalculatorInstance {
-    id: number;
-}
+// export type TransportListItem2 = {
+//     to: string,
+//     from: string,
+//     distance: number,
+//     transportMethod: string
+// }
 
-export interface emissions {
-    stages: {
-        kg: number | null;
-        transportMethod: string ;
-    }[],
-    totalKg: number | null
-}
+// export interface project {
+//     created_at: string;
+//     description: string | null;
+//     emissions: emissions | null;
+//     stages: stages;
+//     id: string;
+//     title: string;
+//     user_id: string;
+// }
 
-export type stages = Stage[];
+// export interface CalculatorInstance {
+//     id: number;
+// }
+
+// export interface emissions {
+//     stages: {
+//         kg: number | null;
+//         transportMethod: string ;
+//     }[],
+//     totalKg: number | null
+// }
 

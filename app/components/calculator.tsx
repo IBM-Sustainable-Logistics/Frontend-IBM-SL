@@ -4,18 +4,18 @@ import { Label } from "./ui/label.tsx";
 import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
-import {
-  Address,
-  Stage,
-  TransportMethod,
-  TruckTransportMethod,
-  getTransportMethodLabel,
-  isTruckTransportMethod,
-  transportMethods,
-  truckTransportMethods,
-} from "../lib/Transport.ts";
+import * as T from "../lib/Transport.ts";
 
 /* Termonology:
+ * - Chain:
+ *      Some routes grouped by the user, either in a project
+ *      or in the calculator.
+ *
+ * - Route:
+ *      A list of stages that represents a logistics route.
+ *      The CO2 emission of a route can be estimated by the
+ *      back-end.
+ *
  * - Stage:
  *      A part of a route that has a transport method and
  *      either a distance or an origin and destination
@@ -34,64 +34,81 @@ import {
  */
 
 /**
- * Reach requires that every html element in a list has a
+ * React requires that every html element in a list has a
  * unique key. This type is simply used to add a key field.
  */
 type Keyed = {
   key: number;
 };
 
-// allows us to show errors to specific stages
-type StageError = "no such from address" | "no such to address";
-
-type Errored = {
-  error: StageError | undefined;
+type Estimated = {
+  emission: number | undefined;
 };
 
-export type FormData = {
-  stages: (Stage & Keyed & Errored)[];
-  emissions:
-    | {
-      totalKg: number;
-      stages: {
-        kg: number;
-        transportMethod: TransportMethod;
-      }[];
-    }
-    | undefined;
+type Address = T.Address & {
+  exists: boolean;
 };
 
-export const defaultFormData = (from?: Address, to?: Address): FormData => ({
-  stages: [
+type Stage = ({
+  usesAddress: false;
+  transportMethod: T.TransportMethod;
+  distance: number;
+} | {
+  usesAddress: true;
+  transportMethod: T.TruckTransportMethod;
+  from: Address;
+  to: Address;
+  impossible: boolean,
+}) & Keyed & Estimated;
+
+type Route = {
+  name: string | undefined;
+  stages: Stage[],
+} & Keyed & Estimated;
+
+type Chain = {
+  routes: Route[],
+} & Estimated;
+
+export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
+  routes: [
     {
-      usesAddress: true,
-      transportMethod: "truck",
-      from: from ? from : { city: "", country: "" },
-      to: to ? to : { city: "", country: "" },
+      name: undefined,
+      stages: [
+        {
+          usesAddress: true,
+          transportMethod: "truck",
+          from: from ? { city: from.city, country: from.country, exists: false } : { city: "", country: "", exists: false },
+          to:   to   ? { city: to.city, country: to.country, exists: false } : { city: "", country: "", exists: false },
+          impossible: false,
+          key: Math.random(),
+          emission: undefined,
+        },
+      ],
       key: Math.random(),
-      error: undefined,
-    },
+      emission: undefined,
+    }
   ],
-  emissions: undefined,
+  emission: undefined,
 });
 
-const transportMethodOptions: ComboboxOption[] = truckTransportMethods.map(
+const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
   (method) => ({
     value: method,
-    label: getTransportMethodLabel(method),
+    label: T.getTransportMethodLabel(method),
   }),
 );
 
 type CalculatorProps = {
   isCreateProject: boolean;
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formData: Chain;
+  setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
 const Calculator = ({
   isCreateProject,
   formData,
-  setFormData,
+  setChain,
 }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
   const [message, setMessage] = useState(undefined);
@@ -102,20 +119,20 @@ const Calculator = ({
    * function that updates the stage's transportMethod.
    */
   const onTransportMethodChange =
-    (index: number) => (_: string, comboboxValue: TransportMethod): void => {
-      setFormData((old: FormData): FormData => {
+    (index: number) => (_: string, comboboxValue: T.TransportMethod): void => {
+      setChain((old: Chain): Chain => {
         const stage = old.stages[index];
 
         // if the old stage used addresses
         if (stage.usesAddress) {
           // and if the new transport method allows for addresses
-          if (isTruckTransportMethod(comboboxValue)) {
+          if (T.isTruckTransportMethod(comboboxValue)) {
             // then keep the addresses
             return {
               ...old,
               stages: old.stages.with(index, {
                 usesAddress: true,
-                transportMethod: comboboxValue as TruckTransportMethod,
+                transportMethod: comboboxValue as T.TruckTransportMethod,
                 from: stage.from,
                 to: stage.to,
                 key: stage.key,
@@ -213,7 +230,7 @@ const Calculator = ({
       const output: Output = await response.json();
 
       if (output.length === 0) {
-        setFormData((old: FormData): FormData => {
+        setChain((old: Chain): Chain => {
           const stage = { ...old.stages[index] };
 
           if (!stage.usesAddress) throw new Error("Stage uses distance");
@@ -233,7 +250,7 @@ const Calculator = ({
         return;
       }
 
-      setFormData((old: FormData): FormData => {
+      setChain((old: Chain): Chain => {
         const stage = old.stages[index];
 
         return {
@@ -255,7 +272,7 @@ const Calculator = ({
    * TODO
    */
   const onSuggestionSelected = (index: number, fromOrTo: "from" | "to") => (_: any, { suggestion }: { suggestion: Address }) => {
-    setFormData((old: FormData): FormData => {
+    setChain((old: Chain): Chain => {
       const stage = { ...old.stages[index] };
 
       if (!stage.usesAddress) throw new Error("Stage uses distance");
@@ -328,7 +345,7 @@ const Calculator = ({
 
       if (inputValue === undefined) return;
 
-      setFormData((old: FormData): FormData => {
+      setChain((old: Chain): Chain => {
         const stage = { ...old.stages[index] };
 
         if (!stage.usesAddress) throw new Error("Stage uses distance");
@@ -362,7 +379,7 @@ const Calculator = ({
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value: inputValue } = e.target as EventTarget;
 
-      setFormData((old: FormData): FormData => {
+      setChain((old: Chain): Chain => {
         const stage = old.stages[index];
 
         if (stage.usesAddress) throw new Error("Stage uses addresses");
@@ -385,7 +402,7 @@ const Calculator = ({
    */
   const onToggleUsesAddress =
     (index: number, use: "address" | "distance") => () => {
-      setFormData((old: FormData): FormData => {
+      setChain((old: Chain): Chain => {
         const stage = old.stages[index];
 
         // if we want to change stage to use addresses
@@ -447,7 +464,7 @@ const Calculator = ({
   const onInsertAfter = (index: number | -1) => () => {
     const id = Math.random();
 
-    setFormData((old: FormData): FormData => {
+    setChain((old: Chain): Chain => {
       // if index is -1, insert as first stage
       if (index === -1) {
         return {
@@ -504,7 +521,7 @@ const Calculator = ({
    * function that removes the stage at the given index.
    */
   const handleRemoveStage = (index: number) => () => {
-    setFormData((old: FormData): FormData => {
+    setChain((old: Chain): Chain => {
       return {
         ...old,
         stages: [...old.stages.slice(0, index), ...old.stages.slice(index + 1)],
@@ -570,14 +587,14 @@ const Calculator = ({
 
       const output: Output = await response.json();
 
-      setFormData(
-        (old: FormData): FormData => ({
+      setChain(
+        (old: Chain): Chain => ({
           ...old,
           emissions: {
             totalKg: output.total_kg,
             stages: output.stages.map((stage) => ({
               kg: stage.kg,
-              transportMethod: stage.transport_form as TransportMethod,
+              transportMethod: stage.transport_form as T.TransportMethod,
             })),
           },
         }),
@@ -740,7 +757,7 @@ const Calculator = ({
                     id={String(stage.key) + "to country"}
                   />
 
-                  {isTruckTransportMethod(stage.transportMethod)
+                  {T.isTruckTransportMethod(stage.transportMethod)
                     ? (
                       <Button
                         className="w-full"
@@ -767,7 +784,7 @@ const Calculator = ({
                     onChange={onDistanceChange(index)}
                   />
 
-                  {isTruckTransportMethod(stage.transportMethod)
+                  {T.isTruckTransportMethod(stage.transportMethod)
                     ? (
                       <Button
                         className="w-full"
