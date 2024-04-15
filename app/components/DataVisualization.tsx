@@ -26,7 +26,18 @@ const DataVisualization: React.FC<DataProps> = ({ project }) => {
           },
         ],
         labels: project.stages.map((stage, index) => {
-          return `Stage ${index + 1} - ${stage.transportMethod}`;
+          return `Stage ${index + 1}- ${
+            stage.usesAddress
+              ? "from " +
+                stage.from.city +
+                " " +
+                stage.from.country +
+                " to  " +
+                stage.to.city +
+                " " +
+                stage.to.country
+              : stage.distance
+          } - ${stage.transportMethod}`;
         }),
       };
 
@@ -35,6 +46,11 @@ const DataVisualization: React.FC<DataProps> = ({ project }) => {
         scales: {
           y: {
             beginAtZero: true,
+            ticks: {
+              callback: function (value: GLfloat) {
+                return `stage -  ${value + 1}  `;
+              },
+            },
           },
         },
       };
