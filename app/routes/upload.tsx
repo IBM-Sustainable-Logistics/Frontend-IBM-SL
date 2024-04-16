@@ -1,4 +1,3 @@
-import { redirect } from "@remix-run/deno";
 import { Button } from "app/components/ui/button";
 import {
   Card,
@@ -10,7 +9,7 @@ import {
 } from "app/components/ui/card";
 import { Label } from "app/components/ui/label";
 
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
 import * as d3 from 'd3';
 
@@ -20,14 +19,26 @@ const UploadFile = () => {
 
   // metadata for the chosen file
   const [fileIsSent, setIsSent] = useState(false);
-  var [fileName, setFileName] = useState<string | null>(null);
   var [file, setFile] = useState<File | null>(null);
   const dataMap = new Map();
-
-  // If user has uploaded a file, then we want to split it up before proceeding
-  var contentSplit;
-  type ContentMap = { [key: string]: any };
-  const contentMap: ContentMap = {};
+  const [formData, setFormData] = useState<FormData>({
+    stages: [
+      {
+        usesAddress: true,
+        transportMethod: "truck",
+        from: {
+          city: dataMap.get("Origin city"),
+          country: dataMap.get("Origin country"),
+        },
+        to: {
+          city: dataMap.get("Destination city"),
+          country: dataMap.get("Destination country"),
+        },
+        key: Math.random(),
+      },
+    ],
+    emissions: undefined,
+  });
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -47,7 +58,6 @@ const UploadFile = () => {
             if (
               file.name.endsWith(".csv") || file.name.endsWith(".xls")
             ) {
-              setFileName(file.name);
               console.log(`… file[${i}].name = ${file.name}`);
               setHasUploaded(true);
             } else {
@@ -79,17 +89,16 @@ const UploadFile = () => {
         if (file) {
           setFile(file);
 
-          const filename = file.name;
-          setFileName(filename);
-          console.log("Chosen file: " + filename);
+          console.log("Chosen file: " + file.name);
 
           if (
-            !filename.toLowerCase().endsWith(".csv") &&
-            !filename.toLowerCase().endsWith(".xls")
+            !file.name.toLowerCase().endsWith(".csv") &&
+            !file.name.toLowerCase().endsWith(".xls")
           ) {
             console.log(`file rejected: ${file.name}`);
             alert("Not in a valid .csv/.xls format!");
             setHasUploaded(false);
+            setFile(null);
             fileInput.value = "";
           } else {
             setHasUploaded(true);
@@ -100,11 +109,14 @@ const UploadFile = () => {
   }
 
   /**
-   * Read the content of the file using the FileReader API
+   * Read the content of the file using the FileReader API,
+   * when the user presses the 'Upload' button.
    */
-  async function readGivenFile() {
+  async function readUploadedFile() {
+    console.log("rEadUploadedFile()");
     if (file != null) {
       console.log("File size: " + file.size);
+
       // File size limit is 15MB
       if (file.size <= 1048576) {
         console.log(file);
@@ -123,7 +135,6 @@ const UploadFile = () => {
   function deleteUpload(): void {
     console.log(file);
     setFile(null);
-    setFileName(null);
     setHasUploaded(false);
 
     if (document.getElementById("fileInput") as HTMLInputElement) {
@@ -150,9 +161,10 @@ const UploadFile = () => {
    * @param file the file, of type CSV, to be read.
    */
   async function ReadCSV(file: File) {
+    console.log("ReadCSV()");
     const filereader = new FileReader();
 
-    filereader.onload = function (_ev) {
+    filereader.onload = async function (_ev) {
       const readfilecont = filereader.result as string;
       const csvData = d3.dsvFormat(";").parse(readfilecont);
       const csvDataAsJSON = JSON.stringify(csvData);
@@ -164,14 +176,26 @@ const UploadFile = () => {
       for (const entry in jsonObj) {
         if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
           dataMap.set(entry, jsonObj[entry]);
+          console.log(jsonObj);
+          console.log(entry + " -> " + jsonObj[entry]);
+          console.log("dataMap: " + entry + " -> " + dataMap.get(entry));
         }
       }
+
+      await updateFormState();
 
     };
 
     filereader.readAsText(file);
   }
 
+  useEffect(() => {
+    console.log("Updated dataMap:", dataMap);
+  }, [dataMap]);
+
+  /**
+   * TODO: implement this function.
+   */
   function ReadExcel(file: File) {
     const filereader = new FileReader();
   }
@@ -180,6 +204,7 @@ const UploadFile = () => {
    * Read the user-provided file, of type .csv and .xls
    */
   async function readFile(): Promise<void> {
+    console.log("readFile()");
     if (file) {
       if (file.name.endsWith(".csv")) {
         await ReadCSV(file);
@@ -188,14 +213,15 @@ const UploadFile = () => {
         ReadExcel(file);
       }
     } else {
-      throw new Error("Unsupported file extension!");
+      deleteUpload();
+      console.error("Unsupported file extension!");
     }
   }
 
-  var initialFormState: FormData;
-
-  try {
-    initialFormState = {
+  async function updateFormState() {
+    console.log("updateFormState()");
+    var newFormState: FormData;
+    newFormState = {
       stages: [
         {
           usesAddress: true,
@@ -206,38 +232,19 @@ const UploadFile = () => {
           },
           to: {
             city: dataMap.get("Destination city"),
-            country: dataMap.get("Destination city"),
+            country: dataMap.get("Destination country"),
           },
           key: Math.random(),
         },
       ],
       emissions: undefined,
     };
-  } catch (error) {
-
-    initialFormState = {
-      stages: [
-        {
-          usesAddress: true,
-          transportMethod: "truck",
-          from: {
-            city: "",
-            country: "",
-          },
-          to: {
-            city: "",
-            country: "",
-          },
-          key: Math.random(),
-        },
-      ],
-      emissions: undefined,
-    };
+    setFormData(newFormState);
+    console.log("The new form state (1): " + dataMap.get("Origin city"));
+    console.log("The new form state (2): " + dataMap.get("Origin country"));
+    console.log("The new form state (3): " + dataMap.get("Destination city"));
+    console.log("The new form state (4): " + dataMap.get("Destination country"));
   }
-
-  const [formData, setFormData] = useState<FormData>(initialFormState);
-
-  console.log(initialFormState);
 
   return (
     <div>
@@ -267,9 +274,9 @@ const UploadFile = () => {
                 <form>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
-                      {(fileName === null || !hasUploaded)
+                      {(file?.name === null || !hasUploaded)
                         ? <Label htmlFor="name">File name:</Label>
-                        : <Label htmlFor="name">File name: {fileName}</Label>}
+                        : <Label htmlFor="name">File name: {file?.name}</Label>}
                       <input
                         type="file"
                         id="fileInput"
@@ -283,7 +290,7 @@ const UploadFile = () => {
                 {!hasUploaded &&
                   <Button variant="ibm_green" disabled>Upload</Button>}
                 {hasUploaded &&
-                  <Button variant="ibm_green" onClick={readGivenFile}>Upload
+                  <Button variant="ibm_green" onClick={readUploadedFile}>Upload
                   </Button>}
                 {hasUploaded &&
                   (
