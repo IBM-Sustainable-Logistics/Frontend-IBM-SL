@@ -78,11 +78,12 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
       fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
 
       setMessage("Project updated");
-      window.location.reload();
 
       setTimeout(() => {
+        window.location.reload();
+
         setMessage("");
-      }, 5000);
+      }, 2000);
     }
   };
 
