@@ -27,6 +27,7 @@ import {
 } from "./ui/table.tsx";
 import tree from "../assets/tree.svg";
 import DataVisualization from "./DataVisualization.tsx";
+import { useRevalidator } from "@remix-run/react";
 
 interface Props {
   project: project;
@@ -41,6 +42,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
   const [formData, setFormData] = useState<FormData>(initialFormState);
   const [titleProject, setTitleProject] = useState(project.title);
+  const [message, setMessage] = useState("");
   const [descriptionProject, setDescriptionProject] = useState(
     project.description
   );
@@ -66,13 +68,22 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   };
 
   const handleUpdateProject = () => {
-    const project_ = {
-      projId: project.id,
-      title: titleProject,
-      descriptionProject: descriptionProject as string,
-      calc: JSON.stringify(formData),
-    };
-    fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
+    if (formData.emissions != project.emissions) {
+      const project_ = {
+        projId: project.id,
+        title: titleProject,
+        descriptionProject: descriptionProject as string,
+        calc: JSON.stringify(formData),
+      };
+      fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
+
+      setMessage("Project updated");
+      window.location.reload();
+
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
+    }
   };
 
   return (
@@ -182,6 +193,11 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             >
               update
             </Button>
+            {message != "" && (
+              <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
+                {message}
+              </div>
+            )}
           </div>
         </CardFooter>
       </Card>
