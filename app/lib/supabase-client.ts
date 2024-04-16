@@ -71,6 +71,9 @@ export async function updateProject(
         calculation: string;
     }>
 ) {
+
+    updates.calculation = JSON.parse(updates.calculation ?? '');
+
     const { error } = await supabase
         .from('projects')
         .update(updates)

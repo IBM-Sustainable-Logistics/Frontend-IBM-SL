@@ -42,10 +42,6 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
       value: "Dashboard",
       href: "/projects",
     },
-    {
-      value: "Data Visualization",
-      href: "/data-visualization",
-    },
   ];
 
   return (

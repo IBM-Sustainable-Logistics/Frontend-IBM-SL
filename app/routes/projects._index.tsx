@@ -13,6 +13,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const projects = await getProjects();
 
+  console.log(projects);
+
   if (!serverSession) {
     return redirect("/signin", { headers });
   }

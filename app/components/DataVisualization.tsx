@@ -1,53 +1,80 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
+import { project } from "../lib/Transport.ts";
 
-/**
- * 
- * @description Temporary data visualization with help from ChatGPT
- */
-const DataVisualization = () => {
-    const chartRef = useRef<HTMLCanvasElement>(null);
+type DataProps = {
+  project: project;
+};
 
-    useEffect(() => {
-      if (chartRef.current) {
+const DataVisualization: React.FC<DataProps> = ({ project }) => {
+  const chartRef = useRef<HTMLCanvasElement>(null);
 
-        const data = {
-          labels: ["1: train", "2: train", "3: truck", "4: air cargo", "5: truck"],
-          datasets: [{
-            label: 'CO2 emission',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
+  useEffect(() => {
+    if (chartRef.current) {
+      const data = {
+        datasets: [
+          {
+            label: "CO2 emission kg",
+            backgroundColor: project.emissions?.stages.map((stage) => {
+              return stage.transportMethod === "truck"
+                ? "rgba(29, 149, 39, 0.2)"
+                : "rgba(54, 162, 235, 0.2)";
+            }),
+            borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1,
-            data: [8, 3, 6, 25, 2],
-          }]
-        };
-  
-        const options = {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        };
-  
-        const chart = new Chart(chartRef.current, {
-          type: 'bar',
-          data: data,
-          options: options
-        });
+            data: project.emissions?.stages.map((stage) => stage.kg),
+          },
+        ],
+        labels: project.stages.map((stage, index) => {
+          return `Stage ${index + 1}- ${
+            stage.usesAddress
+              ? "from " +
+                stage.from.city +
+                " " +
+                stage.from.country +
+                " to  " +
+                stage.to.city +
+                " " +
+                stage.to.country
+              : stage.distance
+          } - ${stage.transportMethod}`;
+        }),
+      };
 
-        return () => {
-          chart.destroy();
-        };
-      }
-    }, []);
-  
-    return (
-      <div style={{ width: "600px", height: "400px", margin: "0 auto" }}>
-        <h1>Carbon emission by mode:</h1>
-        <canvas ref={chartRef} width="600" height="400"></canvas>
-      </div>
-    );
-  };
-    
-  export default DataVisualization;
+      const options = {
+        indexAxis: "y",
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function (value: GLfloat) {
+                return `stage -  ${value + 1}  `;
+              },
+            },
+          },
+        },
+      };
+
+      const chart = new Chart(chartRef.current, {
+        type: "bar",
+        data: data,
+        options: options,
+      });
+
+      return () => {
+        chart.destroy();
+      };
+    }
+  }, []);
+
+  return (
+    <canvas
+      ref={chartRef}
+      className=" m-auto block"
+      width="400"
+      height="200"
+    ></canvas>
+  );
+};
+
+export default DataVisualization;
