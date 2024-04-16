@@ -45,6 +45,11 @@ export type Address = {
   country: string,
 };
 
+export const emptyAddress = {
+  city: "",
+  country: "",
+} as const;
+
 export type Stage = {
   usesAddress: false,
   transportMethod: TransportMethod,

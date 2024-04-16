@@ -49,25 +49,31 @@ type Address = T.Address & {
   exists: boolean;
 };
 
-type Stage = ({
-  usesAddress: false;
-  transportMethod: T.TransportMethod;
-  distance: number | undefined;
-} | {
-  usesAddress: true;
-  transportMethod: T.TruckTransportMethod;
-  from: Address;
-  to: Address;
-  impossible: boolean,
-}) & Keyed & Estimated;
+type Stage =
+  & ({
+    usesAddress: false;
+    transportMethod: T.TransportMethod;
+    distance: number | undefined;
+  } | {
+    usesAddress: true;
+    transportMethod: T.TruckTransportMethod;
+    from: Address;
+    to: Address;
+    impossible: boolean;
+  })
+  & Keyed
+  & Estimated;
 
-type Route = {
-  name: string | undefined;
-  stages: Stage[],
-} & Keyed & Estimated;
+type Route =
+  & {
+    name: string;
+    stages: Stage[];
+  }
+  & Keyed
+  & Estimated;
 
 type Chain = {
-  routes: Route[],
+  routes: Route[];
 } & Estimated;
 
 export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
@@ -78,8 +84,12 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
         {
           usesAddress: true,
           transportMethod: "truck",
-          from: from ? { city: from.city, country: from.country, exists: false } : { city: "", country: "", exists: false },
-          to:   to   ? { city: to.city, country: to.country, exists: false } : { city: "", country: "", exists: false },
+          from: from
+            ? { ...from, exists: false }
+            : { ...T.emptyAddress, exists: false },
+          to: to
+            ? { ...to, exists: false }
+            : { ...T.emptyAddress, exists: false },
           impossible: false,
           key: Math.random(),
           emission: undefined,
@@ -87,7 +97,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
       ],
       key: Math.random(),
       emission: undefined,
-    }
+    },
   ],
   emission: undefined,
 });
@@ -100,15 +110,30 @@ const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
 );
 
 export const loadChain = (
-  stages: Stage[],
-  emissions: number,
+  chain: T.Chain,
 ): Chain => ({
-  stages: stages.map((stage, index) => ({
-    ...stage,
+  routes: chain.routes.map((route, index): Route => ({
+    ...route,
+    stages: route.stages.map((stage, index): Stage => (
+      stage.usesAddress
+        ? {
+          ...stage,
+          from: { ...stage.from, exists: true },
+          to: { ...stage.to, exists: false },
+          impossible: false,
+          key: index,
+          emission: undefined,
+        }
+        : {
+          ...stage,
+          key: index,
+          emission: undefined,
+        }
+    )),
     key: index,
-    error: undefined,
+    emission: undefined,
   })),
-  emissions,
+  emission: undefined,
 });
 
 type CalculatorProps = {
@@ -131,7 +156,8 @@ const Calculator = ({
    * function that updates the stage's transportMethod.
    */
   const onTransportMethodChange =
-    (routeIndex: number, stageIndex: number) => (_: string, comboboxValue: T.TransportMethod): void => {
+    (routeIndex: number, stageIndex: number) =>
+    (_: string, comboboxValue: T.TransportMethod): void => {
       setChain((oldChain: Chain): Chain => {
         const oldRoute = oldChain.routes[routeIndex];
         const oldStage = oldRoute.stages[stageIndex];
@@ -148,9 +174,8 @@ const Calculator = ({
                 stages: oldRoute.stages.with(stageIndex, {
                   ...oldStage,
                   transportMethod: comboboxValue as T.TruckTransportMethod,
-                })
+                }),
               }),
-              
             };
           } // but if the new transport method does not allow for addresses
           else {
@@ -164,7 +189,7 @@ const Calculator = ({
                   usesAddress: false,
                   transportMethod: comboboxValue,
                   distance: 0,
-                })
+                }),
               }),
             };
           }
@@ -178,7 +203,7 @@ const Calculator = ({
               stages: oldRoute.stages.with(stageIndex, {
                 ...oldStage,
                 transportMethod: comboboxValue,
-              })
+              }),
             }),
           };
         }
@@ -229,7 +254,7 @@ const Calculator = ({
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text())
+            (await response.text()),
         );
       }
 
@@ -251,10 +276,9 @@ const Calculator = ({
             ...old,
             stages: old.stages.with(index, {
               ...stage,
-              error:
-                fromOrTo === "from"
-                  ? "no such from address"
-                  : "no such to address",
+              error: fromOrTo === "from"
+                ? "no such from address"
+                : "no such to address",
             }),
           };
         });
@@ -270,11 +294,10 @@ const Calculator = ({
           ...old,
           stages: old.stages.with(index, {
             ...stage,
-            error:
-              stage.error === "no such from address" ||
-              stage.error === "no such to address"
-                ? undefined
-                : stage.error,
+            error: stage.error === "no such from address" ||
+                stage.error === "no such to address"
+              ? undefined
+              : stage.error,
           }),
         };
       });
@@ -285,63 +308,62 @@ const Calculator = ({
   /**
    * TODO
    */
-  const onSuggestionSelected = (index: number, fromOrTo: "from" | "to") => (_: any, { suggestion }: { suggestion: Address }) => {
-    setChain((old: Chain): Chain => {
-      const stage = { ...old.stages[index] };
+  const onSuggestionSelected =
+    (index: number, fromOrTo: "from" | "to") =>
+    (_: any, { suggestion }: { suggestion: Address }) => {
+      setChain((old: Chain): Chain => {
+        const stage = { ...old.stages[index] };
 
-      if (!stage.usesAddress) throw new Error("Stage uses distance");
+        if (!stage.usesAddress) throw new Error("Stage uses distance");
 
-      if (fromOrTo === "from") stage.from = suggestion;
-      else stage.to = suggestion;
+        if (fromOrTo === "from") stage.from = suggestion;
+        else stage.to = suggestion;
 
-      return {
-        ...old,
-        stages: old.stages.with(index, stage),
-      };
-    });
-  };
+        return {
+          ...old,
+          stages: old.stages.with(index, stage),
+        };
+      });
+    };
 
   /**
    * TODO
    */
-  const renderSuggestion =
-    (place: "city" | "country") =>
-    (
-      suggestion: Address,
-      {
-        query: inputValue,
-        isHighlighted,
-      }: {
-        query: string;
-        isHighlighted: boolean;
-      }
-    ) => {
-      const city =
-        place === "city" ? (
-          <>
-            <b>{inputValue}</b>
-            {suggestion.city.slice(inputValue.length)}
-          </>
-        ) : (
-          <>{suggestion.city}</>
-        );
+  const renderSuggestion = (place: "city" | "country") =>
+  (
+    suggestion: Address,
+    {
+      query: inputValue,
+      isHighlighted,
+    }: {
+      query: string;
+      isHighlighted: boolean;
+    },
+  ) => {
+    const city = place === "city"
+      ? (
+        <>
+          <b>{inputValue}</b>
+          {suggestion.city.slice(inputValue.length)}
+        </>
+      )
+      : <>{suggestion.city}</>;
 
-      const country =
-        place === "country" ? (
-          <>
-            <b>{inputValue}</b>
-            {suggestion.country.slice(inputValue.length)}
-          </>
-        ) : (
-          <>{suggestion.country}</>
-        );
+    const country = place === "country"
+      ? (
+        <>
+          <b>{inputValue}</b>
+          {suggestion.country.slice(inputValue.length)}
+        </>
+      )
+      : <>{suggestion.country}</>;
 
-      return (
-        <span className={isHighlighted ? "bg-blue-200" : ""}>
-          {city}, {country}
-        </span>
-      );
-    };
+    return (
+      <span className={isHighlighted ? "bg-blue-200" : ""}>
+        {city}, {country}
+      </span>
+    );
+  };
 
   interface EventTarget {
     value?: string;
@@ -356,54 +378,59 @@ const Calculator = ({
    * The place parameter determines whether the city or
    * country input field of the address should be updated.
    */
-  const onAddressChange =
-    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to", place: "city" | "country") =>
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
-      const { value: inputValue } = event.target as EventTarget;
+  const onAddressChange = (
+    routeIndex: number,
+    stageIndex: number,
+    fromOrTo: "from" | "to",
+    place: "city" | "country",
+  ) =>
+  (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value: inputValue } = event.target as EventTarget;
 
-      if (inputValue === undefined) return;
+    if (inputValue === undefined) return;
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+      const oldStage = oldRoute.stages[stageIndex];
 
-        if (!oldStage.usesAddress) throw Error("Stage uses distance");
+      if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-        // check which address to update
-        const addressToUpdate = (fromOrTo === "from" ? oldStage.from : oldStage.to);
-        // addressToUpdate.exists = true;
+      // check which address to update
+      const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
+      // addressToUpdate.exists = true;
 
-        // either update the city or country
-        if (place === "city") addressToUpdate.city = inputValue;
-        else addressToUpdate.country = inputValue;
-        oldStage.impossible = false;
+      // either update the city or country
+      if (place === "city") addressToUpdate.city = inputValue;
+      else addressToUpdate.country = inputValue;
+      oldStage.impossible = false;
 
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, oldStage)
-          }),
-        };
-      });
-    };
+      return {
+        ...oldChain,
+        routes: oldChain.routes.with(routeIndex, {
+          ...oldRoute,
+          stages: oldRoute.stages.with(stageIndex, oldStage),
+        }),
+      };
+    });
+  };
 
   /**
    * Given an index of a route and stage, returns an input onChange
    * function that updates the stage's distance.
    */
   const onDistanceChange =
-    (routeIndex: number, stageIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (routeIndex: number, stageIndex: number) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value: inputValue } = e.target as EventTarget;
 
       let inputNumber: number | undefined = Number(inputValue);
-      if(inputNumber < 0){
+      if (inputNumber < 0) {
         inputNumber = undefined;
       }
 
       setChain((oldChain: Chain): Chain => {
         const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex]; 
+        const oldStage = oldRoute.stages[stageIndex];
 
         if (oldStage.usesAddress) throw Error("Stage uses addresses");
 
@@ -414,7 +441,7 @@ const Calculator = ({
             stages: oldRoute.stages.with(stageIndex, {
               ...oldStage,
               distance: inputNumber,
-            })
+            }),
           }),
         };
       });
@@ -426,45 +453,52 @@ const Calculator = ({
    * or distances.
    */
   const onToggleUsesAddress =
-    (index: number, use: "address" | "distance") => () => {
-      setChain((old: Chain): Chain => {
-        const stage = old.stages[index];
+    (routeIndex: number, stageIndex: number, use: "address" | "distance") =>
+    () => {
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
         // if we want to change stage to use addresses
         if (use === "address") {
-          if (stage.usesAddress) {
-            throw new Error("Stage already uses addresses");
+          if (oldStage.usesAddress) {
+            throw Error("Stage already uses addresses");
           }
 
-          if (!T.isTruckTransportMethod(stage.transportMethod)) {
-            throw new Error("Stage uses non-truck transport method");
+          if (!T.isTruckTransportMethod(oldStage.transportMethod)) {
+            throw Error("Stage uses non-truck transport method");
           }
 
           return {
-            ...old,
-            stages: old.stages.with(index, {
-              usesAddress: true,
-              transportMethod: stage.transportMethod as T.TruckTransportMethod,
-              from: { city: "", country: "" },
-              to: { city: "", country: "" },
-              key: stage.key,
-              error: undefined,
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                usesAddress: true,
+                transportMethod: oldStage
+                  .transportMethod as T.TruckTransportMethod,
+                from: { ...T.emptyAddress, exists: true },
+                to: { ...T.emptyAddress, exists: true },
+                impossible: false,
+              }),
             }),
           };
         } // or if we want to change stage to use distances
         else {
-          if (!stage.usesAddress) {
+          if (!oldStage.usesAddress) {
             throw new Error("Stage already uses distances");
           }
 
           return {
-            ...old,
-            stages: old.stages.with(index, {
-              usesAddress: false,
-              transportMethod: stage.transportMethod,
-              distance: 0,
-              key: stage.key,
-              error: undefined,
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                usesAddress: false,
+                distance: 0,
+              }),
             }),
           };
         }
@@ -486,73 +520,87 @@ const Calculator = ({
    * If the index is -1, the new stage is inserted as the
    * first stage.
    */
-  const onInsertStageAfter = (index: number | -1) => () => {
-    const id = Math.random();
+  const onInsertStageAfter =
+    (routeIndex: number, stageIndex: number | -1) => () => {
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
 
-    setChain((old: Chain): Chain => {
-      // if index is -1, insert as first stage
-      if (index === -1) {
-        return {
-          ...old,
-          stages: [
-            {
-              usesAddress: true,
-              transportMethod: "truck",
-              from: { city: "", country: "" },
-              to: { city: "", country: "" },
-              key: id,
-              error: undefined,
-            },
-            ...old.stages,
-          ],
-        };
-      }
+        // if index is -1, insert as first stage
+        if (stageIndex === -1) {
+          return {
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: [
+                {
+                  usesAddress: true,
+                  transportMethod: "truck",
+                  from: { ...T.emptyAddress, exists: true },
+                  to: { ...T.emptyAddress, exists: true },
+                  impossible: false,
+                  key: Math.random(),
+                  emission: undefined,
+                },
+                ...oldRoute.stages,
+              ],
+            }),
+          };
+        }
 
-      const beforeStage = old.stages[index];
+        const beforeStage = oldRoute.stages[stageIndex];
 
-      const newStage: Stage & Keyed & Errored = beforeStage.usesAddress
-        ? {
+        const newStage: Stage = beforeStage.usesAddress
+          ? {
             usesAddress: true,
             transportMethod: beforeStage.transportMethod,
             from: {
-              city: beforeStage.to.city,
-              country: beforeStage.to.country,
+              ...beforeStage.to,
+              exists: false,
             },
-            to: { city: "", country: "" },
-            key: id,
-            error: undefined,
+            to: { ...T.emptyAddress, exists: false },
+            impossible: false,
+            key: Math.random(),
+            emission: undefined,
           }
-        : {
+          : {
             usesAddress: false,
             transportMethod: beforeStage.transportMethod,
             distance: 0,
-            key: id,
-            error: undefined,
+            key: Math.random(),
+            emission: undefined,
           };
 
-      return {
-        ...old,
-        stages: [
-          ...old.stages.slice(0, index + 1),
-          newStage,
-          ...old.stages.slice(index + 1),
-        ],
-      };
-    });
-  };
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: [
+              ...oldRoute.stages.slice(0, stageIndex + 1),
+              newStage,
+              ...oldRoute.stages.slice(stageIndex + 1),
+            ],
+          }),
+        };
+      });
+    };
 
   /**
    * Given an index of a stage, returns a button onClick
    * function that removes the stage at the given index.
    */
-  const onRemoveStage = (index: number) => () => {
-    setChain((old: Chain): Chain => {
+  const onRemoveStage = (routeIndex: number, stageIndex: number) => () => {
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+
       return {
-        ...old,
-        stages: [
-          ...old.stages.slice(0, index),
-          ...old.stages.slice(index + 1)
-        ],
+        ...oldChain,
+        routes: oldChain.routes.with(routeIndex, {
+          ...oldRoute,
+          stages: [
+            ...oldRoute.stages.slice(0, stageIndex),
+            ...oldRoute.stages.slice(stageIndex + 1),
+          ],
+        }),
       };
     });
   };
@@ -569,8 +617,8 @@ const Calculator = ({
               {
                 usesAddress: true,
                 transportMethod: "truck",
-                from: { city: "", country: "", exists: false },
-                to: { city: "", country: "", exists: false },
+                from: { ...T.emptyAddress, exists: false },
+                to: { ...T.emptyAddress, exists: false },
                 impossible: false,
                 key: Math.random(),
                 emission: undefined,
@@ -578,55 +626,69 @@ const Calculator = ({
             ],
             key: Math.random(),
             emission: undefined,
-          }
+          },
         ],
       };
-    })
-  }
+    });
+  };
 
   const onRemoveRoute = (index: number) => () => {
     setChain((old: Chain): Chain => {
-      if (index < 0 || index >= old.routes.length || old.routes.length <= 1)
+      if (index < 0 || index >= old.routes.length || old.routes.length <= 1) {
         throw Error("Cannot remove route index: " + index);
+      }
 
       return {
         ...old,
         routes: [
-          ...old.routes.slice(0,index),
-          ...old.routes.slice(index+1),
+          ...old.routes.slice(0, index),
+          ...old.routes.slice(index + 1),
         ],
       };
-    })
-  }
+    });
+  };
 
   const onCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       /** The json schema that the back-end uses for the input. */
-      type Input = ({
-        transport_form: string;
-      } & (
-        | {
-            from: { city: string; country: string };
-            to: { city: string; country: string };
-          }
-        | {
+      type Input = {
+        id: string;
+        stages: (
+          | {
+            transport_form: T.TransportMethod;
             distance_km: number;
           }
-      ))[];
+          | {
+            transport_form: T.TruckTransportMethod;
+          }
+            & ({
+              from: { city: string; country: string };
+              to: { city: string; country: string };
+            } | {
+              distance_km: number;
+            })
+        )[];
+      }[];
 
-      const input: Input = chain.stages.map((stage: Stage) =>
-        stage.usesAddress
-          ? {
-              transport_form: stage.transportMethod,
-              from: stage.from,
-              to: stage.to,
-            }
-          : {
-              transport_form: stage.transportMethod,
-              distance_km: stage.distance,
-            }
+      const input: Input = chain.routes.map(
+        (route: Route) => ({
+          id: route.name,
+          stages: route.stages.map(
+            (stage: Stage) =>
+              stage.usesAddress
+                ? {
+                  transport_form: stage.transportMethod,
+                  from: { city: stage.from.city, country: stage.from.country },
+                  to: { city: stage.to.city, country: stage.to.country },
+                }
+                : {
+                  transport_form: stage.transportMethod,
+                  distance_km: stage.distance || 0,
+                },
+          ),
+        }),
       );
 
       const response = await fetch("/api/estimate", {
@@ -635,6 +697,64 @@ const Calculator = ({
         body: JSON.stringify(input),
       });
 
+      /** The json schema that the back-end uses for the output. */
+      type Output = {
+        chain_kg: number;
+        routes: {
+          id: string;
+          route_kg: number;
+          stages: {
+            stage_kg: number;
+            transport_form: string;
+          }[];
+        }[];
+      } | {
+        error: string;
+      } | {
+        error: "Could not connect locations";
+        route_id: string;
+        stage_index: number;
+      };
+
+      const output: Output = await response.json();
+
+      if ("error" in output) {
+        if (
+          output.error === "Could not connect locations" && "route_id" in output
+        ) {
+          setChain((oldChain: Chain): Chain => {
+            const routeIndex = oldChain.routes.findIndex((route) =>
+              route.name === output.route_id
+            );
+            const oldRoute = oldChain.routes[routeIndex];
+            const oldStage = oldRoute.stages[output.stage_index];
+
+            if (!oldStage.usesAddress) throw Error("Stage uses distance");
+
+            return {
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(output.stage_index, {
+                  ...oldStage,
+                  impossible: true,
+                }),
+              }),
+            };
+          });
+        } else {
+          setError("Error! Failed to calculate emissions. Please try again.");
+          setMessage(undefined);
+          console.error(
+            "Error! Got response code: " +
+              response.status +
+              " " +
+              (await response.text()),
+          );
+        }
+        return;
+      }
+
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
         setMessage(undefined);
@@ -642,32 +762,33 @@ const Calculator = ({
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text())
+            (await response.text()),
         );
       }
 
-      /** The json schema that the back-end uses for the output. */
-      type Output = {
-        total_kg: number;
-        stages: { kg: number; transport_form: string }[];
-      };
+      setChain((oldChain: Chain): Chain => {
+        return {
+          ...oldChain,
+          emission: output.chain_kg,
+          routes: oldChain.routes.map((oldRoute): Route => {
+            const outputRoute = output.routes.find((route) =>
+              route.id === oldRoute.name
+            );
+            if (outputRoute === undefined) throw Error("Route not found");
 
-      const output: Output = await response.json();
+            return {
+              ...oldRoute,
+              emission: outputRoute.route_kg,
+              stages: oldRoute.stages.map((oldStage, index): Stage => ({
+                ...oldStage,
+                emission: outputRoute.stages[index].stage_kg,
+              })),
+            };
+          }),
+        };
+      });
 
-      setChain(
-        (old: Chain): Chain => ({
-          ...old,
-          emissions: {
-            totalKg: output.total_kg,
-            stages: output.stages.map((stage) => ({
-              kg: stage.kg,
-              transportMethod: stage.transport_form as T.TransportMethod,
-            })),
-          },
-        })
-      );
-
-      setMessage("Total estimated CO2 emission: " + output.total_kg + " kg.");
+      setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -676,11 +797,9 @@ const Calculator = ({
 
   return (
     <div
-      className={
-        isCreateProject
-          ? "justify-center items-center flex flex-col gap-4 "
-          : "flex flex-col gap-4 "
-      }
+      className={isCreateProject
+        ? "justify-center items-center flex flex-col gap-4 "
+        : "flex flex-col gap-4 "}
     >
       <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
       <form onSubmit={onCalculate}>
@@ -696,172 +815,177 @@ const Calculator = ({
         {chain.stages.map((stage, index) => (
           <div className=" flex flex-col gap-4 " key={stage.key}>
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              {chain.stages.length <= 1 ? (
-                <>Transport Method:</>
-              ) : (
-                <>Route Stage {index + 1}:</>
-              )}
+              {chain.stages.length <= 1
+                ? <>Transport Method:</>
+                : <>Route Stage {index + 1}:</>}
             </Label>
 
             <Combobox
               options={transportMethodOptions}
               defaultOption={transportMethodOptions.find(
-                (option) => option.value === "truck"
+                (option) =>
+                  option.value === "truck",
               )}
               type="transportType"
               onChange={onTransportMethodChange(index)}
             />
 
-            {stage.usesAddress ? (
-              <>
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Origin Address:
-                </Label>
-                <AutoSuggest
-                  suggestions={suggestions as Address[]}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "from"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "from")}
-                  getSuggestionValue={(suggestion: Address) => suggestion.city}
-                  renderSuggestion={renderSuggestion("city")}
-                  inputProps={{
-                    value: stage.from.city,
-                    type: "string",
-                    id: "from",
-                    name: "from",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such from address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "City",
-                    onChange: onAddressChange(index, "from", "city"),
-                  }}
-                  id={String(stage.key) + "from city"}
-                />
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "from"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "from")}
-                  getSuggestionValue={(suggestion: Address) =>
-                    suggestion.country
-                  }
-                  renderSuggestion={renderSuggestion("country")}
-                  inputProps={{
-                    value: stage.from.country,
-                    type: "string",
-                    id: "from",
-                    name: "from",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such from address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "Country",
-                    onChange: onAddressChange(index, "from", "country"),
-                  }}
-                  id={String(stage.key) + "from country"}
-                />
+            {stage.usesAddress
+              ? (
+                <>
+                  <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Origin Address:
+                  </Label>
+                  <AutoSuggest
+                    suggestions={suggestions as Address[]}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(
+                      index,
+                      "from",
+                    )}
+                    onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "from")}
+                    getSuggestionValue={(suggestion: Address) =>
+                      suggestion.city}
+                    renderSuggestion={renderSuggestion("city")}
+                    inputProps={{
+                      value: stage.from.city,
+                      type: "string",
+                      id: "from",
+                      name: "from",
+                      className:
+                        "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                        (stage.error === "no such from address"
+                          ? " text-red-500"
+                          : ""),
+                      placeholder: "City",
+                      onChange: onAddressChange(index, "from", "city"),
+                    }}
+                    id={String(stage.key) + "from city"}
+                  />
+                  <AutoSuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(
+                      index,
+                      "from",
+                    )}
+                    onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "from")}
+                    getSuggestionValue={(suggestion: Address) =>
+                      suggestion.country}
+                    renderSuggestion={renderSuggestion("country")}
+                    inputProps={{
+                      value: stage.from.country,
+                      type: "string",
+                      id: "from",
+                      name: "from",
+                      className:
+                        "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                        (stage.error === "no such from address"
+                          ? " text-red-500"
+                          : ""),
+                      placeholder: "Country",
+                      onChange: onAddressChange(index, "from", "country"),
+                    }}
+                    id={String(stage.key) + "from country"}
+                  />
 
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Destination Address:
-                </Label>
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "to"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "to")}
-                  getSuggestionValue={(suggestion: Address) => suggestion.city}
-                  renderSuggestion={renderSuggestion("city")}
-                  inputProps={{
-                    value: stage.to.city,
-                    type: "string",
-                    id: "to",
-                    name: "to",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such to address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "City",
-                    onChange: onAddressChange(index, "to", "city"),
-                  }}
-                  id={String(stage.key) + "to city"}
-                />
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "to"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "to")}
-                  getSuggestionValue={(suggestion: Address) =>
-                    suggestion.country
-                  }
-                  renderSuggestion={renderSuggestion("country")}
-                  inputProps={{
-                    value: stage.to.country,
-                    type: "string",
-                    id: "to",
-                    name: "to",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such to address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "Country",
-                    onChange: onAddressChange(index, "to", "country"),
-                  }}
-                  id={String(stage.key) + "to country"}
-                />
+                  <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Destination Address:
+                  </Label>
+                  <AutoSuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(
+                      index,
+                      "to",
+                    )}
+                    onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "to")}
+                    getSuggestionValue={(suggestion: Address) =>
+                      suggestion.city}
+                    renderSuggestion={renderSuggestion("city")}
+                    inputProps={{
+                      value: stage.to.city,
+                      type: "string",
+                      id: "to",
+                      name: "to",
+                      className:
+                        "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                        (stage.error === "no such to address"
+                          ? " text-red-500"
+                          : ""),
+                      placeholder: "City",
+                      onChange: onAddressChange(index, "to", "city"),
+                    }}
+                    id={String(stage.key) + "to city"}
+                  />
+                  <AutoSuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={onSuggestionsRequested(
+                      index,
+                      "to",
+                    )}
+                    onSuggestionsClearRequested={() => setSuggestions([])}
+                    onSuggestionSelected={onSuggestionSelected(index, "to")}
+                    getSuggestionValue={(suggestion: Address) =>
+                      suggestion.country}
+                    renderSuggestion={renderSuggestion("country")}
+                    inputProps={{
+                      value: stage.to.country,
+                      type: "string",
+                      id: "to",
+                      name: "to",
+                      className:
+                        "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                        (stage.error === "no such to address"
+                          ? " text-red-500"
+                          : ""),
+                      placeholder: "Country",
+                      onChange: onAddressChange(index, "to", "country"),
+                    }}
+                    id={String(stage.key) + "to country"}
+                  />
 
-                {T.isTruckTransportMethod(stage.transportMethod) ? (
-                  <Button
-                    className="w-full"
-                    variant={"secondary"}
-                    type="button"
-                    onClick={onToggleUsesAddress(index, "distance")}
-                  >
-                    Use Distance?
-                  </Button>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Distance (km):
-                </Label>
-                <Input
-                  type="number"
-                  id="distance"
-                  name="distance"
-                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                  onChange={onDistanceChange(index)}
-                />
+                  {T.isTruckTransportMethod(stage.transportMethod)
+                    ? (
+                      <Button
+                        className="w-full"
+                        variant={"secondary"}
+                        type="button"
+                        onClick={onToggleUsesAddress(index, "distance")}
+                      >
+                        Use Distance?
+                      </Button>
+                    )
+                    : null}
+                </>
+              )
+              : (
+                <>
+                  <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Distance (km):
+                  </Label>
+                  <Input
+                    type="number"
+                    id="distance"
+                    name="distance"
+                    className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                    onChange={onDistanceChange(index)}
+                  />
 
-                {T.isTruckTransportMethod(stage.transportMethod) ? (
-                  <Button
-                    className="w-full"
-                    variant={"secondary"}
-                    type="button"
-                    onClick={onToggleUsesAddress(index, "address")}
-                  >
-                    Use Addresses?
-                  </Button>
-                ) : null}
-              </>
-            )}
+                  {T.isTruckTransportMethod(stage.transportMethod)
+                    ? (
+                      <Button
+                        className="w-full"
+                        variant={"secondary"}
+                        type="button"
+                        onClick={onToggleUsesAddress(index, "address")}
+                      >
+                        Use Addresses?
+                      </Button>
+                    )
+                    : null}
+                </>
+              )}
 
             {chain.stages.length <= 1 ? null : (
               <Button
