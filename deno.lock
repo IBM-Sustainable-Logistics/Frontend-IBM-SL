@@ -13257,9 +13257,11 @@
         "npm:react-icons@^5.0.1",
         "npm:react-spring@^9.7.3",
         "npm:react@^18.2.0",
+        "npm:remix@^2.8.1",
         "npm:tailwind-merge@^2.2.0",
         "npm:tailwindcss-animate@^1.0.7",
-        "npm:tailwindcss@^3.4.1"
+        "npm:tailwindcss@^3.4.1",
+        "npm:xlsx@^0.18.5"
       ]
     }
   }

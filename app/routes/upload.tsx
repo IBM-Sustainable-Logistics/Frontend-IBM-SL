@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
 import * as d3 from 'd3';
 
+import { readXlsxFile } from 'read-excel-file';
+
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
@@ -93,7 +95,8 @@ const UploadFile = () => {
 
           if (
             !file.name.toLowerCase().endsWith(".csv") &&
-            !file.name.toLowerCase().endsWith(".xls")
+            !file.name.toLowerCase().endsWith(".xls") &&
+            !file.name.endsWith(".xlsx")
           ) {
             console.log(`file rejected: ${file.name}`);
             alert("Not in a valid .csv/.xls format!");
@@ -113,7 +116,7 @@ const UploadFile = () => {
    * when the user presses the 'Upload' button.
    */
   async function readUploadedFile() {
-    console.log("rEadUploadedFile()");
+    console.log("readUploadedFile()");
     if (file != null) {
       console.log("File size: " + file.size);
 
@@ -194,10 +197,14 @@ const UploadFile = () => {
   }, [dataMap]);
 
   /**
-   * TODO: implement this function.
+   * Read the Excel-file uploaded by the user. 
+   * @param file the file, of type xls, to be read.
    */
-  function ReadExcel(file: File) {
-    const filereader = new FileReader();
+  async function ReadExcel(file: File) {
+    console.log("ReadExcel()");
+    await readXlsxFile(file).then((rows) => {
+      console.log(rows);
+    })
   }
 
   /**
@@ -209,8 +216,8 @@ const UploadFile = () => {
       if (file.name.endsWith(".csv")) {
         await ReadCSV(file);
       }
-      else if (file.name.endsWith(".xls")) {
-        ReadExcel(file);
+      else if (file.name.endsWith(".xls") || file.name.endsWith(".xlsx")) {
+        await ReadExcel(file);
       }
     } else {
       deleteUpload();
