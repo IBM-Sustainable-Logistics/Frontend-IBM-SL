@@ -649,114 +649,14 @@ const Calculator = ({
                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Origin Address:
                 </Label>
-                <AutoSuggest
-                  suggestions={suggestions as Address[]}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "from"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "from")}
-                  getSuggestionValue={(suggestion: Address) => suggestion.city}
-                  renderSuggestion={renderSuggestion("city")}
-                  inputProps={{
-                    value: stage.from.city,
-                    type: "string",
-                    id: "from",
-                    name: "from",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such from address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "City",
-                    onChange: onAddressChange(index, "from", "city"),
-                  }}
-                  id={String(stage.key) + "from city"}
-                />
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "from"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "from")}
-                  getSuggestionValue={(suggestion: Address) =>
-                    suggestion.country
-                  }
-                  renderSuggestion={renderSuggestion("country")}
-                  inputProps={{
-                    value: stage.from.country,
-                    type: "string",
-                    id: "from",
-                    name: "from",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such from address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "Country",
-                    onChange: onAddressChange(index, "from", "country"),
-                  }}
-                  id={String(stage.key) + "from country"}
-                />
+                
+                
 
                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Destination Address:
                 </Label>
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "to"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "to")}
-                  getSuggestionValue={(suggestion: Address) => suggestion.city}
-                  renderSuggestion={renderSuggestion("city")}
-                  inputProps={{
-                    value: stage.to.city,
-                    type: "string",
-                    id: "to",
-                    name: "to",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such to address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "City",
-                    onChange: onAddressChange(index, "to", "city"),
-                  }}
-                  id={String(stage.key) + "to city"}
-                />
-                <AutoSuggest
-                  suggestions={suggestions}
-                  onSuggestionsFetchRequested={onSuggestionsRequested(
-                    index,
-                    "to"
-                  )}
-                  onSuggestionsClearRequested={() => setSuggestions([])}
-                  onSuggestionSelected={onSuggestionSelected(index, "to")}
-                  getSuggestionValue={(suggestion: Address) =>
-                    suggestion.country
-                  }
-                  renderSuggestion={renderSuggestion("country")}
-                  inputProps={{
-                    value: stage.to.country,
-                    type: "string",
-                    id: "to",
-                    name: "to",
-                    className:
-                      "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                      (stage.error === "no such to address"
-                        ? " text-red-500"
-                        : ""),
-                    placeholder: "Country",
-                    onChange: onAddressChange(index, "to", "country"),
-                  }}
-                  id={String(stage.key) + "to country"}
-                />
+                
+                
 
                 {isTruckTransportMethod(stage.transportMethod) ? (
                   <Button
