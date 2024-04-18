@@ -13,7 +13,8 @@ import { useEffect, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
 import * as d3 from 'd3';
 
-import { readXlsxFile } from 'read-excel-file';
+import readXlsxFile from 'read-excel-file';
+import { redirect } from "@remix-run/react";
 
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -99,7 +100,7 @@ const UploadFile = () => {
             !file.name.endsWith(".xlsx")
           ) {
             console.log(`file rejected: ${file.name}`);
-            alert("Not in a valid .csv/.xls format!");
+            alert("Not in a valid .csv/.xls/.xlsx format!");
             setHasUploaded(false);
             setFile(null);
             fileInput.value = "";
@@ -192,20 +193,34 @@ const UploadFile = () => {
     filereader.readAsText(file);
   }
 
-  useEffect(() => {
-    console.log("Updated dataMap:", dataMap);
-  }, [dataMap]);
-
   /**
    * Read the Excel-file uploaded by the user. 
    * @param file the file, of type xls, to be read.
-   */
+  */
   async function ReadExcel(file: File) {
     console.log("ReadExcel()");
     await readXlsxFile(file).then((rows) => {
-      console.log(rows);
+      console.log("Excel rows: " + rows);
+
+      const row1 = rows[0];
+      const row2 = rows[1];
+
+      console.log("row1 " + row1);
+      console.log("row2 " + row2);
+
+      // Iterate over each data in excel file and save to a local map
+      for (let i = 0; i < row1.length; i++) {
+        dataMap.set(row1.at(i), row2.at(i));
+      }
+
     })
+
+    await updateFormState();
   }
+
+  useEffect(() => {
+    console.log("Updated dataMap:", dataMap);
+  }, [dataMap]);
 
   /**
    * Read the user-provided file, of type .csv and .xls
