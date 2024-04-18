@@ -14,7 +14,6 @@ import Calculator, { FormData } from "app/components/calculator";
 import * as d3 from 'd3';
 
 import readXlsxFile from 'read-excel-file';
-import { redirect } from "@remix-run/react";
 
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -59,13 +58,13 @@ const UploadFile = () => {
           setFile(file);
           if (file) {
             if (
-              file.name.endsWith(".csv") || file.name.endsWith(".xls")
+              file.name.endsWith(".csv") || file.name.endsWith(".xls") || file.name.endsWith(".xlsx")
             ) {
               console.log(`… file[${i}].name = ${file.name}`);
               setHasUploaded(true);
             } else {
               console.log(`file rejected: ${file.name}`);
-              alert("Not in a valid .csv/.xls format!");
+              alert("Not in a valid .csv/.xls/.xlsx format!");
               setHasUploaded(false);
             }
           }
@@ -117,14 +116,11 @@ const UploadFile = () => {
    * when the user presses the 'Upload' button.
    */
   async function readUploadedFile() {
-    console.log("readUploadedFile()");
     if (file != null) {
       console.log("File size: " + file.size);
 
       // File size limit is 15MB
       if (file.size <= 1048576) {
-        console.log(file);
-
         setIsSent(true);
         await readFile();
       } else {
@@ -137,15 +133,13 @@ const UploadFile = () => {
    * Equivalent to garbage collecting
    */
   function deleteUpload(): void {
-    console.log(file);
+    console.log("Deleting file: " + file);
     setFile(null);
     setHasUploaded(false);
 
     if (document.getElementById("fileInput") as HTMLInputElement) {
       (document.getElementById("fileInput") as HTMLInputElement).value = "";
     }
-
-    console.log(file);
   }
 
   function dragOverHandler(ev: React.DragEvent<HTMLDivElement>): void {
@@ -165,7 +159,6 @@ const UploadFile = () => {
    * @param file the file, of type CSV, to be read.
    */
   async function ReadCSV(file: File) {
-    console.log("ReadCSV()");
     const filereader = new FileReader();
 
     filereader.onload = async function (_ev) {
@@ -180,9 +173,6 @@ const UploadFile = () => {
       for (const entry in jsonObj) {
         if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
           dataMap.set(entry, jsonObj[entry]);
-          console.log(jsonObj);
-          console.log(entry + " -> " + jsonObj[entry]);
-          console.log("dataMap: " + entry + " -> " + dataMap.get(entry));
         }
       }
 
@@ -198,15 +188,10 @@ const UploadFile = () => {
    * @param file the file, of type xls, to be read.
   */
   async function ReadExcel(file: File) {
-    console.log("ReadExcel()");
     await readXlsxFile(file).then((rows) => {
-      console.log("Excel rows: " + rows);
 
       const row1 = rows[0];
       const row2 = rows[1];
-
-      console.log("row1 " + row1);
-      console.log("row2 " + row2);
 
       // Iterate over each data in excel file and save to a local map
       for (let i = 0; i < row1.length; i++) {
@@ -219,14 +204,12 @@ const UploadFile = () => {
   }
 
   useEffect(() => {
-    console.log("Updated dataMap:", dataMap);
   }, [dataMap]);
 
   /**
    * Read the user-provided file, of type .csv and .xls
    */
   async function readFile(): Promise<void> {
-    console.log("readFile()");
     if (file) {
       if (file.name.endsWith(".csv")) {
         await ReadCSV(file);
@@ -241,7 +224,6 @@ const UploadFile = () => {
   }
 
   async function updateFormState() {
-    console.log("updateFormState()");
     var newFormState: FormData;
     newFormState = {
       stages: [
@@ -266,6 +248,26 @@ const UploadFile = () => {
     console.log("The new form state (2): " + dataMap.get("Origin country"));
     console.log("The new form state (3): " + dataMap.get("Destination city"));
     console.log("The new form state (4): " + dataMap.get("Destination country"));
+
+    console.log("JSON.stringify: " + JSON.stringify(newFormState));
+
+    const response = await fetch("/api/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newFormState),
+    });
+    if (!response.ok) {
+      console.error(
+        "Error! Got response code: " +
+        response.status +
+        " " +
+        (await response.text()),
+      );
+      alert("Error uploading, please try again.");
+      deleteUpload();
+    } else {
+      console.log("Status: " + response.status);
+    }
   }
 
   return (
