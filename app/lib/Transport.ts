@@ -50,7 +50,11 @@ export const emptyAddress = {
   country: "",
 } as const;
 
-export type Stage = {
+export type Estimated = {
+  emission: number | undefined;
+};
+
+export type Stage = ({
   usesAddress: false,
   transportMethod: TransportMethod,
   distance: number,
@@ -59,16 +63,16 @@ export type Stage = {
   transportMethod: TruckTransportMethod,
   from: Address,
   to: Address,
-};
+}) & Estimated;
 
 export type Route = {
-  name: string | undefined,
+  name: string,
   stages: Stage[],
-};
+} & Estimated;
 
 export type Chain = {
   routes: Route[],
-};
+} & Estimated;
 
 // export type TransportListItem2 = {
 //     to: string,

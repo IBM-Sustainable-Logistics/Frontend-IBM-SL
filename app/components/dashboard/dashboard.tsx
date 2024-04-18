@@ -27,11 +27,21 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 6;
 
+  const [filteredProjectsByUser, setFilteredProjectsByUser] = useState<
+    project[]
+  >([]);
+
+  useEffect(() => {
+    console.log(UserId);
+    const filtered = Projects.filter((project) => project.user_id === UserId);
+    setFilteredProjectsByUser(filtered);
+  }, [Projects, UserId]);
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredProjects = Projects.filter((project) =>
+  const filteredProjects = filteredProjectsByUser.filter((project) =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

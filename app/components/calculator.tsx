@@ -41,10 +41,6 @@ type Keyed = {
   key: number;
 };
 
-type Estimated = {
-  emission: number | undefined;
-};
-
 type Address = T.Address & {
   exists: boolean;
 };
@@ -62,7 +58,7 @@ type Stage =
     impossible: boolean;
   })
   & Keyed
-  & Estimated;
+  & T.Estimated;
 
 type Route =
   & {
@@ -70,16 +66,16 @@ type Route =
     stages: Stage[];
   }
   & Keyed
-  & Estimated;
+  & T.Estimated;
 
 type Chain = {
   routes: Route[];
-} & Estimated;
+} & T.Estimated;
 
 export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
   routes: [
     {
-      name: undefined,
+      name: "Route 1",
       stages: [
         {
           usesAddress: true,
@@ -103,7 +99,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
 });
 
 const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
-  (method) => ({
+  (method: T.TransportMethod) => ({
     value: method,
     label: T.getTransportMethodLabel(method),
   }),
@@ -114,6 +110,7 @@ export const loadChain = (
 ): Chain => ({
   routes: chain.routes.map((route, index): Route => ({
     ...route,
+    name: route.name,
     stages: route.stages.map((stage, index): Stage => (
       stage.usesAddress
         ? {
@@ -217,11 +214,12 @@ const Calculator = ({
    * suggestions.
    */
   const onSuggestionsRequested =
-    (index: number, fromOrTo: "from" | "to") =>
+    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
     async ({ value }: { value: string }) => {
-      const stage = chain.stages[index];
+      const route = chain.routes[routeIndex];
+      const stage = route.stages[stageIndex];
 
-      if (!stage.usesAddress) throw new Error("Stage uses distance");
+      if (!stage.usesAddress) throw Error("Stage uses distance");
 
       setError(undefined);
 
@@ -267,18 +265,20 @@ const Calculator = ({
       const output: Output = await response.json();
 
       if (output.length === 0) {
-        setChain((old: Chain): Chain => {
-          const stage = { ...old.stages[index] };
+        setChain((oldChain: Chain): Chain => {
+          const oldRoute = oldChain.routes[routeIndex];
+          const oldStage = oldRoute.stages[stageIndex];
 
-          if (!stage.usesAddress) throw new Error("Stage uses distance");
+          if (!oldStage.usesAddress) throw Error("Stage uses distance");
+
+          if (fromOrTo === "from") oldStage.from.exists = false;
+          else oldStage.to.exists = true;
 
           return {
-            ...old,
-            stages: old.stages.with(index, {
-              ...stage,
-              error: fromOrTo === "from"
-                ? "no such from address"
-                : "no such to address",
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, oldStage),
             }),
           };
         });
@@ -287,17 +287,21 @@ const Calculator = ({
         return;
       }
 
-      setChain((old: Chain): Chain => {
-        const stage = old.stages[index];
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
+
+        if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
         return {
-          ...old,
-          stages: old.stages.with(index, {
-            ...stage,
-            error: stage.error === "no such from address" ||
-                stage.error === "no such to address"
-              ? undefined
-              : stage.error,
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, {
+              ...oldStage,
+              from: { ...oldStage.from, exists: true },
+              to: { ...oldStage.to, exists: true },
+            }),
           }),
         };
       });
@@ -309,19 +313,23 @@ const Calculator = ({
    * TODO
    */
   const onSuggestionSelected =
-    (index: number, fromOrTo: "from" | "to") =>
+    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
     (_: any, { suggestion }: { suggestion: Address }) => {
-      setChain((old: Chain): Chain => {
-        const stage = { ...old.stages[index] };
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
-        if (!stage.usesAddress) throw new Error("Stage uses distance");
+        if (!oldStage.usesAddress) throw new Error("Stage uses distance");
 
-        if (fromOrTo === "from") stage.from = suggestion;
-        else stage.to = suggestion;
+        if (fromOrTo === "from") oldStage.from = suggestion;
+        else oldStage.to = suggestion;
 
         return {
-          ...old,
-          stages: old.stages.with(index, stage),
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, oldStage),
+          }),
         };
       });
     };
@@ -606,13 +614,21 @@ const Calculator = ({
   };
 
   const onAddRoute = () => {
-    setChain((old: Chain): Chain => {
+    setChain((oldChain: Chain): Chain => {
+      let next_number = 1;
+
+      const route_names: string[] = [];
+
+      for (const route of oldChain.routes) {
+        const something = route.name.;
+      }
+
       return {
-        ...old,
+        ...oldChain,
         routes: [
-          ...old.routes,
+          ...oldChain.routes,
           {
-            name: undefined,
+            name: ,
             stages: [
               {
                 usesAddress: true,
@@ -797,11 +813,15 @@ const Calculator = ({
 
   return (
     <div
-      className={isCreateProject
-        ? "justify-center items-center flex flex-col gap-4 "
-        : "flex flex-col gap-4 "}
+      className={
+        isCreateProject
+          ? "justify-center items-center flex flex-col gap-4  font-mono"
+          : "flex flex-col gap-4 font-mono "
+      }
     >
-      <h1 className=" text-primary text-4xl font-bold">Calculate Emissions</h1>
+      <h1 className=" text-primary text-4xl font-bold font-mono">
+        {isCreateProject ? "" : "Calculate Emissions"}
+      </h1>
       <form onSubmit={onCalculate}>
         <Button
           className="w-full"

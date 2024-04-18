@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, project } from "../lib/Transport.ts";
+import { Stage, getTransportMethodLabel, project } from "../lib/Transport.ts";
 import {
   Card,
   CardContent,
@@ -26,6 +26,8 @@ import {
   TableRow,
 } from "./ui/table.tsx";
 import tree from "../assets/tree.svg";
+import DataVisualization from "./DataVisualization.tsx";
+import { useRevalidator } from "@remix-run/react";
 
 interface Props {
   project: project;
@@ -40,6 +42,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
   const [formData, setFormData] = useState<FormData>(initialFormState);
   const [titleProject, setTitleProject] = useState(project.title);
+  const [message, setMessage] = useState("");
   const [descriptionProject, setDescriptionProject] = useState(
     project.description
   );
@@ -65,19 +68,29 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   };
 
   const handleUpdateProject = () => {
-    const project_ = {
-      projId: project.id,
-      title: titleProject,
-      descriptionProject: descriptionProject as string,
-      calc: JSON.stringify(formData),
-    };
-    fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
+    if (formData.emissions != project.emissions) {
+      const project_ = {
+        projId: project.id,
+        title: titleProject,
+        descriptionProject: descriptionProject as string,
+        calc: JSON.stringify(formData),
+      };
+      fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
+
+      setMessage("Project updated");
+
+      setTimeout(() => {
+        window.location.reload();
+
+        setMessage("");
+      }, 2000);
+    }
   };
 
   return (
     /* create a project page */
-    <div className=" flex flex-col justify-center items-center ">
-      <Card>
+    <div className="flex flex-col justify-center items-center p-2 sm:p-10">
+      <Card className="w-full sm:w-auto">
         <CardHeader>
           <CardTitle>{project.title}</CardTitle>
           <CardDescription>{project.description}</CardDescription>
@@ -87,7 +100,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <Table>
             <TableCaption>
               Emissions in total:{" "}
-              {project.emissions ? project.emissions.emissions?.totalKg : 0}
+              {project.emissions ? project.emissions?.totalKg : 0}
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -108,7 +121,15 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                       <TableRow>
                         <TableCell>
                           {project.emissions
-                            ? project.emissions.stages[index].transportMethod
+                            ? getTransportMethodLabel(
+                                project.emissions.stages[index]
+                                  .transportMethod as
+                                  | "truck"
+                                  | "etruck"
+                                  | "cargoship"
+                                  | "aircraft"
+                                  | "train"
+                              )
                             : ""}
                         </TableCell>
                         <TableCell>
@@ -141,6 +162,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
               </TableBody>
             )}
           </Table>
+          <DataVisualization project={project} />
+
           {calculators.map((calculator: CalculatorInstance) => (
             <div key={calculator.id} className=" w-full">
               <Calculator
@@ -160,7 +183,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         <CardFooter>
           <div className=" flex gap-4 flex-col w-full">
             <Button onClick={addCalculator} className="w-full">
-              Add a new Calculator
+              {calculators.length === 0
+                ? "Update calculator "
+                : "Add another calculator"}
             </Button>
             <Button
               className="border-black border rounded"
@@ -169,6 +194,11 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             >
               update
             </Button>
+            {message != "" && (
+              <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
+                {message}
+              </div>
+            )}
           </div>
         </CardFooter>
       </Card>
