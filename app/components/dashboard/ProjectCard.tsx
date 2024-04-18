@@ -27,7 +27,7 @@ import {
 } from "../ui/accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
-import { Stage, TransportListItem2 } from "../../lib/Transport.ts";
+import { Stage } from "../../lib/Transport.ts";
 import { emissions } from "../../lib/Transport.ts";
 
 const ProjectCard = ({

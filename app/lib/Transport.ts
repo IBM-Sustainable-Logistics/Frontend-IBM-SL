@@ -74,32 +74,25 @@ export type Chain = {
   routes: Route[],
 } & Estimated;
 
-// export type TransportListItem2 = {
-//     to: string,
-//     from: string,
-//     distance: number,
-//     transportMethod: string
-// }
+export interface project {
+    created_at: string;
+    description: string | null;
+    emissions: emissions | null;
+    stages: Stage[];
+    id: string;
+    title: string;
+    user_id: string;
+}
 
-// export interface project {
-//     created_at: string;
-//     description: string | null;
-//     emissions: emissions | null;
-//     stages: stages;
-//     id: string;
-//     title: string;
-//     user_id: string;
-// }
+export interface CalculatorInstance {
+    id: number;
+}
 
-// export interface CalculatorInstance {
-//     id: number;
-// }
-
-// export interface emissions {
-//     stages: {
-//         kg: number | null;
-//         transportMethod: string ;
-//     }[],
-//     totalKg: number | null
-// }
+export interface emissions {
+    stages: {
+        kg: number | null;
+        transportMethod: string ;
+    }[],
+    totalKg: number | null
+}
 

@@ -8,11 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card.tsx";
-import Calculator, {
-  defaultFormData,
-  FormData,
-  loadFormData,
-} from "./calculator.tsx";
+import Calculator, * as C from "./calculator.tsx";
 import { CalculatorInstance, emissions } from "./../lib/Transport.ts";
 import { useFetcher } from "@remix-run/react";
 import { Button } from "./ui/button.tsx";
@@ -34,10 +30,17 @@ interface Props {
 }
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
-  const initialFormState: FormData = loadFormData(
-    project.stages as Stage[],
-    project.emissions as emissions
-  );
+  const initialFormState: C.Chain = C.loadChain({
+    routes: [
+      {
+        name: "Unique Route Name",
+        stages: project.stages as Stage[],
+        key: Math.random(),
+        emission: undefined,
+      },
+    ],
+    emission: project.emissions as emissions,
+});
 
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
   const [formData, setFormData] = useState<FormData>(initialFormState);
