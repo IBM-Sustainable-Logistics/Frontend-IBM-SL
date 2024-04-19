@@ -31,19 +31,12 @@ interface Props {
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
   const initialFormState: C.Chain = C.loadChain({
-    routes: [
-      {
-        name: "Unique Route Name",
-        stages: project.stages as Stage[],
-        key: Math.random(),
-        emission: undefined,
-      },
-    ],
-    emission: project.emissions as emissions,
-});
+    routes: project.routes,
+    emission: project.emissions,
+  });
 
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
-  const [formData, setFormData] = useState<FormData>(initialFormState);
+  const [chain, setChain] = useState<C.Chain>(initialFormState);
   const [titleProject, setTitleProject] = useState(project.title);
   const [message, setMessage] = useState("");
   const [descriptionProject, setDescriptionProject] = useState(
@@ -71,20 +64,19 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   };
 
   const handleUpdateProject = () => {
-    if (formData.emissions != project.emissions) {
+    console.log(chain, project.Chain);
+    if (chain.routes != project.routes) {
       const project_ = {
         projId: project.id,
         title: titleProject,
         descriptionProject: descriptionProject as string,
-        calc: JSON.stringify(formData),
+        calc: JSON.stringify(chain),
       };
       fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
 
       setMessage("Project updated");
 
       setTimeout(() => {
-        window.location.reload();
-
         setMessage("");
       }, 2000);
     }
@@ -100,79 +92,59 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <img src={tree} alt="IBM Logo" className="h-40" />
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableCaption>
-              Emissions in total:{" "}
-              {project.emissions ? project.emissions?.totalKg : 0}
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Transport Form</TableHead>
-                <TableHead>Distance KM</TableHead>
-                <TableHead>From</TableHead>
-                <TableHead>To</TableHead>
-                <TableHead className="text-right">
-                  Amount of co2 in kg
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            {project.emissions ? (
-              <>
+          {project.routes.map((route) => (
+            <>
+              <Table>
+                <TableCaption>
+                  Emissions in total: {project.emissions} for route {route.name}
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Transport Form</TableHead>
+                    <TableHead>Distance KM</TableHead>
+                    <TableHead>From</TableHead>
+                    <TableHead>To</TableHead>
+                    <TableHead className="text-right">
+                      Amount of co2 in kg
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+
                 <TableBody>
-                  {project.stages.map((stage, index) => (
-                    <>
-                      <TableRow>
-                        <TableCell>
-                          {project.emissions
-                            ? getTransportMethodLabel(
-                                project.emissions.stages[index]
-                                  .transportMethod as
-                                  | "truck"
-                                  | "etruck"
-                                  | "cargoship"
-                                  | "aircraft"
-                                  | "train"
-                              )
-                            : ""}
-                        </TableCell>
-                        <TableCell>
-                          {stage.usesAddress ? "" : stage.distance}
-                        </TableCell>
-                        <TableCell>
-                          {stage.usesAddress
-                            ? stage.from.city + " " + stage.from.country
-                            : ""}
-                        </TableCell>
-                        <TableCell>
-                          {stage.usesAddress
-                            ? stage.to.city + " " + stage.to.country
-                            : ""}
-                        </TableCell>
-                        <TableCell>
-                          {" "}
-                          {project.emissions
-                            ? project.emissions.stages[index].kg
-                            : ""}
-                        </TableCell>
-                      </TableRow>
-                    </>
+                  {route.stages.map((stage: Stage, index: number) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        {getTransportMethodLabel(stage.transportMethod)}
+                      </TableCell>
+
+                      {stage.usesAddress ? (
+                        <>
+                          <TableCell></TableCell>
+                          <TableCell>{stage.from.city}</TableCell>
+                          <TableCell>{stage.to.city}</TableCell>
+                        </>
+                      ) : (
+                        <>
+                          <TableCell>{stage.distance}</TableCell>
+                        </>
+                      )}
+                      <TableCell className="text-right">
+                        {stage.emission ? route.emission : 0}
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
-              </>
-            ) : (
-              <TableBody>
-                <TableRow>no calculations</TableRow>
-              </TableBody>
-            )}
-          </Table>
-          <DataVisualization project={project} />
+              </Table>
+              <DataVisualization stages={route.stages} />
+            </>
+          ))}
 
           {calculators.map((calculator: CalculatorInstance) => (
             <div key={calculator.id} className=" w-full">
               <Calculator
                 isCreateProject={true}
-                formData={formData}
-                setFormData={setFormData}
+                chain={chain}
+                setChain={setChain}
               />
               <Button
                 variant="destructive"

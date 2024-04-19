@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
-import { project } from "../lib/Transport.ts";
+import { Stage, project } from "../lib/Transport.ts";
 
 type DataProps = {
-  project: project;
+  stages: Stage[];
 };
 
-const DataVisualization: React.FC<DataProps> = ({ project }) => {
+const DataVisualization: React.FC<DataProps> = ({ stages }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,17 +15,17 @@ const DataVisualization: React.FC<DataProps> = ({ project }) => {
         datasets: [
           {
             label: "CO2 emission kg",
-            backgroundColor: project.emissions?.stages.map((stage) => {
+            backgroundColor: stages.map((stage) => {
               return stage.transportMethod === "truck"
                 ? "rgba(29, 149, 39, 0.2)"
                 : "rgba(54, 162, 235, 0.2)";
             }),
             borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1,
-            data: project.emissions?.stages.map((stage) => stage.kg),
+            data: stages.map((stage) => stage.emission || 0),
           },
         ],
-        labels: project.stages.map((stage, index) => {
+        labels: stages.map((stage, index) => {
           return `Stage ${index + 1}- ${
             stage.usesAddress
               ? "from " +

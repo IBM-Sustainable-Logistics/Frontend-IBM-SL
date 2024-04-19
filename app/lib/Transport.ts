@@ -77,8 +77,9 @@ export type Chain = {
 export interface project {
     created_at: string;
     description: string | null;
-    emissions: emissions | null;
-    stages: Stage[];
+    chain: Chain;
+    routes: Route[];
+    emissions: number ;
     id: string;
     title: string;
     user_id: string;
