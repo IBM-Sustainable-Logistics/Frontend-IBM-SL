@@ -315,7 +315,9 @@ const UploadFile = () => {
     }
   }
 
-  //const { projects, userId } = useLoaderData<typeof loader>();
+  function redirectToProjects(){
+    return redirect("/projects");
+  }
 
   return (
     <div>
@@ -385,12 +387,7 @@ const UploadFile = () => {
         )}
       {fileIsSent &&
         (
-          <div className=" min-h-screen flex items-center justify-center">
-            <Calculator
-              isCreateProject={false}
-              formData={formData}
-              setFormData={setFormData}
-            />
+          <div className=" min-h-screen flex items-center justify-center" onLoad={redirectToProjects}>
           </div>
         )}
     </div>
