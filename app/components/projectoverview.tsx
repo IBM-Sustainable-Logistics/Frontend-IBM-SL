@@ -30,10 +30,7 @@ interface Props {
 }
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
-  const initialFormState: C.Chain = C.loadChain({
-    routes: project.routes,
-    emission: project.emissions,
-  });
+  const initialFormState: C.Chain = project.chain as C.Chain;
 
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
   const [chain, setChain] = useState<C.Chain>(initialFormState);
@@ -64,8 +61,11 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   };
 
   const handleUpdateProject = () => {
-    console.log(chain, project.Chain);
-    if (chain.routes != project.routes) {
+    console.log(chain, project.chain);
+    if (
+      chain.emission != project.chain.emission ||
+      chain.routes.length != project.chain.routes.length
+    ) {
       const project_ = {
         projId: project.id,
         title: titleProject,

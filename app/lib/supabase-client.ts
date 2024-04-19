@@ -97,7 +97,7 @@ export async function deleteProject(projectId: string) {
 export async function getSingleProject(projectId: string) {
     const { data, error } = await supabase
         .from('projects')
-        .select(' id, created_at, title, description, user_id, description, emissions: calculation->emission, routes:  calculation->routes')
+        .select(' id, created_at, title, description, user_id, description, emissions: calculation->emission, routes:  calculation->routes,chain: calculation')
         .eq('id', projectId);
     if (error) {
         console.error("Error fetching project:", error);
