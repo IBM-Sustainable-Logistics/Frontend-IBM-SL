@@ -121,7 +121,6 @@ const UploadFile = () => {
 
       // File size limit is 15MB
       if (file.size <= 1048576) {
-        setIsSent(true);
         await readFile();
       } else {
         alert("Please upload a file less than 15 MB!");
@@ -257,6 +256,7 @@ const UploadFile = () => {
       body: JSON.stringify(newFormState),
     });
     if (!response.ok) {
+      setIsSent(false);
       console.error(
         "Error! Got response code: " +
         response.status +
@@ -266,6 +266,7 @@ const UploadFile = () => {
       alert("Error uploading, please try again.");
       deleteUpload();
     } else {
+      setIsSent(true);
       console.log("Status: " + response.status);
     }
   }
