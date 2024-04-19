@@ -25,7 +25,23 @@ import { useLoaderData } from "@remix-run/react";
  * Same function for checking if user has signed in,
  * taken from: projects._index.tsx.
  */
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
+    request,
+  });
 
+  const projects = await getProjects();
+
+  console.log(projects);
+
+  if (!serverSession) {
+    return redirect("/signin", { headers });
+  }
+
+  const userId = serverSession.user.id;
+
+  return json({ success: true, projects, userId }, { headers });
+};
 
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
