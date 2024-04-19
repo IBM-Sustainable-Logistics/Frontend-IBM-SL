@@ -81,11 +81,11 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
           usesAddress: true,
           transportMethod: "truck",
           from: from
-            ? { ...from, exists: false }
-            : { ...T.emptyAddress, exists: false },
+            ? { ...from, exists: true }
+            : { ...T.emptyAddress, exists: true },
           to: to
-            ? { ...to, exists: false }
-            : { ...T.emptyAddress, exists: false },
+            ? { ...to, exists: true }
+            : { ...T.emptyAddress, exists: true },
           impossible: false,
           key: Math.random(),
           emission: undefined,
@@ -116,7 +116,7 @@ export const loadChain = (
         ? {
           ...stage,
           from: { ...stage.from, exists: true },
-          to: { ...stage.to, exists: false },
+          to: { ...stage.to, exists: true },
           impossible: false,
           key: index,
           emission: undefined,
@@ -272,7 +272,7 @@ const Calculator = ({
           if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
           if (fromOrTo === "from") oldStage.from.exists = false;
-          else oldStage.to.exists = true;
+          else oldStage.to.exists = false;
 
           return {
             ...oldChain,
@@ -563,7 +563,6 @@ const Calculator = ({
             transportMethod: beforeStage.transportMethod,
             from: {
               ...beforeStage.to,
-              exists: false,
             },
             to: { ...T.emptyAddress, exists: false },
             impossible: false,
@@ -619,8 +618,8 @@ const Calculator = ({
       const used_numbers: number[] = [];
 
       for (const route of oldChain.routes) {
-        if (route.name.startsWith("Project ")) {
-          const number = parseInt(route.name.substring(8));
+        if (route.name.startsWith("Route ")) {
+          const number = parseInt(route.name.substring(6));
 
           if (!isNaN(number)) {
             used_numbers.push(number);
@@ -629,14 +628,16 @@ const Calculator = ({
       }
 
       let suffix_number = 1;
-      next_number: do {
+      next_number: while (true) {
         for (const number of used_numbers) {
+          console.log(number, " === ", suffix_number);
           if (number === suffix_number) {
             suffix_number++;
             continue next_number;
           }
         }
-      } while (false);
+        break;
+      }
 
       return {
         ...oldChain,
@@ -648,8 +649,8 @@ const Calculator = ({
               {
                 usesAddress: true,
                 transportMethod: "truck",
-                from: { ...T.emptyAddress, exists: false },
-                to: { ...T.emptyAddress, exists: false },
+                from: { ...T.emptyAddress, exists: true },
+                to: { ...T.emptyAddress, exists: true },
                 impossible: false,
                 key: Math.random(),
                 emission: undefined,
@@ -1060,14 +1061,16 @@ const Calculator = ({
               </Button>
             </div>
           ))}
-          <Button
-            className="w-full"
-            variant={"destructive"}
-            type="button"
-            onClick={onRemoveRoute(routeIndex)}
-          >
-            Remove Route
-          </Button>
+          {chain.routes.length <= 1 ? null : (
+            <Button
+              className="w-full"
+              variant={"destructive"}
+              type="button"
+              onClick={onRemoveRoute(routeIndex)}
+            >
+              Remove Route
+            </Button>
+          )}
         </>))}
         <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate

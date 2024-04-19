@@ -15,7 +15,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 const CalculateEmissionsPage = () => {
   const initialChain: C.Chain = C.defaultChain(
     // Use these two cities as examples for the user. Maybe change later.
-    { city: "Copenhagen", country: "" },
+    { city: "", country: "" },
     { city: "", country: "" }
   );
 
