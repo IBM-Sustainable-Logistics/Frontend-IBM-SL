@@ -338,40 +338,42 @@ const Calculator = ({
    * TODO
    */
   const renderSuggestion = (place: "city" | "country") =>
-  (
-    suggestion: Address,
-    {
-      query: inputValue,
-      isHighlighted,
-    }: {
-      query: string;
-      isHighlighted: boolean;
-    },
-  ) => {
-    const city = place === "city"
-      ? (
-        <>
-          <b>{inputValue}</b>
-          {suggestion.city.slice(inputValue.length)}
-        </>
-      )
-      : <>{suggestion.city}</>;
+    (
+      suggestion: Address,
+      {
+        query: inputValue,
+        isHighlighted,
+      }: {
+        query: string;
+        isHighlighted: boolean;
+      }
+    ) => {
+      // const city =
+      //   place === "city" ? (
+      //     <>
+      //       <b>{inputValue}</b>
+      //       {suggestion.city.slice(inputValue.length)}
+      //     </>
+      //   ) : (
+      //     <>{suggestion.city}</>
+      //   );
+      //
+      // const country =
+      //   place === "country" ? (
+      //     <>
+      //       <b>{inputValue}</b>
+      //       {suggestion.country.slice(inputValue.length)}
+      //     </>
+      //   ) : (
+      //     <>{suggestion.country}</>
+      //   );
 
-    const country = place === "country"
-      ? (
-        <>
-          <b>{inputValue}</b>
-          {suggestion.country.slice(inputValue.length)}
-        </>
-      )
-      : <>{suggestion.country}</>;
-
-    return (
-      <span className={isHighlighted ? "bg-blue-200" : ""}>
-        {city}, {country}
-      </span>
-    );
-  };
+      return (
+        <span className={isHighlighted ? "bg-blue-200" : ""}>
+          {suggestion.city}, {suggestion.country}
+        </span>
+      );
+    };
 
   interface EventTarget {
     value?: string;
