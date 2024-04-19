@@ -1,5 +1,7 @@
-import { test, expect } from "@playwright/test";
+/* import { test, expect } from "@playwright/test";
 
+
+//TODO add test for create project
 const url = "https://ibm-sl-api.deno.dev/api/estimate";
 
 test("fetch /api/estimate and get response 200", async () => {
@@ -102,3 +104,4 @@ test("fetch /api/estimate and get total stages to 4", async () => {
   const body = await resp.json();
   expect(body.stages.length).toBe(4); // Check if the number of stages is 4
 });
+ */

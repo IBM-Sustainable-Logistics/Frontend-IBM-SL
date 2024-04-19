@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 
-import Calculator, {
-  FormData,
-  defaultFormData,
-} from "../components/calculator.tsx";
+import Calculator, * as C from "../components/calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
@@ -16,20 +13,20 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const CalculateEmissionsPage = () => {
-  const initialFormState: FormData = defaultFormData(
+  const initialChain: C.Chain = C.defaultChain(
     // Use these two cities as examples for the user. Maybe change later.
-    { city: "Copenhagen", country: "" },
+    { city: "", country: "" },
     { city: "", country: "" }
   );
 
-  const [formData, setFormData] = useState<FormData>(initialFormState);
+  const [chain, setChain] = useState<C.Chain>(initialChain);
 
   return (
     <div className=" min-h-screen flex items-center justify-center">
       <Calculator
         isCreateProject={false}
-        formData={formData}
-        setFormData={setFormData}
+        chain={chain}
+        setChain={setChain}
       />
     </div>
   );

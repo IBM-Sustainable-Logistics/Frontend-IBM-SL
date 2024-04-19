@@ -27,19 +27,22 @@ import {
 } from "../ui/accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
-import { Stage, TransportListItem2 } from "../../lib/Transport.ts";
+import { Route, Stage, getTransportMethodLabel } from "../../lib/Transport.ts";
 import { emissions } from "../../lib/Transport.ts";
+import { routes } from "../../../remix.config.js";
 
 const ProjectCard = ({
   id,
   title,
   description,
-  emissions,
+  emission,
+  routes,
 }: {
   id: string;
   title: string;
   description: string | null;
-  emissions: emissions | null;
+  emission: number;
+  routes: Route[];
 }) => {
   const fetcher = useFetcher();
 
@@ -61,7 +64,7 @@ const ProjectCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Estimation amount: {emissions ? emissions.totalKg : 0} kg</p>
+        <p>Estimation amount: {emission ? emission : 0} kg</p>
       </CardContent>
       <CardFooter className="flex justify-between gap-4">
         <Dialog>
@@ -112,21 +115,47 @@ const ProjectCard = ({
             </DialogHeader>
             {/* Content for the dialog's form will go here */}
             <Accordion type="single" collapsible>
-              {emissions
-                ? emissions.stages.map((s, index) => (
-                    <>
-                      <AccordionItem value={"item " + index}>
-                        <AccordionTrigger>
-                          {/* We need to replace this with the transportation method */}
-                          {"Transport type" + " " + s.transportMethod}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {"Emissions estimated at: " + s.kg} kg
-                        </AccordionContent>
-                      </AccordionItem>
-                    </>
-                  ))
-                : "none"}
+              {routes.map((route, index) => (
+                <AccordionItem key={index} value={"item " + index}>
+                  <AccordionTrigger>
+                    <h2>{route.name}</h2>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Transport Form</th>
+                          <th>From</th>
+                          <th>To</th>
+                          <th className="text-right">Amount of co2 in kg</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {route.stages.map((stage, index) => (
+                          <tr key={index}>
+                            <td>
+                              {getTransportMethodLabel(stage.transportMethod)}
+                            </td>
+                            <td>
+                              {stage.usesAddress
+                                ? `${stage.from.city}, ${stage.from.country}`
+                                : "N/A"}
+                            </td>
+                            <td>
+                              {stage.usesAddress
+                                ? `${stage.to.city}, ${stage.to.country}`
+                                : "N/A"}
+                            </td>
+                            <td className="text-right">
+                              {route.emission ? route.emission : 0}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
 
             <Link to={id}>
@@ -160,7 +189,7 @@ const ProjectCard = ({
             id={id}
             title={title}
             description={description}
-            emissions={emissions}
+            emissions={emission}
           />
         </Dialog>
       </CardFooter>
