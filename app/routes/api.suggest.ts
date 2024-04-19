@@ -11,7 +11,7 @@ export const loader = async ({
         return new Response("Invalid method", { status: 405 });
       }
 
-      const url = new URL(`${backendUrl}api/suggest`);
+      const url = new URL(`${backendUrl}api/fuzzy`);
 
       const res = await fetch(url.toString(), {
         method: "GET",
@@ -34,7 +34,7 @@ export const action = async ({
     case "POST": {
       const body = await request.json();
 
-      const url = new URL(`${backendUrl}api/suggest`);
+      const url = new URL(`${backendUrl}api/fuzzy`);
 
 
       const res = await fetch(url, {
