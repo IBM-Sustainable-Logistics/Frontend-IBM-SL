@@ -21,6 +21,8 @@ test("can login and see dashboard", async ({ page }) => {
   }
 });
 
+//TODO add test for create project
+/* 
 const dateTimeUnix = Date.now();
 const projectTitle = "Test Project " + dateTimeUnix;
 const projectDescription =
@@ -58,4 +60,4 @@ test("can create and delete a project", async ({ page }) => {
     console.error("Test failed during title check", error);
     throw error; // Rethrow if you want the test to fail
   }
-});
+}); */

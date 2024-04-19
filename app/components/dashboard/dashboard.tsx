@@ -87,7 +87,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                 id={p.id}
                 title={p.title}
                 description={p.description}
-                emissions={p.emissions}
+                routes={p.routes}
+                emission={p.emissions}
               />
             );
           })}

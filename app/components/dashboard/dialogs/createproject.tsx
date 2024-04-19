@@ -13,14 +13,14 @@ import {
 import { Button } from "../../ui/button.tsx";
 import { PlusIcon } from "../../../lib/Icons.tsx";
 import { Input } from "../../ui/input.tsx";
-import Calculator, { FormData, defaultFormData } from "../../calculator.tsx";
+import Calculator, { Chain, defaultChain } from "../../calculator.tsx";
 
 interface Props {
   UserId: string;
 }
 
-const CreateProject: React.FC<Props> = ({ UserId }) => {
-  const [formData, setFormData] = useState<FormData>(defaultFormData());
+const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
+  const [chain, setChain] = useState<Chain>(defaultChain());
   const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
@@ -47,7 +47,7 @@ const CreateProject: React.FC<Props> = ({ UserId }) => {
       title: titleProject,
       descriptionProject: descriptionProject,
       userId: UserId,
-      calc: JSON.stringify(formData),
+      calc: JSON.stringify(chain),
     };
     fetcher.submit(project, { method: "POST", action: "/api/project" });
   };
@@ -69,20 +69,20 @@ const CreateProject: React.FC<Props> = ({ UserId }) => {
                 type="text"
                 placeholder="Title"
                 className="w-full"
-                onChange={(e) => setTitleProject(e.target.value)}
+                onChange={(e: any) => setTitleProject(e.target.value)}
               />
               <Input
                 type="text"
                 placeholder="Description"
                 className="w-full"
-                onChange={(e) => setDescriptionProject(e.target.value)}
+                onChange={(e: any) => setDescriptionProject(e.target.value)}
               />
               {calculators.map((calculator: CalculatorInstance) => (
                 <div key={calculator.id} className=" w-full">
                   <Calculator
                     isCreateProject={true}
-                    formData={formData}
-                    setFormData={setFormData}
+                    chain={chain}
+                    setChain={setChain}
                   />
                   <Button
                     variant="destructive"

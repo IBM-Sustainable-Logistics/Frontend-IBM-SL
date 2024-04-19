@@ -1,5 +1,3 @@
-import { Json } from "./utils/types.ts";
-
 export const truckTransportMethods = [
     "truck",
     "etruck",
@@ -42,32 +40,46 @@ export const getTransportMethodLabel = (method: TransportMethod): string => {
     }
 }
 
-export type Address = { city: string, country: string };
-
-export type Stage = {
-    usesAddress: false,
-    transportMethod: TransportMethod,
-    distance: number,
-} | {
-    usesAddress: true,
-    transportMethod: TruckTransportMethod,
-    from: Address,
-    to: Address,
+export type Address = {
+  city: string,
+  country: string,
 };
 
+export const emptyAddress = {
+  city: "",
+  country: "",
+} as const;
 
-export type TransportListItem2 = {
-    to: string,
-    from: string,
-    distance: number,
-    transportMethod: string
-}
+export type Estimated = {
+  emission: number | undefined;
+};
+
+export type Stage = ({
+  usesAddress: false,
+  transportMethod: TransportMethod,
+  distance: number,
+} | {
+  usesAddress: true,
+  transportMethod: TruckTransportMethod,
+  from: Address,
+  to: Address,
+}) & Estimated;
+
+export type Route = {
+  name: string,
+  stages: Stage[],
+} & Estimated;
+
+export type Chain = {
+  routes: Route[],
+} & Estimated;
 
 export interface project {
     created_at: string;
     description: string | null;
-    emissions: emissions | null;
-    stages: stages;
+    chain: Chain;
+    routes: Route[];
+    emissions: number ;
     id: string;
     title: string;
     user_id: string;
@@ -84,6 +96,4 @@ export interface emissions {
     }[],
     totalKg: number | null
 }
-
-export type stages = Stage[];
 

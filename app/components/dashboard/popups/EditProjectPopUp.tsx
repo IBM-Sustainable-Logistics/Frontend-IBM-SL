@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "../../ui/dialog.tsx";
 import { Button } from "../../ui/button.tsx";
-import Calculator, { defaultFormData, FormData } from "../../calculator.tsx";
+import Calculator, { defaultChain, Chain } from "../../calculator.tsx";
 import { Link, useFetcher } from "@remix-run/react";
 import { Label } from "../../ui/label.tsx";
 
@@ -30,7 +30,7 @@ export const EditProjectPopUp: React.FC<Props> = ({
   id,
   title,
   description,
-}) => {
+}: { id: any, title: any, description: any }) => {
   const [titleProject, setTitleProject] = useState(title);
   const [descriptionProject, setDescriptionProject] = useState(description);
 
@@ -55,13 +55,13 @@ export const EditProjectPopUp: React.FC<Props> = ({
             value={titleProject || ""}
             placeholder="title"
             className="w-full"
-            onChange={(e) => setTitleProject(e.target.value)}
+            onChange={(e: any) => setTitleProject(e.target.value)}
           />
           <Input
             value={(descriptionProject as string) || ""}
             placeholder="Description"
             className="w-full"
-            onChange={(e) => setDescriptionProject(e.target.value)}
+            onChange={(e: any) => setDescriptionProject(e.target.value)}
           />
 
           <Label>To edit calculations open project</Label>
