@@ -13227,6 +13227,7 @@
         "npm:@radix-ui/react-scroll-area@^1.0.5",
         "npm:@radix-ui/react-select@^2.0.0",
         "npm:@radix-ui/react-slot@^1.0.2",
+        "npm:@radix-ui/react-switch@^1.0.3",
         "npm:@radix-ui/react-toast@^1.1.5",
         "npm:@remix-run/css-bundle@^2.5.1",
         "npm:@remix-run/deno@^2.5.1",

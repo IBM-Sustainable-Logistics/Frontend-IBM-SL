@@ -8,11 +8,12 @@ import {
   CardTitle,
 } from "app/components/ui/card";
 import { Label } from "app/components/ui/label";
+import { Switch } from "app/components/ui/switch.tsx";
 
 import { useEffect, useState } from "react";
 import Calculator, { FormData } from "app/components/calculator";
-import * as d3 from 'd3';
 
+import * as d3 from 'd3';
 import readXlsxFile from 'read-excel-file';
 
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
@@ -24,27 +25,13 @@ import { useLoaderData } from "@remix-run/react";
  * Same function for checking if user has signed in,
  * taken from: projects._index.tsx.
  */
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
-    request,
-  });
 
-  const projects = await getProjects();
-
-  console.log(projects);
-
-  if (!serverSession) {
-    return redirect("/signin", { headers });
-  }
-
-  const userId = serverSession.user.id;
-
-  return json({ success: true, projects, userId }, { headers });
-};
 
 const UploadFile = () => {
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
+
+  const [isDistanceMode, setIsDistanceMode] = useState(false);
 
   // metadata for the chosen file
   const [fileIsSent, setIsSent] = useState(false);
@@ -251,24 +238,38 @@ const UploadFile = () => {
 
   async function updateFormState() {
     var newFormState: FormData;
-    newFormState = {
-      stages: [
-        {
-          usesAddress: true,
-          transportMethod: "truck",
-          from: {
-            city: dataMap.get("Origin city"),
-            country: dataMap.get("Origin country"),
+    if (!isDistanceMode) {
+      newFormState = {
+        stages: [
+          {
+            usesAddress: true,
+            transportMethod: "truck",
+            from: {
+              city: dataMap.get("Origin city"),
+              country: dataMap.get("Origin country"),
+            },
+            to: {
+              city: dataMap.get("Destination city"),
+              country: dataMap.get("Destination country"),
+            },
+            key: Math.random(),
           },
-          to: {
-            city: dataMap.get("Destination city"),
-            country: dataMap.get("Destination country"),
+        ],
+        emissions: undefined,
+      };
+    } else {
+      newFormState = {
+        stages: [
+          {
+            usesAddress: false,
+            transportMethod: "truck",
+            distance: dataMap.get("Distance"),
+            key: Math.random(),
           },
-          key: Math.random(),
-        },
-      ],
-      emissions: undefined,
-    };
+        ],
+        emissions: undefined,
+      };
+    }
     setFormData(newFormState);
     console.log("The new form state (1): " + dataMap.get("Origin city"));
     console.log("The new form state (2): " + dataMap.get("Origin country"));
@@ -298,7 +299,7 @@ const UploadFile = () => {
     }
   }
 
-  const { projects, userId } = useLoaderData<typeof loader>();
+  //const { projects, userId } = useLoaderData<typeof loader>();
 
   return (
     <div>
@@ -312,7 +313,7 @@ const UploadFile = () => {
             onDragLeave={dragHoverEnd}
           >
             <Card
-              className="w-[350px]"
+              className="w-[450px]"
               style={{
                 backgroundColor: onHover ? "lightgray" : "white",
               }}
@@ -360,6 +361,8 @@ const UploadFile = () => {
                       Choose file
                     </Button>
                   )}
+                <Switch id="use-distance" checked={isDistanceMode} onCheckedChange={setIsDistanceMode} />
+                <Label htmlFor="use-distance">Use distance?</Label>
               </CardFooter>
             </Card>
           </div>
