@@ -254,6 +254,8 @@ const Calculator = ({
             " " +
             (await response.text()),
         );
+        setSuggestions([]);
+        return;
       }
 
       /** The json schema that the back-end uses for the output. */
