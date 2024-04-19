@@ -77,6 +77,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
       setMessage("Project updated");
 
       setTimeout(() => {
+        window.location.reload();
         setMessage("");
       }, 2000);
     }
