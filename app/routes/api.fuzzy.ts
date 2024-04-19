@@ -22,7 +22,7 @@ export const loader = async ({
         return new Response("Error fetching articles", { status: res.status });
       }
 
-      const data = await res.clone().json();
+      const data = await res.json();
       return new Response(JSON.stringify(data), { status: 200 });
 };
 
@@ -47,7 +47,7 @@ export const action = async ({
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
-      return res.clone().json();
+      return res.json();
     }
   }
 };
