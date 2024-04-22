@@ -20,6 +20,7 @@ import readXlsxFile from 'read-excel-file';
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { getProjects } from "../lib/supabase-client.ts";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 
 /**
  * Same function for checking if user has signed in,
@@ -44,6 +45,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const UploadFile = () => {
+  const { projects, userId } = useLoaderData<typeof loader>();
+
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
 
@@ -58,6 +61,8 @@ const UploadFile = () => {
     { city: "", country: "" },
     { city: "", country: "" }
   ));
+
+  const fetcher = useFetcher();
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -268,10 +273,10 @@ const UploadFile = () => {
         ]
       }
     ]
-      
-      
-  
-  )
+
+
+
+    )
 
     setChainData(newChain);
 
@@ -294,13 +299,20 @@ const UploadFile = () => {
       deleteUpload();
     } else {
       setIsSent(true);
-      
+      const project = {
+        title: "abc test",
+        descriptionProject: "desc test",
+        userId: userId,
+        calc: JSON.stringify(newChain),
+      };
+      console.log(newChain)
+      fetcher.submit(project, { method: "POST", action: "/api/project" });
       console.log("Status: " + response.status);
       console.log("chain:kg: " + response);
     }
   }
 
-  function redirectToProjects(){
+  function redirectToProjects() {
     return redirect("/projects");
   }
 
