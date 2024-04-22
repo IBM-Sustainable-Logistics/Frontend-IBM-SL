@@ -300,8 +300,8 @@ const UploadFile = () => {
     } else {
       setIsSent(true);
       const project = {
-        title: "abc test",
-        descriptionProject: "desc test",
+        title: "Uploaded project",
+        descriptionProject: "This project was uploaded by the user.",
         userId: userId,
         calc: JSON.stringify(newChain),
       };
