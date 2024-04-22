@@ -11,7 +11,8 @@ import { Label } from "app/components/ui/label";
 import { Switch } from "app/components/ui/switch.tsx";
 
 import { useEffect, useState } from "react";
-import Calculator, { FormData } from "app/components/calculator";
+import * as C from "../components/calculator.tsx";
+import * as T from "../lib/Transport.ts";
 
 import * as d3 from 'd3';
 import readXlsxFile from 'read-excel-file';
@@ -19,7 +20,6 @@ import readXlsxFile from 'read-excel-file';
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { getProjects } from "../lib/supabase-client.ts";
-import { useLoaderData } from "@remix-run/react";
 
 /**
  * Same function for checking if user has signed in,
@@ -53,24 +53,11 @@ const UploadFile = () => {
   const [fileIsSent, setIsSent] = useState(false);
   var [file, setFile] = useState<File | null>(null);
   const dataMap = new Map();
-  const [formData, setFormData] = useState<FormData>({
-    stages: [
-      {
-        usesAddress: true,
-        transportMethod: "truck",
-        from: {
-          city: dataMap.get("Origin city"),
-          country: dataMap.get("Origin country"),
-        },
-        to: {
-          city: dataMap.get("Destination city"),
-          country: dataMap.get("Destination country"),
-        },
-        key: Math.random(),
-      },
-    ],
-    emissions: undefined,
-  });
+  const [chainData, setChainData] = useState<C.Chain>(C.defaultChain(
+    // Use these two cities as examples for the user. Maybe change later.
+    { city: "", country: "" },
+    { city: "", country: "" }
+  ));
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -253,51 +240,47 @@ const UploadFile = () => {
   }
 
   async function updateFormState() {
-    var newFormState: FormData;
-    if (!isDistanceMode) {
-      newFormState = {
-        stages: [
-          {
-            usesAddress: true,
-            transportMethod: "truck",
-            from: {
-              city: dataMap.get("Origin city"),
-              country: dataMap.get("Origin country"),
-            },
-            to: {
-              city: dataMap.get("Destination city"),
-              country: dataMap.get("Destination country"),
-            },
-            key: Math.random(),
-          },
-        ],
-        emissions: undefined,
-      };
-    } else {
-      newFormState = {
-        stages: [
-          {
-            usesAddress: false,
-            transportMethod: "truck",
-            distance: dataMap.get("Distance"),
-            key: Math.random(),
-          },
-        ],
-        emissions: undefined,
-      };
-    }
-    setFormData(newFormState);
-    console.log("The new form state (1): " + dataMap.get("Origin city"));
-    console.log("The new form state (2): " + dataMap.get("Origin country"));
-    console.log("The new form state (3): " + dataMap.get("Destination city"));
-    console.log("The new form state (4): " + dataMap.get("Destination country"));
+    let originAddress: T.Address = {
+      city: dataMap.get("Origin city"),
+      country: dataMap.get("Origin country")
+    };
 
-    console.log("JSON.stringify: " + JSON.stringify(newFormState));
+    let destinationAddress: T.Address = {
+      city: dataMap.get("Destination city"),
+      country: dataMap.get("Destination country")
+    };
+
+    var newChain: C.Chain = ([
+      {
+        "id": "Primary Route",
+        "stages": [
+          {
+            "transport_form": "truck",
+            "from": {
+              "city": originAddress.city,
+              "country": originAddress.country
+            },
+            "to": {
+              "city": destinationAddress.city,
+              "country": destinationAddress.country
+            }
+          }
+        ]
+      }
+    ]
+      
+      
+  
+  )
+
+    setChainData(newChain);
+
+    console.log("JSON.stringify: " + JSON.stringify(newChain));
 
     const response = await fetch("/api/estimate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newFormState),
+      body: JSON.stringify(newChain),
     });
     if (!response.ok) {
       setIsSent(false);
@@ -311,7 +294,9 @@ const UploadFile = () => {
       deleteUpload();
     } else {
       setIsSent(true);
+      
       console.log("Status: " + response.status);
+      console.log("chain:kg: " + response);
     }
   }
 
