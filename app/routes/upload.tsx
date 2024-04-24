@@ -257,20 +257,37 @@ const UploadFile = () => {
   }
 
   async function updateFormState() {
-    let originAddress: T.Address = {
-      city: dataMap.get("Origin city"),
-      country: dataMap.get("Origin country")
-    };
+    let originAddress: T.Address;
+    let destinationAddress: T.Address;
+    let distance: Number;
 
-    let destinationAddress: T.Address = {
-      city: dataMap.get("Destination city"),
-      country: dataMap.get("Destination country")
-    };
+    if (isDistanceMode) {
+      distance = dataMap.get("Distance")
+      originAddress = {
+        city: "undefined",
+        country: "undefined"
+      };
+
+      destinationAddress = {
+        city: "undefined",
+        country: "undefined"
+      };
+    } else {
+      originAddress = {
+        city: dataMap.get("Origin city"),
+        country: dataMap.get("Origin country")
+      };
+
+      destinationAddress = {
+        city: dataMap.get("Destination city"),
+        country: dataMap.get("Destination country")
+      };
+    }
 
     var newChain: C.Chain = ([
       {
         "id": "Primary Route",
-        "stages": [
+        "stages": !isDistanceMode ? [
           {
             "transport_form": "truck",
             "from": {
@@ -282,13 +299,15 @@ const UploadFile = () => {
               "country": destinationAddress.country
             }
           }
-        ]
+        ] :
+          [
+            {
+              "transport_form": "truck",
+              "distance": dataMap.get("Distance")
+            }
+          ]
       }
-    ]
-
-
-
-    )
+    ])
 
     setChainData(newChain);
 
