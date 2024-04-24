@@ -5,6 +5,7 @@ import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
 import * as T from "../lib/Transport.ts";
+import { redirect } from "@remix-run/react";
 
 /* Termonology:
  * - Chain:
@@ -104,6 +105,10 @@ const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
     label: T.getTransportMethodLabel(method),
   }),
 );
+
+export async function goToUploadPage() {
+  return redirect("/upload", {});
+}
 
 export const loadChain = (
   chain: T.Chain,
@@ -1076,6 +1081,9 @@ const Calculator = ({
             </Button>
           )}
         </>))}
+        <Button className="w-full mt-5" variant={"ibm_green"} onClick={goToUploadPage}>
+          Upload File
+        </Button>
         <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
