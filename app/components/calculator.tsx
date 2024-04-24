@@ -830,8 +830,7 @@ const Calculator = ({
               "Error! Could not connect `" +
                 oldStage.from.city + ", " + oldStage.from.country + "` to `" +
                 oldStage.to.city + ", " + oldStage.to.country + "`. " +
-                "Please make sure the stage doesn't go over the ocean, " +
-                "or is otherwise impossible to travel.",
+                "Please make sure the stage is connected by roads.",
             );
             setMessage(undefined);
 
