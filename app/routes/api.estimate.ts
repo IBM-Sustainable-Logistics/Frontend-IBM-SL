@@ -19,7 +19,6 @@ export const loader = async ({
       });
 
       if (!res.ok) {
-        console.log(res.status)
         return new Response("Error fetching articles", { status: res.status });
       }
 
