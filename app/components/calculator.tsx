@@ -58,6 +58,9 @@ type Stage =
     to: Address;
     impossible: boolean;
   })
+  & {
+    cargo: number | undefined;
+  }
   & Keyed
   & T.Estimated;
 
@@ -81,6 +84,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
         {
           usesAddress: true,
           transportMethod: "truck",
+          cargo: undefined,
           from: from
             ? { ...from, exists: true }
             : { ...T.emptyAddress, exists: true },
@@ -211,6 +215,42 @@ const Calculator = ({
         }
       });
     };
+
+  /**
+   * TODO
+   */
+  const onCargoChanged =
+    (routeIndex: number, stageIndex: number) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value: inputValue } = e.target as EventTarget;
+
+      let inputNumber: number | undefined;
+
+      if (inputValue === "") {
+        inputNumber = undefined;
+      } else {
+        inputNumber = Number(inputValue);
+        if (isNaN(inputNumber) || inputNumber < 0) {
+          inputNumber = undefined;
+        }
+      }
+
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
+
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, {
+              ...oldStage,
+              cargo: inputNumber,
+            }),
+          }),
+        };
+      });
+    }
 
   /**
    * Given an index of a stage and whether it should use
@@ -404,21 +444,22 @@ const Calculator = ({
   (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value: inputValue } = event.target as EventTarget;
 
-    if (inputValue === undefined) return;
-
     setChain((oldChain: Chain): Chain => {
       const oldRoute = oldChain.routes[routeIndex];
       const oldStage = oldRoute.stages[stageIndex];
 
       if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-      // check which address to update
-      const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
-      // addressToUpdate.exists = true;
+      if (inputValue !== undefined) {
+        // check which address to update
+        const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
+        // addressToUpdate.exists = true;
 
-      // either update the city or country
-      if (place === "city") addressToUpdate.city = inputValue;
-      else addressToUpdate.country = inputValue;
+        // either update the city or country
+        if (place === "city") addressToUpdate.city = inputValue;
+        else addressToUpdate.country = inputValue;
+      }
+
       oldStage.impossible = false;
 
       return {
@@ -440,9 +481,15 @@ const Calculator = ({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value: inputValue } = e.target as EventTarget;
 
-      let inputNumber: number | undefined = Number(inputValue);
-      if (inputNumber < 0) {
+      let inputNumber: number | undefined;
+
+      if (inputValue === "") {
         inputNumber = undefined;
+      } else {
+        inputNumber = Number(inputValue);
+        if (isNaN(inputNumber) || inputNumber < 0) {
+          inputNumber = undefined;
+        }
       }
 
       setChain((oldChain: Chain): Chain => {
@@ -552,6 +599,7 @@ const Calculator = ({
                 {
                   usesAddress: true,
                   transportMethod: "truck",
+                  cargo: 0,
                   from: { ...T.emptyAddress, exists: true },
                   to: { ...T.emptyAddress, exists: true },
                   impossible: false,
@@ -570,6 +618,7 @@ const Calculator = ({
           ? {
             usesAddress: true,
             transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
             from: {
               ...beforeStage.to,
             },
@@ -581,6 +630,7 @@ const Calculator = ({
           : {
             usesAddress: false,
             transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
             distance: 0,
             key: Math.random(),
             emission: undefined,
@@ -658,6 +708,7 @@ const Calculator = ({
               {
                 usesAddress: true,
                 transportMethod: "truck",
+                cargo: 0,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
@@ -697,19 +748,18 @@ const Calculator = ({
       type Input = {
         id: string;
         stages: (
-          | {
+          ({
             transport_form: T.TransportMethod;
             distance_km: number;
           }
           | {
             transport_form: T.TruckTransportMethod;
+            from: { city: string; country?: string };
+            to: { city: string; country?: string };
+          })
+          & {
+            cargo_t?: number;
           }
-            & ({
-              from: { city: string; country: string };
-              to: { city: string; country: string };
-            } | {
-              distance_km: number;
-            })
         )[];
       }[];
 
@@ -721,11 +771,13 @@ const Calculator = ({
               stage.usesAddress
                 ? {
                   transport_form: stage.transportMethod,
+                  cargo_t: stage.cargo,
                   from: { city: stage.from.city, country: stage.from.country },
                   to: { city: stage.to.city, country: stage.to.country },
                 }
                 : {
                   transport_form: stage.transportMethod,
+                  cargo_t: stage.cargo,
                   distance_km: stage.distance || 0,
                 },
           ),
@@ -887,6 +939,30 @@ const Calculator = ({
                 type="transportType"
                 onChange={onTransportMethodChange(routeIndex, stageIndex)}
               />
+
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Cargo Weight (Tons):
+              </Label>
+              <Input
+                type="number"
+                id="cargo"
+                name="cargo"
+                className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                onChange={onCargoChanged(routeIndex, stageIndex)}
+              />
+
+              {T.isTruckTransportMethod(stage.transportMethod)
+                ? (
+                  <Button
+                    className="w-full"
+                    variant={"secondary"}
+                    type="button"
+                    onClick={onToggleUsesAddress(routeIndex, stageIndex, "address")}
+                  >
+                    Use Addresses?
+                  </Button>
+                )
+                : null}
 
               {stage.usesAddress
                 ? (
