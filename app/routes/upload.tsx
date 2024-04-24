@@ -10,9 +10,16 @@ import {
 import { Label } from "app/components/ui/label";
 import { Switch } from "app/components/ui/switch.tsx";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "app/components/ui/hover-card"
+
 import { useEffect, useState } from "react";
 import * as C from "../components/calculator.tsx";
 import * as T from "../lib/Transport.ts";
+import * as spinner from 'react-spinners'
 
 import * as d3 from 'd3';
 import readXlsxFile from 'read-excel-file';
@@ -21,6 +28,10 @@ import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { getProjects } from "../lib/supabase-client.ts";
 import { useFetcher, useLoaderData } from "@remix-run/react";
+
+export async function redirectToTemplateDescription() {
+  return redirect("/template");
+}
 
 /**
  * Same function for checking if user has signed in,
@@ -49,6 +60,7 @@ const UploadFile = () => {
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
+  const [shouldSpin, setShouldSpin] = useState(false);
 
   const [isDistanceMode, setIsDistanceMode] = useState(false);
 
@@ -298,7 +310,6 @@ const UploadFile = () => {
       alert("Error uploading, please try again.");
       deleteUpload();
     } else {
-      setIsSent(true);
       const project = {
         title: "Uploaded project",
         descriptionProject: "This project was uploaded by the user.",
@@ -309,10 +320,11 @@ const UploadFile = () => {
       fetcher.submit(project, { method: "POST", action: "/api/project" });
       console.log("Status: " + response.status);
       console.log("chain:kg: " + response);
+      setIsSent(true);
     }
   }
 
-  function redirectToProjects() {
+  async function redirectToProjects() {
     return redirect("/projects");
   }
 
@@ -379,6 +391,13 @@ const UploadFile = () => {
                 <Switch id="use-distance" checked={isDistanceMode} onCheckedChange={setIsDistanceMode} />
                 <Label htmlFor="use-distance">Use distance?</Label>
               </CardFooter>
+              <HoverCard>
+                <HoverCardTrigger>Which filetypes are supported?</HoverCardTrigger>
+                <HoverCardContent>
+                  The supported file-extensions are: <b>.csv (comma separated values)</b>, and <b>.xls/.xlsx (Excel) files</b>. For further information, click the button below: <Button variant="outline" onClick={redirectToTemplateDescription}>Templates</Button>
+                </HoverCardContent>
+              </HoverCard>
+
             </Card>
           </div>
         )}
