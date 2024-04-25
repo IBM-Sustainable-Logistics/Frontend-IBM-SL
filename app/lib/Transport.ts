@@ -63,10 +63,7 @@ export type Stage = ({
   transportMethod: TruckTransportMethod,
   from: Address,
   to: Address,
-}) & {
-  cargo: number,
-}
-  & Estimated;
+}) & Estimated;
 
 export type Route = {
   name: string,
