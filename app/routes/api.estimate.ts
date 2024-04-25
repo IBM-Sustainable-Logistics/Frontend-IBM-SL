@@ -44,11 +44,18 @@ export const action = async ({
         body: JSON.stringify(body),
       });
 
+      switch (res.status) {
+        case 200:
+          return res;
+        case 400:
+          return res;
+      }
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
-      return res.json();
+      return res;
     }
   }
 };

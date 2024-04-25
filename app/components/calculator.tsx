@@ -58,6 +58,9 @@ type Stage =
     to: Address;
     impossible: boolean;
   })
+  & {
+    cargo: number | undefined;
+  }
   & Keyed
   & T.Estimated;
 
@@ -81,6 +84,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
         {
           usesAddress: true,
           transportMethod: "truck",
+          cargo: undefined,
           from: from
             ? { ...from, exists: true }
             : { ...T.emptyAddress, exists: true },
@@ -106,7 +110,7 @@ const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
   }),
 );
 
-export async function goToUploadPage() {
+export function goToUploadPage() {
   return redirect("/upload", {});
 }
 
@@ -213,6 +217,78 @@ const Calculator = ({
       };
 
   /**
+   * TODO
+   */
+  const onCargoChanged =
+    (routeIndex: number, stageIndex: number) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value: inputValue } = e.target as EventTarget;
+
+      let inputNumber: number | undefined;
+
+      if (inputValue === "") {
+        inputNumber = undefined;
+      } else {
+        inputNumber = Number(inputValue);
+        if (isNaN(inputNumber) || inputNumber < 0) {
+          inputNumber = undefined;
+        }
+      }
+
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
+
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, {
+              ...oldStage,
+              cargo: inputNumber,
+            }),
+          }),
+        };
+      });
+    };
+
+  /**
+   * TODO
+   */
+  const onCargoChanged =
+    (routeIndex: number, stageIndex: number) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value: inputValue } = e.target as EventTarget;
+
+      let inputNumber: number | undefined;
+
+      if (inputValue === "") {
+        inputNumber = undefined;
+      } else {
+        inputNumber = Number(inputValue);
+        if (isNaN(inputNumber) || inputNumber < 0) {
+          inputNumber = undefined;
+        }
+      }
+
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
+
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, {
+              ...oldStage,
+              cargo: inputNumber,
+            }),
+          }),
+        };
+      });
+    };
+
+  /**
    * Given an index of a stage and whether it should use
    * the from or to address, returns an auto-suggest
    * onSuggestionsFetchRequested that updates the current
@@ -226,12 +302,12 @@ const Calculator = ({
 
         if (!stage.usesAddress) throw Error("Stage uses distance");
 
-        setError(undefined);
+      setError(undefined);
 
-        if (value.length === 0) {
-          setSuggestions([]);
-          return;
-        }
+      if (value.length === 0) {
+        setSuggestions([]);
+        return;
+      }
 
         /** The json schema that the back-end uses for the input. */
         type Input = {
@@ -345,42 +421,42 @@ const Calculator = ({
    * TODO
    */
   const renderSuggestion = (place: "city" | "country") =>
-    (
-      suggestion: Address,
-      {
-        query: inputValue,
-        isHighlighted,
-      }: {
-        query: string;
-        isHighlighted: boolean;
-      }
-    ) => {
-      // const city =
-      //   place === "city" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.city.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.city}</>
-      //   );
-      //
-      // const country =
-      //   place === "country" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.country.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.country}</>
-      //   );
+  (
+    suggestion: Address,
+    {
+      query: inputValue,
+      isHighlighted,
+    }: {
+      query: string;
+      isHighlighted: boolean;
+    },
+  ) => {
+    // const city =
+    //   place === "city" ? (
+    //     <>
+    //       <b>{inputValue}</b>
+    //       {suggestion.city.slice(inputValue.length)}
+    //     </>
+    //   ) : (
+    //     <>{suggestion.city}</>
+    //   );
+    //
+    // const country =
+    //   place === "country" ? (
+    //     <>
+    //       <b>{inputValue}</b>
+    //       {suggestion.country.slice(inputValue.length)}
+    //     </>
+    //   ) : (
+    //     <>{suggestion.country}</>
+    //   );
 
-      return (
-        <span className={isHighlighted ? "bg-blue-200" : ""}>
-          {suggestion.city}, {suggestion.country}
-        </span>
-      );
-    };
+    return (
+      <span className={isHighlighted ? "bg-blue-200" : ""}>
+        {suggestion.city}, {suggestion.country}
+      </span>
+    );
+  };
 
   interface EventTarget {
     value?: string;
@@ -404,22 +480,27 @@ const Calculator = ({
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       const { value: inputValue } = event.target as EventTarget;
 
-      if (inputValue === undefined) return;
+    if (inputValue === undefined) return;
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+      const oldStage = oldRoute.stages[stageIndex];
 
         if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
+      if (inputValue !== undefined) {
         // check which address to update
-        const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
+        const addressToUpdate = fromOrTo === "from"
+          ? oldStage.from
+          : oldStage.to;
         // addressToUpdate.exists = true;
 
         // either update the city or country
         if (place === "city") addressToUpdate.city = inputValue;
         else addressToUpdate.country = inputValue;
-        oldStage.impossible = false;
+      }
+
+      oldStage.impossible = false;
 
         return {
           ...oldChain,
@@ -440,10 +521,16 @@ const Calculator = ({
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value: inputValue } = e.target as EventTarget;
 
-        let inputNumber: number | undefined = Number(inputValue);
-        if (inputNumber < 0) {
+      let inputNumber: number | undefined;
+
+      if (inputValue === "") {
+        inputNumber = undefined;
+      } else {
+        inputNumber = Number(inputValue);
+        if (isNaN(inputNumber) || inputNumber < 0) {
           inputNumber = undefined;
         }
+      }
 
         setChain((oldChain: Chain): Chain => {
           const oldRoute = oldChain.routes[routeIndex];
@@ -552,6 +639,7 @@ const Calculator = ({
                 {
                   usesAddress: true,
                   transportMethod: "truck",
+                  cargo: 0,
                   from: { ...T.emptyAddress, exists: true },
                   to: { ...T.emptyAddress, exists: true },
                   impossible: false,
@@ -570,6 +658,7 @@ const Calculator = ({
           ? {
             usesAddress: true,
             transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
             from: {
               ...beforeStage.to,
             },
@@ -581,6 +670,7 @@ const Calculator = ({
           : {
             usesAddress: false,
             transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
             distance: 0,
             key: Math.random(),
             emission: undefined,
@@ -623,7 +713,6 @@ const Calculator = ({
 
   const onAddRoute = () => {
     setChain((oldChain: Chain): Chain => {
-
       const used_numbers: number[] = [];
 
       for (const route of oldChain.routes) {
@@ -658,6 +747,7 @@ const Calculator = ({
               {
                 usesAddress: true,
                 transportMethod: "truck",
+                cargo: 0,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
@@ -697,19 +787,20 @@ const Calculator = ({
       type Input = {
         id: string;
         stages: (
-          | {
-            transport_form: T.TransportMethod;
-            distance_km: number;
+          & (
+            | {
+              transport_form: T.TransportMethod;
+              distance_km: number;
+            }
+            | {
+              transport_form: T.TruckTransportMethod;
+              from: { city: string; country?: string };
+              to: { city: string; country?: string };
+            }
+          )
+          & {
+            cargo_t?: number;
           }
-          | {
-            transport_form: T.TruckTransportMethod;
-          }
-          & ({
-            from: { city: string; country: string };
-            to: { city: string; country: string };
-          } | {
-            distance_km: number;
-          })
         )[];
       }[];
 
@@ -721,11 +812,13 @@ const Calculator = ({
               stage.usesAddress
                 ? {
                   transport_form: stage.transportMethod,
+                  cargo_t: stage.cargo,
                   from: { city: stage.from.city, country: stage.from.country },
                   to: { city: stage.to.city, country: stage.to.country },
                 }
                 : {
                   transport_form: stage.transportMethod,
+                  cargo_t: stage.cargo,
                   distance_km: stage.distance || 0,
                 },
           ),
@@ -752,6 +845,7 @@ const Calculator = ({
       } | {
         error: string;
       } | {
+        // TODO: Error should also contains full address
         error: "Could not connect locations";
         route_id: string;
         stage_index: number;
@@ -771,6 +865,14 @@ const Calculator = ({
             const oldStage = oldRoute.stages[output.stage_index];
 
             if (!oldStage.usesAddress) throw Error("Stage uses distance");
+
+            setError(
+              "Error! Could not connect `" +
+                oldStage.from.city + ", " + oldStage.from.country + "` to `" +
+                oldStage.to.city + ", " + oldStage.to.country + "`. " +
+                "Please make sure the stage is connected by roads.",
+            );
+            setMessage(undefined);
 
             return {
               ...oldChain,
@@ -803,7 +905,7 @@ const Calculator = ({
           "Error! Got response code: " +
           response.status +
           " " +
-          (await response.text()),
+          await response.text(),
         );
       }
 
@@ -838,11 +940,9 @@ const Calculator = ({
 
   return (
     <div
-      className={
-        isCreateProject
-          ? "justify-center items-center flex flex-col gap-4  font-mono"
-          : "flex flex-col gap-4 font-mono "
-      }
+      className={isCreateProject
+        ? "justify-center items-center flex flex-col gap-4  font-mono"
+        : "flex flex-col gap-4 font-mono "}
     >
       <h1 className=" text-primary text-4xl font-bold font-mono">
         {isCreateProject ? "" : "Calculate Emissions"}
@@ -857,235 +957,304 @@ const Calculator = ({
           Add Route
         </Button>
 
-        {chain.routes.map((route, routeIndex) => (<>
-          <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
-            {route.name}
-          </h2>
-          <Button
-            className="w-full"
-            variant={"secondary"}
-            type="button"
-            onClick={onInsertStageAfter(routeIndex, -1)}
-          >
-            Add Stage
-          </Button>
+        {chain.routes.map((route, routeIndex) => (
+          <>
+            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
+              {route.name}
+            </h2>
+            <Button
+              className="w-full"
+              variant={"secondary"}
+              type="button"
+              onClick={onInsertStageAfter(routeIndex, -1)}
+            >
+              Add Stage
+            </Button>
 
-          {route.stages.map((stage, stageIndex) => (
-            <div className=" flex flex-col gap-4 " key={stage.key}>
-              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {route.stages.length <= 1
-                  ? <>Transport Method:</>
-                  : <>Route Stage {stageIndex + 1}:</>}
-              </Label>
+            {route.stages.map((stage, stageIndex) => (
+              <div className=" flex flex-col gap-4 " key={stage.key}>
+                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  {route.stages.length <= 1
+                    ? <>Transport Method:</>
+                    : <>Route Stage {stageIndex + 1}:</>}
+                </Label>
 
-              <Combobox
-                options={transportMethodOptions}
-                defaultOption={transportMethodOptions.find(
-                  (option) =>
-                    option.value === "truck",
+                <Combobox
+                  options={transportMethodOptions}
+                  defaultOption={transportMethodOptions.find(
+                    (option) =>
+                      option.value === "truck",
+                  )}
+                  type="transportType"
+                  onChange={onTransportMethodChange(routeIndex, stageIndex)}
+                />
+
+                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Cargo Weight (Tons):
+                </Label>
+                <Input
+                  type="number"
+                  id="cargo"
+                  name="cargo"
+                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                  onChange={onCargoChanged(routeIndex, stageIndex)}
+                />
+
+                {T.isTruckTransportMethod(stage.transportMethod) && (
+                  <Button
+                    className="w-full"
+                    variant={"secondary"}
+                    type="button"
+                    onClick={onToggleUsesAddress(
+                      routeIndex,
+                      stageIndex,
+                      "address",
+                    )}
+                  >
+                    Use Addresses?
+                  </Button>
                 )}
-                type="transportType"
-                onChange={onTransportMethodChange(routeIndex, stageIndex)}
-              />
 
-              {stage.usesAddress
-                ? (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Origin Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions as Address[]}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from",
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(routeIndex, stageIndex, "from")}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city}
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.from.city,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists
-                            ? " text-red-500"
-                            : ""),
-                        placeholder: "City",
-                        onChange: onAddressChange(routeIndex, stageIndex, "from", "city"),
-                      }}
-                      id={String(stage.key) + "from city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from",
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(routeIndex, stageIndex, "from")}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country}
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.from.country,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists
-                            ? " text-red-500"
-                            : ""),
-                        placeholder: "Country",
-                        onChange: onAddressChange(routeIndex, stageIndex, "from", "country"),
-                      }}
-                      id={String(stage.key) + "from country"}
-                    />
+                {stage.usesAddress
+                  ? (
+                    <>
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Origin Address:
+                      </Label>
+                      <AutoSuggest
+                        suggestions={suggestions as Address[]}
+                        onSuggestionsFetchRequested={onSuggestionsRequested(
+                          routeIndex,
+                          stageIndex,
+                          "from",
+                        )}
+                        onSuggestionsClearRequested={() => setSuggestions([])}
+                        onSuggestionSelected={onSuggestionSelected(
+                          routeIndex,
+                          stageIndex,
+                          "from",
+                        )}
+                        getSuggestionValue={(suggestion: Address) =>
+                          suggestion.city}
+                        renderSuggestion={renderSuggestion("city")}
+                        inputProps={{
+                          value: stage.from.city,
+                          type: "string",
+                          id: "from",
+                          name: "from",
+                          className:
+                            "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                            (!stage.from.exists ? " text-red-500" : ""),
+                          placeholder: "City",
+                          onChange: onAddressChange(
+                            routeIndex,
+                            stageIndex,
+                            "from",
+                            "city",
+                          ),
+                        }}
+                        id={String(stage.key) + "from city"}
+                      />
+                      <AutoSuggest
+                        suggestions={suggestions}
+                        onSuggestionsFetchRequested={onSuggestionsRequested(
+                          routeIndex,
+                          stageIndex,
+                          "from",
+                        )}
+                        onSuggestionsClearRequested={() =>
+                          setSuggestions([])}
+                        onSuggestionSelected={onSuggestionSelected(
+                          routeIndex,
+                          stageIndex,
+                          "from",
+                        )}
+                        getSuggestionValue={(suggestion: Address) =>
+                          suggestion.country}
+                        renderSuggestion={renderSuggestion("country")}
+                        inputProps={{
+                          value: stage.from.country,
+                          type: "string",
+                          id: "from",
+                          name: "from",
+                          className:
+                            "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                            (!stage.from.exists ? " text-red-500" : ""),
+                          placeholder: "Country",
+                          onChange: onAddressChange(
+                            routeIndex,
+                            stageIndex,
+                            "from",
+                            "country",
+                          ),
+                        }}
+                        id={String(stage.key) + "from country"}
+                      />
 
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Destination Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to",
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(routeIndex, stageIndex, "to")}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city}
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.to.city,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists
-                            ? " text-red-500"
-                            : ""),
-                        placeholder: "City",
-                        onChange: onAddressChange(routeIndex, stageIndex, "to", "city"),
-                      }}
-                      id={String(stage.key) + "to city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to",
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(routeIndex, stageIndex, "to")}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country}
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.to.country,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists
-                            ? " text-red-500"
-                            : ""),
-                        placeholder: "Country",
-                        onChange: onAddressChange(routeIndex, stageIndex, "to", "country"),
-                      }}
-                      id={String(stage.key) + "to country"}
-                    />
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Destination Address:
+                      </Label>
+                      <AutoSuggest
+                        suggestions={suggestions}
+                        onSuggestionsFetchRequested={onSuggestionsRequested(
+                          routeIndex,
+                          stageIndex,
+                          "to",
+                        )}
+                        onSuggestionsClearRequested={() => setSuggestions([])}
+                        onSuggestionSelected={onSuggestionSelected(
+                          routeIndex,
+                          stageIndex,
+                          "to",
+                        )}
+                        getSuggestionValue={(suggestion: Address) =>
+                          suggestion.city}
+                        renderSuggestion={renderSuggestion("city")}
+                        inputProps={{
+                          value: stage.to.city,
+                          type: "string",
+                          id: "to",
+                          name: "to",
+                          className:
+                            "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                            (!stage.to.exists ? " text-red-500" : ""),
+                          placeholder: "City",
+                          onChange: onAddressChange(
+                            routeIndex,
+                            stageIndex,
+                            "to",
+                            "city",
+                          ),
+                        }}
+                        id={String(stage.key) + "to city"}
+                      />
+                      <AutoSuggest
+                        suggestions={suggestions}
+                        onSuggestionsFetchRequested={onSuggestionsRequested(
+                          routeIndex,
+                          stageIndex,
+                          "to",
+                        )}
+                        onSuggestionsClearRequested={() => setSuggestions([])}
+                        onSuggestionSelected={onSuggestionSelected(
+                          routeIndex,
+                          stageIndex,
+                          "to",
+                        )}
+                        getSuggestionValue={(suggestion: Address) =>
+                          suggestion.country}
+                        renderSuggestion={renderSuggestion("country")}
+                        inputProps={{
+                          value: stage.to.country,
+                          type: "string",
+                          id: "to",
+                          name: "to",
+                          className:
+                            "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+                            (!stage.to.exists ? " text-red-500" : ""),
+                          placeholder: "Country",
+                          onChange: onAddressChange(
+                            routeIndex,
+                            stageIndex,
+                            "to",
+                            "country",
+                          ),
+                        }}
+                        id={String(stage.key) + "to country"}
+                      />
 
-                    {T.isTruckTransportMethod(stage.transportMethod)
-                      ? (
+                      {stage.impossible && (
+                        <Label className="text-base font-medium text-red-500 dark:text-gray-100">
+                          Error: Could not connect these addresses
+                        </Label>
+                      )}
+
+                      {T.isTruckTransportMethod(stage.transportMethod) && (
                         <Button
                           className="w-full"
                           variant={"secondary"}
                           type="button"
-                          onClick={onToggleUsesAddress(routeIndex, stageIndex, "distance")}
+                          onClick={onToggleUsesAddress(
+                            routeIndex,
+                            stageIndex,
+                            "distance",
+                          )}
                         >
                           Use Distance?
                         </Button>
-                      )
-                      : null}
-                  </>
-                )
-                : (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Distance (km):
-                    </Label>
-                    <Input
-                      type="number"
-                      id="distance"
-                      name="distance"
-                      className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                      onChange={onDistanceChange(routeIndex, stageIndex)}
-                    />
+                      )}
+                    </>
+                  )
+                  : (
+                    <>
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Distance (km):
+                      </Label>
+                      <Input
+                        type="number"
+                        id="distance"
+                        name="distance"
+                        className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+                        onChange={onDistanceChange(routeIndex, stageIndex)}
+                      />
 
-                    {T.isTruckTransportMethod(stage.transportMethod)
-                      ? (
+                      {T.isTruckTransportMethod(stage.transportMethod) && (
                         <Button
                           className="w-full"
                           variant={"secondary"}
                           type="button"
-                          onClick={onToggleUsesAddress(routeIndex, stageIndex, "address")}
+                          onClick={onToggleUsesAddress(
+                            routeIndex,
+                            stageIndex,
+                            "address",
+                          )}
                         >
                           Use Addresses?
                         </Button>
-                      )
-                      : null}
-                  </>
+                      )}
+                    </>
+                  )}
+
+                {route.stages.length > 1 && (
+                  <Button
+                    onClick={onRemoveStage(routeIndex, stageIndex)}
+                    className="w-full"
+                    variant={"destructive"}
+                    type="button"
+                  >
+                    Remove Stage
+                  </Button>
                 )}
 
-              {route.stages.length <= 1 ? null : (
                 <Button
-                  onClick={onRemoveStage(routeIndex, stageIndex)}
                   className="w-full"
-                  variant={"destructive"}
+                  variant={"secondary"}
                   type="button"
+                  onClick={onInsertStageAfter(routeIndex, stageIndex)}
                 >
-                  Remove Stage
+                  Add Stage
                 </Button>
-              )}
-
+              </div>
+            ))}
+            {chain.routes.length > 1 && (
               <Button
                 className="w-full"
-                variant={"secondary"}
+                variant={"destructive"}
                 type="button"
-                onClick={onInsertStageAfter(routeIndex, stageIndex)}
+                onClick={onRemoveRoute(routeIndex)}
               >
-                Add Stage
+                Remove Route
               </Button>
-            </div>
-          ))}
-          {chain.routes.length <= 1 ? null : (
-            <Button
-              className="w-full"
-              variant={"destructive"}
-              type="button"
-              onClick={onRemoveRoute(routeIndex)}
-            >
-              Remove Route
-            </Button>
-          )}
-        </>))}
-        <Link to="/upload">
-          <Button className="w-full mt-5" variant={"ibm_green"}>
-            Upload File
-          </Button>
-        </Link>
+            )}
+          </>
+        ))}
+        <Button
+          className="w-full mt-5"
+          variant={"ibm_green"}
+          onClick={goToUploadPage}
+        >
+          Upload File
+        </Button>
         <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
