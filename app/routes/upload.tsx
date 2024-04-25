@@ -27,7 +27,7 @@ import readXlsxFile from 'read-excel-file';
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { getProjects } from "../lib/supabase-client.ts";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 
 export async function redirectToTemplateDescription() {
   return redirect("/template");
@@ -413,7 +413,10 @@ const UploadFile = () => {
               <HoverCard>
                 <HoverCardTrigger>Which filetypes are supported?</HoverCardTrigger>
                 <HoverCardContent>
-                  The supported file-extensions are: <b>.csv (comma separated values)</b>, and <b>.xls/.xlsx (Excel) files</b>. For further information, click the button below: <Button variant="outline" onClick={redirectToTemplateDescription}>Templates</Button>
+                  The supported file-extensions are: <b>.csv (comma separated values)</b>, and <b>.xls/.xlsx (Excel) files</b>. For further information, click the button below:
+                  <Link to="/template">
+                    <Button variant="outline">Templates</Button>
+                  </Link>
                 </HoverCardContent>
               </HoverCard>
 

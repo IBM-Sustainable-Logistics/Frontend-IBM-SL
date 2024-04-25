@@ -1,3 +1,10 @@
+import goodexample1 from 'public/Images/goodexample1.png'
+import goodexample2 from 'public/Images/goodexample2.png'
+import badexample1 from 'public/Images/badexample1.png'
+import badexample2 from 'public/Images/badexample2.png'
+import badexample3 from 'public/Images/badexample3.png'
+import checkdistance from 'public/Images/checkdistance.png'
+
 const Template = () => {
     return (
         <div className="min-h-screen flex items-center justify-center flex-col">
@@ -7,7 +14,7 @@ const Template = () => {
                     Uploading your own data
                 </h1>
             </div>
-            <div>
+            <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">In order to upload a file, you need to make sure that your file implements the following rules described as below.
                     Furthermore, there is a template available for you to download and use. </p>
             </div>
@@ -31,14 +38,67 @@ const Template = () => {
                     2. File structure
                 </h2>
             </div>
-            <div>
+            <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">In order for the file to be successfully uploaded and read, it will need to follow a specific structure.
-                    currently, there are two main ways of structuring the data inside your file:</p>
+                    Currently, there are two main ways of structuring the data inside your file:</p>
                 <ul className="mb-6">
                     <li>- <b>Using address</b></li>
                     <li>- <b>Distance mode</b></li>
                 </ul>
-                <p className="mb-6">If the file extension is NOT one of the above, then our application will reject the file, and ask you to try again.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <h3 className="text-primary text-xl font-bold font-mono mb-6">
+                    2.1. Using addresses
+                </h3>
+            </div>
+            <div style={{ maxWidth: '800px' }}>
+                <p className="mb-6">In order to use addresses, you need to atleast use four cells. These four cells should have the titles:
+                    <b>Origin city</b>, <b>Origin country</b>, <b>Destination city</b>, and <b>Destination country</b>. Under each of these cells,
+                    you should write the information they describe. Remember: the data has to be BELOW the descriptive cells! For example, if cell <b>A1</b>
+                    has the title <b>Origin city</b>, then the origin city name should be in the cell <b>A2</b>. </p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={goodexample1} alt="Example 1 of a valid excel file structure." />
+                <p className="mb-6">Example 1: a valid file structure using addresses.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={badexample1} alt="Example 2 of an invalid excel file structure." />
+                <p className="mb-6">Example 2: an invalid file structure using addresses.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={badexample2} alt="Example 3 of an invalid excel file structure." />
+                <p className="mb-6">Example 3: another invalid file structure using addresses.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <h3 className="text-primary text-xl font-bold font-mono mb-6">
+                    2.2. Using distance numbers
+                </h3>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <p className="mb-6">In order to give the distance (which is in kilometer), you need to atleast use two cells. One of the cells should have the title:
+                    <b>Distance</b>. Under each of these cells, you should write the distance length. Remember: the data has to be BELOW the descriptive cell! For example,
+                    if cell <b>A1</b> has the title <b>Distance</b>, then the distance length should be in the cell <b>A2</b>. </p>
+
+
+                <p className="mb-6"><b>REMEMBER: </b>set 'use distance' on under the upload file page!</p>
+                <img src={checkdistance} alt="'use distance' should be activates if you want to provide distance numbers instead." />
+                <p className="mb-6">'use distance' should be activates if you want to provide distance numbers instead</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={goodexample2} alt="Example 4 of a valid excel file structure." />
+                <p className="mb-6">Example 4: a valid file structure using distances.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={badexample3} alt="Example 5 of an invalid excel file structure." />
+                <p className="mb-6">Example 5: an invalid file structure using distances.</p>
             </div>
 
         </div>

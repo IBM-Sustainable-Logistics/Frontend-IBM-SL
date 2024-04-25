@@ -5,7 +5,7 @@ import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "./ui/input.tsx";
 import * as T from "../lib/Transport.ts";
-import { redirect } from "@remix-run/react";
+import { Link, redirect } from "@remix-run/react";
 
 /* Termonology:
  * - Chain:
@@ -159,58 +159,58 @@ const Calculator = ({
    */
   const onTransportMethodChange =
     (routeIndex: number, stageIndex: number) =>
-    (_: string, comboboxValue: T.TransportMethod): void => {
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+      (_: string, comboboxValue: T.TransportMethod): void => {
+        setChain((oldChain: Chain): Chain => {
+          const oldRoute = oldChain.routes[routeIndex];
+          const oldStage = oldRoute.stages[stageIndex];
 
-        // if the old stage used addresses
-        if (oldStage.usesAddress) {
-          // and if the new transport method allows for addresses
-          if (T.isTruckTransportMethod(comboboxValue)) {
-            // then keep the addresses
-            return {
-              ...oldChain,
-              routes: oldChain.routes.with(routeIndex, {
-                ...oldRoute,
-                stages: oldRoute.stages.with(stageIndex, {
-                  ...oldStage,
-                  transportMethod: comboboxValue as T.TruckTransportMethod,
+          // if the old stage used addresses
+          if (oldStage.usesAddress) {
+            // and if the new transport method allows for addresses
+            if (T.isTruckTransportMethod(comboboxValue)) {
+              // then keep the addresses
+              return {
+                ...oldChain,
+                routes: oldChain.routes.with(routeIndex, {
+                  ...oldRoute,
+                  stages: oldRoute.stages.with(stageIndex, {
+                    ...oldStage,
+                    transportMethod: comboboxValue as T.TruckTransportMethod,
+                  }),
                 }),
-              }),
-            };
-          } // but if the new transport method does not allow for addresses
+              };
+            } // but if the new transport method does not allow for addresses
+            else {
+              // then use default distance of 0
+              return {
+                ...oldChain,
+                routes: oldChain.routes.with(routeIndex, {
+                  ...oldRoute,
+                  stages: oldRoute.stages.with(stageIndex, {
+                    ...oldStage,
+                    usesAddress: false,
+                    transportMethod: comboboxValue,
+                    distance: 0,
+                  }),
+                }),
+              };
+            }
+          } // or if the old stage used distance
           else {
-            // then use default distance of 0
+            // then keep the distance
             return {
               ...oldChain,
               routes: oldChain.routes.with(routeIndex, {
                 ...oldRoute,
                 stages: oldRoute.stages.with(stageIndex, {
                   ...oldStage,
-                  usesAddress: false,
                   transportMethod: comboboxValue,
-                  distance: 0,
                 }),
               }),
             };
           }
-        } // or if the old stage used distance
-        else {
-          // then keep the distance
-          return {
-            ...oldChain,
-            routes: oldChain.routes.with(routeIndex, {
-              ...oldRoute,
-              stages: oldRoute.stages.with(stageIndex, {
-                ...oldStage,
-                transportMethod: comboboxValue,
-              }),
-            }),
-          };
-        }
-      });
-    };
+        });
+      };
 
   /**
    * Given an index of a stage and whether it should use
@@ -220,66 +220,116 @@ const Calculator = ({
    */
   const onSuggestionsRequested =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
-    async ({ value }: { value: string }) => {
-      const route = chain.routes[routeIndex];
-      const stage = route.stages[stageIndex];
+      async ({ value }: { value: string }) => {
+        const route = chain.routes[routeIndex];
+        const stage = route.stages[stageIndex];
 
-      if (!stage.usesAddress) throw Error("Stage uses distance");
+        if (!stage.usesAddress) throw Error("Stage uses distance");
 
-      setError(undefined);
+        setError(undefined);
 
-      if (value.length === 0) {
-        setSuggestions([]);
-        return;
-      }
+        if (value.length === 0) {
+          setSuggestions([]);
+          return;
+        }
 
-      /** The json schema that the back-end uses for the input. */
-      type Input = {
-        city: string;
-        country?: string;
-      };
+        /** The json schema that the back-end uses for the input. */
+        type Input = {
+          city: string;
+          country?: string;
+        };
 
-      const address: Address = fromOrTo === "from" ? stage.from : stage.to;
+        const address: Address = fromOrTo === "from" ? stage.from : stage.to;
 
-      const input: Input = {
-        city: address.city,
-        country: address.country,
-      };
+        const input: Input = {
+          city: address.city,
+          country: address.country,
+        };
 
-      const response = await fetch("/api/fuzzy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      });
+        const response = await fetch("/api/fuzzy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(input),
+        });
 
-      if (!response.ok) {
-        console.error(
-          "Error! Got response code: " +
+        if (!response.ok) {
+          console.error(
+            "Error! Got response code: " +
             response.status +
             " " +
             (await response.text()),
-        );
-        setSuggestions([]);
-        return;
-      }
+          );
+          setSuggestions([]);
+          return;
+        }
 
-      /** The json schema that the back-end uses for the output. */
-      type Output = {
-        city: string;
-        country: string;
-      }[];
+        /** The json schema that the back-end uses for the output. */
+        type Output = {
+          city: string;
+          country: string;
+        }[];
 
-      const output: Output = await response.json();
+        const output: Output = await response.json();
 
-      if (output.length === 0) {
+        if (output.length === 0) {
+          setChain((oldChain: Chain): Chain => {
+            const oldRoute = oldChain.routes[routeIndex];
+            const oldStage = oldRoute.stages[stageIndex];
+
+            if (!oldStage.usesAddress) throw Error("Stage uses distance");
+
+            if (fromOrTo === "from") oldStage.from.exists = false;
+            else oldStage.to.exists = false;
+
+            return {
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, oldStage),
+              }),
+            };
+          });
+
+          setSuggestions([]);
+          return;
+        }
+
         setChain((oldChain: Chain): Chain => {
           const oldRoute = oldChain.routes[routeIndex];
           const oldStage = oldRoute.stages[stageIndex];
 
           if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-          if (fromOrTo === "from") oldStage.from.exists = false;
-          else oldStage.to.exists = false;
+          return {
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                from: { ...oldStage.from, exists: true },
+                to: { ...oldStage.to, exists: true },
+              }),
+            }),
+          };
+        });
+
+        setSuggestions(output);
+      };
+
+  /**
+   * TODO
+   */
+  const onSuggestionSelected =
+    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
+      (_: any, { suggestion }: { suggestion: Address }) => {
+        setChain((oldChain: Chain): Chain => {
+          const oldRoute = oldChain.routes[routeIndex];
+          const oldStage = oldRoute.stages[stageIndex];
+
+          if (!oldStage.usesAddress) throw new Error("Stage uses distance");
+
+          if (fromOrTo === "from") oldStage.from = suggestion;
+          else oldStage.to = suggestion;
 
           return {
             ...oldChain,
@@ -289,57 +339,7 @@ const Calculator = ({
             }),
           };
         });
-
-        setSuggestions([]);
-        return;
-      }
-
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
-
-        if (!oldStage.usesAddress) throw Error("Stage uses distance");
-
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, {
-              ...oldStage,
-              from: { ...oldStage.from, exists: true },
-              to: { ...oldStage.to, exists: true },
-            }),
-          }),
-        };
-      });
-
-      setSuggestions(output);
-    };
-
-  /**
-   * TODO
-   */
-  const onSuggestionSelected =
-    (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
-    (_: any, { suggestion }: { suggestion: Address }) => {
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
-
-        if (!oldStage.usesAddress) throw new Error("Stage uses distance");
-
-        if (fromOrTo === "from") oldStage.from = suggestion;
-        else oldStage.to = suggestion;
-
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, oldStage),
-          }),
-        };
-      });
-    };
+      };
 
   /**
    * TODO
@@ -401,35 +401,35 @@ const Calculator = ({
     fromOrTo: "from" | "to",
     place: "city" | "country",
   ) =>
-  (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { value: inputValue } = event.target as EventTarget;
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      const { value: inputValue } = event.target as EventTarget;
 
-    if (inputValue === undefined) return;
+      if (inputValue === undefined) return;
 
-    setChain((oldChain: Chain): Chain => {
-      const oldRoute = oldChain.routes[routeIndex];
-      const oldStage = oldRoute.stages[stageIndex];
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
-      if (!oldStage.usesAddress) throw Error("Stage uses distance");
+        if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-      // check which address to update
-      const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
-      // addressToUpdate.exists = true;
+        // check which address to update
+        const addressToUpdate = fromOrTo === "from" ? oldStage.from : oldStage.to;
+        // addressToUpdate.exists = true;
 
-      // either update the city or country
-      if (place === "city") addressToUpdate.city = inputValue;
-      else addressToUpdate.country = inputValue;
-      oldStage.impossible = false;
+        // either update the city or country
+        if (place === "city") addressToUpdate.city = inputValue;
+        else addressToUpdate.country = inputValue;
+        oldStage.impossible = false;
 
-      return {
-        ...oldChain,
-        routes: oldChain.routes.with(routeIndex, {
-          ...oldRoute,
-          stages: oldRoute.stages.with(stageIndex, oldStage),
-        }),
-      };
-    });
-  };
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, oldStage),
+          }),
+        };
+      });
+    };
 
   /**
    * Given an index of a route and stage, returns an input onChange
@@ -437,32 +437,32 @@ const Calculator = ({
    */
   const onDistanceChange =
     (routeIndex: number, stageIndex: number) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value: inputValue } = e.target as EventTarget;
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value: inputValue } = e.target as EventTarget;
 
-      let inputNumber: number | undefined = Number(inputValue);
-      if (inputNumber < 0) {
-        inputNumber = undefined;
-      }
+        let inputNumber: number | undefined = Number(inputValue);
+        if (inputNumber < 0) {
+          inputNumber = undefined;
+        }
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+        setChain((oldChain: Chain): Chain => {
+          const oldRoute = oldChain.routes[routeIndex];
+          const oldStage = oldRoute.stages[stageIndex];
 
-        if (oldStage.usesAddress) throw Error("Stage uses addresses");
+          if (oldStage.usesAddress) throw Error("Stage uses addresses");
 
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, {
-              ...oldStage,
-              distance: inputNumber,
+          return {
+            ...oldChain,
+            routes: oldChain.routes.with(routeIndex, {
+              ...oldRoute,
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                distance: inputNumber,
+              }),
             }),
-          }),
-        };
-      });
-    };
+          };
+        });
+      };
 
   /**
    * Given an index of a route and stage, returns a button onClick
@@ -471,56 +471,56 @@ const Calculator = ({
    */
   const onToggleUsesAddress =
     (routeIndex: number, stageIndex: number, use: "address" | "distance") =>
-    () => {
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+      () => {
+        setChain((oldChain: Chain): Chain => {
+          const oldRoute = oldChain.routes[routeIndex];
+          const oldStage = oldRoute.stages[stageIndex];
 
-        // if we want to change stage to use addresses
-        if (use === "address") {
-          if (oldStage.usesAddress) {
-            throw Error("Stage already uses addresses");
-          }
+          // if we want to change stage to use addresses
+          if (use === "address") {
+            if (oldStage.usesAddress) {
+              throw Error("Stage already uses addresses");
+            }
 
-          if (!T.isTruckTransportMethod(oldStage.transportMethod)) {
-            throw Error("Stage uses non-truck transport method");
-          }
+            if (!T.isTruckTransportMethod(oldStage.transportMethod)) {
+              throw Error("Stage uses non-truck transport method");
+            }
 
-          return {
-            ...oldChain,
-            routes: oldChain.routes.with(routeIndex, {
-              ...oldRoute,
-              stages: oldRoute.stages.with(stageIndex, {
-                ...oldStage,
-                usesAddress: true,
-                transportMethod: oldStage
-                  .transportMethod as T.TruckTransportMethod,
-                from: { ...T.emptyAddress, exists: true },
-                to: { ...T.emptyAddress, exists: true },
-                impossible: false,
+            return {
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, {
+                  ...oldStage,
+                  usesAddress: true,
+                  transportMethod: oldStage
+                    .transportMethod as T.TruckTransportMethod,
+                  from: { ...T.emptyAddress, exists: true },
+                  to: { ...T.emptyAddress, exists: true },
+                  impossible: false,
+                }),
               }),
-            }),
-          };
-        } // or if we want to change stage to use distances
-        else {
-          if (!oldStage.usesAddress) {
-            throw new Error("Stage already uses distances");
-          }
+            };
+          } // or if we want to change stage to use distances
+          else {
+            if (!oldStage.usesAddress) {
+              throw new Error("Stage already uses distances");
+            }
 
-          return {
-            ...oldChain,
-            routes: oldChain.routes.with(routeIndex, {
-              ...oldRoute,
-              stages: oldRoute.stages.with(stageIndex, {
-                ...oldStage,
-                usesAddress: false,
-                distance: 0,
+            return {
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, {
+                  ...oldStage,
+                  usesAddress: false,
+                  distance: 0,
+                }),
               }),
-            }),
-          };
-        }
-      });
-    };
+            };
+          }
+        });
+      };
 
   /**
    * Given an index of a stage, returns a button onClick
@@ -704,12 +704,12 @@ const Calculator = ({
           | {
             transport_form: T.TruckTransportMethod;
           }
-            & ({
-              from: { city: string; country: string };
-              to: { city: string; country: string };
-            } | {
-              distance_km: number;
-            })
+          & ({
+            from: { city: string; country: string };
+            to: { city: string; country: string };
+          } | {
+            distance_km: number;
+          })
         )[];
       }[];
 
@@ -788,9 +788,9 @@ const Calculator = ({
           setMessage(undefined);
           console.error(
             "Error! Got response code: " +
-              response.status +
-              " " +
-              (await response.text()),
+            response.status +
+            " " +
+            (await response.text()),
           );
         }
         return;
@@ -801,9 +801,9 @@ const Calculator = ({
         setMessage(undefined);
         console.error(
           "Error! Got response code: " +
-            response.status +
-            " " +
-            (await response.text()),
+          response.status +
+          " " +
+          (await response.text()),
         );
       }
 
@@ -1081,9 +1081,11 @@ const Calculator = ({
             </Button>
           )}
         </>))}
-        <Button className="w-full mt-5" variant={"ibm_green"} onClick={goToUploadPage}>
-          Upload File
-        </Button>
+        <Link to="/upload">
+          <Button className="w-full mt-5" variant={"ibm_green"}>
+            Upload File
+          </Button>
+        </Link>
         <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
           Calculate
         </Button>
