@@ -1,7 +1,5 @@
 import React from "react";
-import { TextGenerateEffect } from "../components/ui/text-generate-effect.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { GitHub } from "../lib/Icons.tsx";
 import { Link } from "@remix-run/react";
 import heroImage from "../assets/undraw_calculation.svg";
 

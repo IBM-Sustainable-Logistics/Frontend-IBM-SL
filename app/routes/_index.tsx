@@ -6,6 +6,7 @@ import {
   json,
 } from "@remix-run/deno";
 import Hero from "../components/hero.tsx";
+import Section from "../components/section.tsx";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
 export const meta: MetaFunction = () => {
@@ -27,6 +28,7 @@ export default function Index() {
   return (
     <main className="flex flex-col justify-center items-center mt-20 bg-background">
       <Hero />
+      <Section backgroundColor="#C3C3C3"/>
     </main>
   );
 }
