@@ -26,9 +26,9 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Index() {
   return (
-    <main className="flex flex-col justify-center items-center mt-20 bg-background">
+    <main className='flex flex-col justify-center items-center mt-20 bg-background'>
       <Hero />
-      <Section backgroundColor="#C3C3C3"/>
+      <Section backgroundColor='#d6d6d6' textColor='black' />
     </main>
   );
 }
