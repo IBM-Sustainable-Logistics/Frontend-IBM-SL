@@ -52,7 +52,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
         className="flex h-20 w-full shrink-0 items-center px-4 md:px-6"
       >
         <Link className="mr-6 flex items-center" to="/">
-          <img src={calc} alt="IBM Logo" className=" h-14 ml-5 mr-10" />
+          <img src={calc} alt="IBM Logo" className=" h-14 ml-5" />
         </Link>
         <nav className="lg:flex lg:gap-5 lg:items-center hidden">
           <NavigationMenu className="invisible lg:visible px-4 lg:px-6 h-16 flex">
