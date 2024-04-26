@@ -6,7 +6,7 @@ import heroImage from "../assets/undraw_calculation.svg";
 export default function Hero() {
   const message = "Empowering the future of sustainable logistics with IBM";
   return (
-    <section id='hero' className='w-auto ml-5rem lg:ml-[2rem] pb-32	lg:p-0'>
+    <section id='hero' className='w-auto ml-5rem lg:ml-[2rem] pb-10	lg:p-0'>
       <div className='w-full px-2 flex flex-col-reverse gap-10 lg:flex-row'>
         <div className='max-w-[40rem] flex flex-col gap-6'>
           <h1 className='text-4xl lg:text-[3vw] leading-[3rem] font-bold'>
