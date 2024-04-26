@@ -25,8 +25,8 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Index() {
   return (
-    <div className="flex flex-col justify-center items-center h-screen gap-6 bg-background font-mono">
+    <main className="flex flex-col justify-center items-center mt-20 bg-background">
       <Hero />
-    </div>
+    </main>
   );
 }
