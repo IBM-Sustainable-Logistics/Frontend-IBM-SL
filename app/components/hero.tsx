@@ -1,7 +1,5 @@
 import React from "react";
-import { TextGenerateEffect } from "../components/ui/text-generate-effect.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { GitHub } from "../lib/Icons.tsx";
 import { Link } from "@remix-run/react";
 import heroImage from "../assets/undraw_calculation.svg";
 
@@ -11,12 +9,13 @@ export default function Hero() {
     <section id='hero' className='w-auto ml-5rem lg:ml-[2rem] pb-32	lg:p-0'>
       <div className='w-full px-2 flex flex-col-reverse gap-10 lg:flex-row'>
         <div className='max-w-[40rem] flex flex-col gap-6'>
-          <h1 className='text-4xl lg:text-[3vw] leading-10 font-bold'>
-            Calculate your footprint emissions for FREE
+          <h1 className='text-4xl lg:text-[3vw] leading-[3rem] font-bold'>
+            Calculate your footprint emissions for
+            <span style={{color: "#3d815c"}}> FREE</span>
           </h1>
           <p className='text-2xl lg:text-[1.5vw]'>
             Use our web service to calculate your carbon footprint from the
-            transportation of your truck.
+            transportation of your truck and e-truck.
           </p>
           <Link to='/calculate-emissions'>
             <Button className='bg-black text-white w-fit	md:w-88 text-2xl py-7 px-10'>
