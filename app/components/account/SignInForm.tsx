@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import logo from "../../assets/ibm-logo.svg";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Database } from "../../lib/utils/types.ts";
+import { MessageDialog } from "../ui/messagedialog.tsx";
 
 interface FormState {
   email: string;
@@ -23,6 +24,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
+
   const [counter, setCounter] = useState(0);
 
   // Handle form submission
@@ -77,11 +80,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
           }, 5000);
         }
       } else {
-        setShowMessage(true);
-        setMessage("You are logged in now");
-        setTimeout(() => {
-          setShowMessage(false);
-        }, 5000);
+        setMessage("You have been signed in");
+        setOpen(true);
       }
     } catch (error) {
       console.error(error);
@@ -160,16 +160,13 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
           </a>
         </div>
       </form>
-      {showMessage && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
-          {message}
-        </div>
-      )}
+
       {showError && (
         <div className="bg-red-200 p-3 mb-3 rounded-md text-red-800 mt-6">
           {errorMessage}
         </div>
       )}
+      <MessageDialog message={message} open={open} setopen={setOpen} />
     </div>
   );
 };

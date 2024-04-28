@@ -16,6 +16,8 @@ import type {
   SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import calc from "../assets/CALC.svg";
+import { ErrorDialog } from "./ui/errordialog.tsx";
+import { MessageDialog } from "./ui/messagedialog.tsx";
 
 interface NavBar {
   serverSession: Session | null;
@@ -24,6 +26,10 @@ interface NavBar {
 
 export const NavBar = ({ serverSession, supabase }: NavBar) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const [message, setMessage] = useState("");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -31,6 +37,8 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    setMessage("You have been signed out");
+    setOpen(true);
     setIsOpen(false);
   };
 
@@ -54,6 +62,8 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
         <Link className="mr-6 flex items-center" to="/">
           <img src={calc} alt="IBM Logo" className=" h-14 ml-5" />
         </Link>
+        <MessageDialog message={message} open={open} setopen={setOpen} />
+
         <nav className="lg:flex lg:gap-5 lg:items-center hidden">
           <NavigationMenu className="invisible lg:visible px-4 lg:px-6 h-16 flex">
             <NavigationMenuList>
