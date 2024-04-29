@@ -16,7 +16,6 @@ import type {
   SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import calc from "../assets/CALC.svg";
-import { ErrorDialog } from "./ui/errordialog.tsx";
 import { MessageDialog } from "./ui/messagedialog.tsx";
 
 interface NavBar {
