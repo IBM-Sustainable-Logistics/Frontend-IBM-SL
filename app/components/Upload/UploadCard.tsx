@@ -408,20 +408,9 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
               />
               <Label htmlFor="use-distance">Use distance?</Label>
             </CardFooter>
-            <HoverCard>
-              <HoverCardTrigger>
-                Which filetypes are supported?
-              </HoverCardTrigger>
-              <HoverCardContent>
-                The supported file-extensions are:{" "}
-                <b>.csv (comma separated values)</b>, and{" "}
-                <b>.xls/.xlsx (Excel) files</b>. For further information, click
-                the button below:
-                <Link to="/template">
-                  <Button variant="outline">Templates</Button>
-                </Link>
-              </HoverCardContent>
-            </HoverCard>
+            <Link to="/template">
+              <Button variant="default">Which files are supported?</Button>
+            </Link>
           </Card>
         </div>
       )}
