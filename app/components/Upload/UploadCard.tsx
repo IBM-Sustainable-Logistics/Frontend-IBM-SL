@@ -297,9 +297,8 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
       return {
         ...oldChain,
         routes: [
-          ...oldChain.routes,
           {
-            name: "Route " + (oldChain.routes.length + 1),
+            name: "Route " + (oldChain.routes.length - 1 + 1),
             stages: newStages,
             key: Math.random(),
             emission: undefined,
