@@ -242,8 +242,6 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
           dataMap.set(entry, jsonObj[entry]);
         }
       }
-
-      await updateFormState();
     };
 
     filereader.readAsText(file);
@@ -254,69 +252,62 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
    * @param file the file, of type xls, to be read.
    */
   async function ReadExcel(file: File) {
-    await readXlsxFile(file).then((rows) => {
-      console.log(rows.length);
+    const rows = await readXlsxFile(file);
+    console.log(rows.length);
 
-      // Iterate over each data in csv and save to a local map
+    const newStages: Stage[] = [];
 
-      for (let i = 1; i < rows.length; i++) {
-        // make from and to
-        const from = {
-          city: rows[i][0].toString(),
-          country: rows[i][1].toString(),
-          exists: true,
-        };
+    for (let i = 1; i < rows.length; i++) {
+      const from = {
+        city: rows[i][0].toString(),
+        country: rows[i][1].toString(),
+        exists: true,
+      };
 
-        const to = {
-          city: rows[i][2].toString(),
-          country: rows[i][3].toString(),
-          exists: true,
-        };
+      const to = {
+        city: rows[i][2].toString(),
+        country: rows[i][3].toString(),
+        exists: true,
+      };
 
-        setStage((oldStages: Stage[]): Stage[] => {
-          return [
-            ...oldStages,
-            isDistanceMode
-              ? {
-                  usesAddress: false,
-                  transportMethod: "truck",
-                  distance: rows[i][4] as number,
-                  key: Math.random(),
-                  emission: undefined,
-                }
-              : {
-                  usesAddress: true,
-                  transportMethod: "truck",
-                  from: from,
-                  to: to,
-                  key: Math.random(),
-                  emission: undefined,
-                  impossible: false,
-                },
-          ];
-        });
-      }
+      const stage = isDistanceMode
+        ? {
+            usesAddress: false,
+            transportMethod: "truck",
+            distance: rows[i][4] as number,
+            key: Math.random(),
+            emission: undefined,
+          }
+        : {
+            usesAddress: true,
+            transportMethod: "truck",
+            from: from,
+            to: to,
+            key: Math.random(),
+            emission: undefined,
+            impossible: false,
+          };
 
-      setChainData((oldChain: Chain): Chain => {
-        return {
-          ...oldChain,
-          routes: [
-            ...oldChain.routes,
-            {
-              name: "Route " + (oldChain.routes.length + 1),
-              stages: stages,
-              key: Math.random(),
-              emission: undefined,
-            },
-          ],
-        };
-      });
+      newStages.push(stage as Stage);
+    }
 
-      console.log(chain);
+    setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
+
+    setChainData((oldChain: Chain): Chain => {
+      return {
+        ...oldChain,
+        routes: [
+          ...oldChain.routes,
+          {
+            name: "Route " + (oldChain.routes.length + 1),
+            stages: newStages,
+            key: Math.random(),
+            emission: undefined,
+          },
+        ],
+      };
     });
   }
-
-  useEffect(() => {}, [dataMap]);
 
   /**
    * Read the user-provided file, of type .csv and .xls
@@ -335,91 +326,79 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
   }
 
   return (
-    <div>
-      {!fileIsSent && (
-        <div
-          className="  flex items-center justify-center"
-          id="drop_zone"
-          onDrop={dropHandler}
-          onDragOver={dragOverHandler}
-          onDragLeave={dragHoverEnd}
-        >
-          <Card
-            className="w-[450px]"
-            style={{
-              backgroundColor: onHover ? "lightgray" : "white",
-            }}
-          >
-            <CardHeader>
-              <CardTitle>Upload your file here</CardTitle>
-              <CardDescription>
-                You can drag and drop your file here. Alternatively, you can
-                click the 'Choose file' button below:
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form>
-                <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    {file?.name === null || !hasUploaded ? (
-                      <Label htmlFor="name">File name:</Label>
-                    ) : (
-                      <Label htmlFor="name">File name: {file?.name}</Label>
-                    )}
-                    <input
-                      type="file"
-                      id="fileInput"
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              {!hasUploaded && (
-                <Button variant="ibm_green" disabled>
-                  Upload
-                </Button>
-              )}
-              {hasUploaded && (
-                <Button variant="ibm_green" onClick={readUploadedFile}>
-                  Upload
-                </Button>
-              )}
-              {hasUploaded && (
-                <Button variant="destructive" onClick={deleteUpload}>
-                  Cancel
-                </Button>
-              )}
-              {hasUploaded && (
-                <Button variant="ibm_blue" disabled>
-                  Choose file
-                </Button>
-              )}
-              {!hasUploaded && (
-                <Button variant="ibm_blue" onClick={handleUploadClick}>
-                  Choose file
-                </Button>
-              )}
-              <Switch
-                id="use-distance"
-                checked={isDistanceMode}
-                onCheckedChange={setIsDistanceMode}
-              />
-              <Label htmlFor="use-distance">Use distance?</Label>
-            </CardFooter>
-            <Link to="/template">
-              <Button variant="ibm_teal">Which files are supported?</Button>
-            </Link>
-          </Card>
-        </div>
-      )}
-      {fileIsSent && (
-        <div
-          className=" min-h-screen flex items-center justify-center"
-          onLoad={redirectToProjects}
-        ></div>
-      )}
+    <div
+      className=" flex items-center justify-center "
+      id="drop_zone"
+      onDrop={dropHandler}
+      onDragOver={dragOverHandler}
+      onDragLeave={dragHoverEnd}
+    >
+      <Card
+        className="w-[450px]"
+        style={{
+          backgroundColor: onHover ? "lightgray" : "white",
+        }}
+      >
+        <CardHeader>
+          <CardTitle>Upload your file here</CardTitle>
+          <CardDescription>
+            You can drag and drop your file here. Alternatively, you can click
+            the 'Choose file' button below:
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                {file?.name === null || !hasUploaded ? (
+                  <Label htmlFor="name">File name:</Label>
+                ) : (
+                  <Label htmlFor="name">File name: {file?.name}</Label>
+                )}
+                <input type="file" id="fileInput" style={{ display: "none" }} />
+              </div>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-between gap-1">
+          <div className="flex gap-4">
+            <Button
+              variant="ibm_green"
+              onClick={readUploadedFile}
+              disabled={!hasUploaded}
+            >
+              Upload
+            </Button>
+            {hasUploaded && (
+              <Button variant="destructive" onClick={deleteUpload}>
+                Cancel
+              </Button>
+            )}
+            {hasUploaded && (
+              <Button variant="ibm_blue" disabled>
+                Choose file
+              </Button>
+            )}
+            {!hasUploaded && (
+              <Button variant="ibm_blue" onClick={handleUploadClick}>
+                Choose file
+              </Button>
+            )}
+          </div>
+          <div className=" flex flex-col">
+            <Label htmlFor="use-distance">Use distance?</Label>
+
+            <Switch
+              id="use-distance"
+              checked={isDistanceMode}
+              onCheckedChange={setIsDistanceMode}
+            />
+          </div>
+        </CardFooter>
+        <Link to="/template">
+          <Button variant="ibm_teal">Which files are supported?</Button>
+        </Link>
+      </Card>
     </div>
   );
 };
