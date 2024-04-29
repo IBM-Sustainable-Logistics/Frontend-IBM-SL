@@ -168,7 +168,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                         </>
                       )}
                       <TableCell className="text-right">
-                        {stage.emission ? route.emission : 0}
+                        {stage.emission ? stage.emission : 0}
                       </TableCell>
                     </TableRow>
                   ))}
