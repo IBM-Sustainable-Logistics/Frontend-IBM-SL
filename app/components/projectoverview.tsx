@@ -27,7 +27,6 @@ import { useRevalidator } from "@remix-run/react";
 import xlsx from "https://esm.sh/json-as-xlsx@2.5.6";
 import { stagger } from "npm:framer-motion@^11.0.8";
 import { Sheet } from "./ui/sheet.tsx";
-import { routes } from "../../remix.config.js";
 
 interface Props {
   project: project;
