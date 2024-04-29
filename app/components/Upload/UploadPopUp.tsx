@@ -19,7 +19,7 @@ const UploadPopUp: React.FC<Props> = ({ setChainData, chain }) => {
       <DialogTrigger className="w-full mt-3">
         <Button variant={"ibm_blue"}>Upload file</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-transparent border-0">
         {/* here i will add the upload */}
         <UploadCard setChainData={setChainData} chain={chain} />
         <DialogClose>
