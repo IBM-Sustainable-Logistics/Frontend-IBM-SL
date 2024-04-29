@@ -274,7 +274,7 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
         ? {
             usesAddress: false,
             transportMethod: "truck",
-            distance: rows[i][4] as number,
+            distance: rows[i][0] as number,
             key: Math.random(),
             emission: undefined,
           }
