@@ -24,6 +24,10 @@ import {
 import tree from "../assets/tree.svg";
 import DataVisualization from "./DataVisualization.tsx";
 import { useRevalidator } from "@remix-run/react";
+import xlsx from "https://esm.sh/json-as-xlsx@2.5.6";
+import { stagger } from "npm:framer-motion@^11.0.8";
+import { Sheet } from "./ui/sheet.tsx";
+import { routes } from "../../remix.config.js";
 
 interface Props {
   project: project;
@@ -81,6 +85,40 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         setMessage("");
       }, 2000);
     }
+  };
+
+  const handleDownload = () => {
+    let settings = {
+      fileName: project.title, // Name of the resulting spreadsheet
+      extraLength: 3, // A bigger number means that columns will be wider
+      writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
+      writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
+      RTL: true, // Display the columns from right-to-left (the default value is false)
+    };
+
+    let data = project.chain.routes.map((route) => {
+      return {
+        sheet: route.name,
+        columns: [
+          { label: "Transport Form", value: "transport_form" },
+          { label: "Distance KM", value: "distance_km" },
+          { label: "From", value: "from" },
+          { label: "To", value: "to" },
+          { label: "Amount of co2 in kg", value: "amount_of_CO2" },
+        ],
+        content: route.stages.map((stage: Stage) => {
+          return {
+            transport_form: getTransportMethodLabel(stage.transportMethod),
+            distance_km: stage.usesAddress ? "" : stage.distance,
+            from: stage.usesAddress ? stage.from.city : "",
+            to: stage.usesAddress ? stage.to.city : "",
+            amount_of_CO2: stage.emission as number,
+          };
+        }),
+      };
+    });
+
+    xlsx(data, settings);
   };
 
   return (
@@ -158,6 +196,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         </CardContent>
         <CardFooter>
           <div className=" flex gap-4 flex-col w-full">
+            <Button onClick={handleDownload}>Download as spreadsheet</Button>
             <Button onClick={addCalculator} className="w-full">
               {calculators.length === 0
                 ? "Update calculator "
