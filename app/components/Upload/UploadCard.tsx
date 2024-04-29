@@ -409,7 +409,7 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
               <Label htmlFor="use-distance">Use distance?</Label>
             </CardFooter>
             <Link to="/template">
-              <Button variant="outline">Which files are supported?</Button>
+              <Button variant="ibm_teal">Which files are supported?</Button>
             </Link>
           </Card>
         </div>

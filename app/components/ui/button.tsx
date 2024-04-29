@@ -20,6 +20,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         ibm_blue: "bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]",
         ibm_green: "bg-[#198038] text-primary-foreground hover:bg-[#6fdc8c]",
+        ibm_teal: "bg-[#007d79] text-primary-foreground hover:bg-[#9ef0f0]",
       },
       size: {
         default: "h-10 px-4 py-2",
