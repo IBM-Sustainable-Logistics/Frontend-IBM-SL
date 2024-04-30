@@ -293,6 +293,8 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
 
     setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
 
+    console.log("newStages: " + newStages)
+
     setChainData((oldChain: Chain): Chain => {
       return {
         ...oldChain,
