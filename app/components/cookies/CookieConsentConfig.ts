@@ -1,5 +1,8 @@
 import type { CookieConsentConfig } from 'vanilla-cookieconsent';
 
+
+// https://cookieconsent.orestbida.com/
+
 const pluginConfig: CookieConsentConfig = {
   guiOptions: {
     consentModal: {
