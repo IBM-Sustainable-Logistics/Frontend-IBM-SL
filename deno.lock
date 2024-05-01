@@ -52,6 +52,7 @@
       "npm:tailwind-merge@^2.2.0": "npm:tailwind-merge@2.2.2",
       "npm:tailwindcss-animate@^1.0.7": "npm:tailwindcss-animate@1.0.7_tailwindcss@3.4.1__postcss@8.4.38",
       "npm:tailwindcss@^3.4.1": "npm:tailwindcss@3.4.1_postcss@8.4.38",
+      "npm:vanilla-cookieconsent@^3.0.1": "npm:vanilla-cookieconsent@3.0.1",
       "npm:xlsx@^0.18.5": "npm:xlsx@0.18.5"
     },
     "npm": {
@@ -13128,6 +13129,10 @@
           "builtins": "builtins@5.0.1"
         }
       },
+      "vanilla-cookieconsent@3.0.1": {
+        "integrity": "sha512-gqc4x7O9t1I4xWr7x6/jtQWPr4PZK26SmeA0iyTv1WyoECfAGnu5JEOExmMEP+5Fz66AT9OiCBO3GII4wDQHLw==",
+        "dependencies": {}
+      },
       "vary@1.1.2": {
         "integrity": "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==",
         "dependencies": {}
@@ -13954,6 +13959,7 @@
         "npm:tailwind-merge@^2.2.0",
         "npm:tailwindcss-animate@^1.0.7",
         "npm:tailwindcss@^3.4.1",
+        "npm:vanilla-cookieconsent@^3.0.1",
         "npm:xlsx@^0.18.5"
       ]
     }

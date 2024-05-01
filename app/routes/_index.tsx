@@ -26,11 +26,13 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Index() {
   return (
-    <main className='flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-16 
+    <main
+      className="flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-16 
     md:mt-20
-    md:gap-32'>
+    md:gap-32"
+    >
       <Hero />
-      <Section backgroundColor='#d6d6d6' textColor='black' />
+      <Section backgroundColor="#d6d6d6" textColor="black" />
     </main>
   );
 }

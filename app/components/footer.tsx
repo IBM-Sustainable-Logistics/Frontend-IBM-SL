@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 import React from "react";
+import CookieConsentComponent from "./cookies/CookieConsent.tsx";
 
 export default function Footer() {
   return (
@@ -13,6 +14,7 @@ export default function Footer() {
         <Link className="text-xs hover:underline underline-offset-4" to="#">
           Privacy Policy
         </Link>
+        <CookieConsentComponent />
       </div>
     </footer>
   );
