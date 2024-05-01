@@ -159,9 +159,17 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
    */
   const onTransportMethodChange =
     (routeIndex: number, stageIndex: number) =>
-    (_: string, comboboxValue: T.TransportMethod | undefined): void => {
+    (_: string, comboboxValue: T.TransportMethod): void => {
 
-      if (!comboboxValue) return;
+      // If the input value was somehow undefined or empty
+      if (!comboboxValue) {
+        // But we already had a transport method then return
+        if (chain.routes[routeIndex].stages[stageIndex].transportMethod) {
+          return;
+        }
+        // But if the current transport method was somehow also undefined
+        comboboxValue = "truck"; // we use truck as default
+      }
 
       setChain((oldChain: Chain): Chain => {
         const oldRoute = oldChain.routes[routeIndex];
@@ -1091,7 +1099,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                   options={transportMethodOptions}
                   defaultOption={transportMethodOptions.find(
                     (option) => option.value === "truck"
-                  )}
+                  )!}
                   type="transportType"
                   onChange={onTransportMethodChange(routeIndex, stageIndex)}
                 />
