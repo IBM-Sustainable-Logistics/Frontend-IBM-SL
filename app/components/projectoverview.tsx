@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card.tsx";
-import Calculator, * as C from "./calculator.tsx";
+import Calculator, * as C from "./calculator/Calculator.tsx";
 import { CalculatorInstance, emissions } from "./../lib/Transport.ts";
 import { useFetcher } from "@remix-run/react";
 import { Button } from "./ui/button.tsx";

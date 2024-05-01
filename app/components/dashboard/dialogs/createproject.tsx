@@ -13,7 +13,7 @@ import {
 import { Button } from "../../ui/button.tsx";
 import { PlusIcon } from "../../../lib/Icons.tsx";
 import { Input } from "../../ui/input.tsx";
-import Calculator, { Chain, defaultChain } from "../../calculator.tsx";
+import Calculator, { Chain, defaultChain } from "../../calculator/Calculator.tsx";
 
 interface Props {
   UserId: string;

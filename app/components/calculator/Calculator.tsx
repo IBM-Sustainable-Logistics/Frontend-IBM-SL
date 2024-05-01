@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { Button } from "../components/ui/button.tsx";
-import { Label } from "./ui/label.tsx";
-import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { Label } from "../ui/label.tsx";
+import { Combobox, ComboboxOption } from "../ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
-import { Input } from "./ui/input.tsx";
-import * as T from "../lib/Transport.ts";
+import { Input } from "../ui/input.tsx";
+import * as T from "../../lib/Transport.ts";
 import { redirect } from "@remix-run/react";
-import UploadPopUp from "./Upload/UploadPopUp.tsx";
+import UploadPopUp from "../Upload/UploadPopUp.tsx";
+import ChainCard from "./ChainCard.tsx";
+import RouteCard from "./RouteCard.tsx";
+import StageCard from "./StageCard.tsx";
 
 /* Termonology:
  * - Chain:
@@ -1043,324 +1046,335 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
   };
 
   return (
-    <div
-      className={
-        isCreateProject
-          ? "justify-center items-center flex flex-col gap-4  font-mono"
-          : "flex flex-col gap-4 font-mono "
-      }
-    >
-      <h1 className=" text-primary text-4xl font-bold font-mono">
-        {isCreateProject ? "" : "Calculate Emissions"}
-      </h1>
-      <form onSubmit={onCalculate}>
-        <Button
-          className="w-full"
-          variant={"secondary"}
-          type="button"
-          onClick={onAddRoute}
-        >
-          Add Route
-        </Button>
-
-        {chain.routes.map((route, routeIndex) => (
-          <>
-            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
-              {route.name}
-            </h2>
-            <Button
-              className="w-full"
-              variant={"secondary"}
-              type="button"
-              onClick={onInsertStageAfter(routeIndex, -1)}
-            >
-              Add Stage
-            </Button>
-
-            {route.stages.map((stage, stageIndex) => (
-              <div className=" flex flex-col gap-4 " key={stage.key}>
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  {route.stages.length <= 1 ? (
-                    <>Transport Method:</>
-                  ) : (
-                    <>Route Stage {stageIndex + 1}:</>
-                  )}
-                </Label>
-
-                <Combobox
-                  options={transportMethodOptions}
-                  defaultOption={transportMethodOptions.find(
-                    (option) => option.value === "truck"
-                  )}
-                  type="transportType"
-                  onChange={onTransportMethodChange(routeIndex, stageIndex)}
-                />
-
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Cargo Weight (Tons):
-                </Label>
-                <Input
-                  type="number"
-                  id="cargo"
-                  name="cargo"
-                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                  onChange={onCargoChanged(routeIndex, stageIndex)}
-                />
-
-                {stage.usesAddress ? (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Origin Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions as Address[]}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city
-                      }
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.from.city,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
-                        placeholder: "City",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "from",
-                          "city"
-                        ),
-                      }}
-                      id={String(stage.key) + "from city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country
-                      }
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.from.country,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
-                        placeholder: "Country",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "from",
-                          "country"
-                        ),
-                      }}
-                      id={String(stage.key) + "from country"}
-                    />
-
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Destination Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city
-                      }
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.to.city,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
-                        placeholder: "City",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "to",
-                          "city"
-                        ),
-                      }}
-                      id={String(stage.key) + "to city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country
-                      }
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.to.country,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
-                        placeholder: "Country",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "to",
-                          "country"
-                        ),
-                      }}
-                      id={String(stage.key) + "to country"}
-                    />
-
-                    {stage.impossible && (
-                      <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-                        Error: Could not connect these addresses
-                      </Label>
-                    )}
-
-                    {T.isTruckTransportMethod(stage.transportMethod) && (
-                      <Button
-                        className="w-full"
-                        variant={"secondary"}
-                        type="button"
-                        onClick={onToggleUsesAddress(
-                          routeIndex,
-                          stageIndex,
-                          "distance"
-                        )}
-                      >
-                        Use Distance?
-                      </Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Distance (km):
-                    </Label>
-                    <Input
-                      type="number"
-                      id="distance"
-                      name="distance"
-                      className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                      onChange={onDistanceChange(routeIndex, stageIndex)}
-                    />
-
-                    {T.isTruckTransportMethod(stage.transportMethod) && (
-                      <Button
-                        className="w-full"
-                        variant={"secondary"}
-                        type="button"
-                        onClick={onToggleUsesAddress(
-                          routeIndex,
-                          stageIndex,
-                          "address"
-                        )}
-                      >
-                        Use Addresses?
-                      </Button>
-                    )}
-                  </>
-                )}
-
-                {route.stages.length > 1 && (
-                  <Button
-                    onClick={onRemoveStage(routeIndex, stageIndex)}
-                    className="w-full"
-                    variant={"destructive"}
-                    type="button"
-                  >
-                    Remove Stage
-                  </Button>
-                )}
-
-                <Button
-                  className="w-full"
-                  variant={"secondary"}
-                  type="button"
-                  onClick={onInsertStageAfter(routeIndex, stageIndex)}
-                >
-                  Add Stage
-                </Button>
-              </div>
-            ))}
-
-            {chain.routes.length <= 1 ? null : (
-              <Button
-                className="w-full"
-                variant={"destructive"}
-                type="button"
-                onClick={onRemoveRoute(routeIndex)}
-              >
-                Remove Route
-              </Button>
-            )}
-          </>
-        ))}
-
-        <UploadPopUp setChainData={setChain} chain={chain} />
-
-        <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
-          Calculate
-        </Button>
-      </form>
-
-      {message !== undefined && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
-          {message}
+    <div className="flex">
+      <div>
+        <ChainCard/>
+      </div>
+      <div>
+        <div>
+          <RouteCard/>
+          <StageCard/>
         </div>
-      )}
-      {error != undefined && (
-        <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-          {error}
-        </Label>
-      )}
+      </div>
     </div>
+    // <div
+    //   className={
+    //     isCreateProject
+    //       ? "justify-center items-center flex flex-col gap-4  font-mono"
+    //       : "flex flex-col gap-4 font-mono "
+    //   }
+    // >
+    //   <h1 className=" text-primary text-4xl font-bold font-mono">
+    //     {isCreateProject ? "" : "Calculate Emissions"}
+    //   </h1>
+    //   <form onSubmit={onCalculate}>
+    //     <Button
+    //       className="w-full"
+    //       variant={"secondary"}
+    //       type="button"
+    //       onClick={onAddRoute}
+    //     >
+    //       Add Route
+    //     </Button>
+    //
+    //     {chain.routes.map((route, routeIndex) => (
+    //       <>
+    //         <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
+    //           {route.name}
+    //         </h2>
+    //         <Button
+    //           className="w-full"
+    //           variant={"secondary"}
+    //           type="button"
+    //           onClick={onInsertStageAfter(routeIndex, -1)}
+    //         >
+    //           Add Stage
+    //         </Button>
+    //
+    //         {route.stages.map((stage, stageIndex) => (
+    //           <div className=" flex flex-col gap-4 " key={stage.key}>
+    //             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+    //               {route.stages.length <= 1 ? (
+    //                 <>Transport Method:</>
+    //               ) : (
+    //                 <>Route Stage {stageIndex + 1}:</>
+    //               )}
+    //             </Label>
+    //
+    //             <Combobox
+    //               options={transportMethodOptions}
+    //               defaultOption={transportMethodOptions.find(
+    //                 (option) => option.value === "truck"
+    //               )}
+    //               type="transportType"
+    //               onChange={onTransportMethodChange(routeIndex, stageIndex)}
+    //             />
+    //
+    //             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+    //               Cargo Weight (Tons):
+    //             </Label>
+    //             <Input
+    //               type="number"
+    //               id="cargo"
+    //               name="cargo"
+    //               className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+    //               onChange={onCargoChanged(routeIndex, stageIndex)}
+    //             />
+    //
+    //             {stage.usesAddress ? (
+    //               <>
+    //                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+    //                   Origin Address:
+    //                 </Label>
+    //                 <AutoSuggest
+    //                   suggestions={suggestions as Address[]}
+    //                   onSuggestionsFetchRequested={onSuggestionsRequested(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "from"
+    //                   )}
+    //                   onSuggestionsClearRequested={() => setSuggestions([])}
+    //                   onSuggestionSelected={onSuggestionSelected(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "from"
+    //                   )}
+    //                   getSuggestionValue={(suggestion: Address) =>
+    //                     suggestion.city
+    //                   }
+    //                   renderSuggestion={renderSuggestion("city")}
+    //                   inputProps={{
+    //                     value: stage.from.city,
+    //                     type: "string",
+    //                     id: "from",
+    //                     name: "from",
+    //                     className:
+    //                       "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+    //                       (!stage.from.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
+    //                     placeholder: "City",
+    //                     onChange: onAddressChange(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "from",
+    //                       "city"
+    //                     ),
+    //                   }}
+    //                   id={String(stage.key) + "from city"}
+    //                 />
+    //                 <AutoSuggest
+    //                   suggestions={suggestions}
+    //                   onSuggestionsFetchRequested={onSuggestionsRequested(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "from"
+    //                   )}
+    //                   onSuggestionsClearRequested={() => setSuggestions([])}
+    //                   onSuggestionSelected={onSuggestionSelected(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "from"
+    //                   )}
+    //                   getSuggestionValue={(suggestion: Address) =>
+    //                     suggestion.country
+    //                   }
+    //                   renderSuggestion={renderSuggestion("country")}
+    //                   inputProps={{
+    //                     value: stage.from.country,
+    //                     type: "string",
+    //                     id: "from",
+    //                     name: "from",
+    //                     className:
+    //                       "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+    //                       (!stage.from.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
+    //                     placeholder: "Country",
+    //                     onChange: onAddressChange(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "from",
+    //                       "country"
+    //                     ),
+    //                   }}
+    //                   id={String(stage.key) + "from country"}
+    //                 />
+    //
+    //                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+    //                   Destination Address:
+    //                 </Label>
+    //                 <AutoSuggest
+    //                   suggestions={suggestions}
+    //                   onSuggestionsFetchRequested={onSuggestionsRequested(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "to"
+    //                   )}
+    //                   onSuggestionsClearRequested={() => setSuggestions([])}
+    //                   onSuggestionSelected={onSuggestionSelected(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "to"
+    //                   )}
+    //                   getSuggestionValue={(suggestion: Address) =>
+    //                     suggestion.city
+    //                   }
+    //                   renderSuggestion={renderSuggestion("city")}
+    //                   inputProps={{
+    //                     value: stage.to.city,
+    //                     type: "string",
+    //                     id: "to",
+    //                     name: "to",
+    //                     className:
+    //                       "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+    //                       (!stage.to.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
+    //                     placeholder: "City",
+    //                     onChange: onAddressChange(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "to",
+    //                       "city"
+    //                     ),
+    //                   }}
+    //                   id={String(stage.key) + "to city"}
+    //                 />
+    //                 <AutoSuggest
+    //                   suggestions={suggestions}
+    //                   onSuggestionsFetchRequested={onSuggestionsRequested(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "to"
+    //                   )}
+    //                   onSuggestionsClearRequested={() => setSuggestions([])}
+    //                   onSuggestionSelected={onSuggestionSelected(
+    //                     routeIndex,
+    //                     stageIndex,
+    //                     "to"
+    //                   )}
+    //                   getSuggestionValue={(suggestion: Address) =>
+    //                     suggestion.country
+    //                   }
+    //                   renderSuggestion={renderSuggestion("country")}
+    //                   inputProps={{
+    //                     value: stage.to.country,
+    //                     type: "string",
+    //                     id: "to",
+    //                     name: "to",
+    //                     className:
+    //                       "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
+    //                       (!stage.to.exists ? " outline outline-offset-2 outline-red-500" : " outline-none "),
+    //                     placeholder: "Country",
+    //                     onChange: onAddressChange(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "to",
+    //                       "country"
+    //                     ),
+    //                   }}
+    //                   id={String(stage.key) + "to country"}
+    //                 />
+    //
+    //                 {stage.impossible && (
+    //                   <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
+    //                     Error: Could not connect these addresses
+    //                   </Label>
+    //                 )}
+    //
+    //                 {T.isTruckTransportMethod(stage.transportMethod) && (
+    //                   <Button
+    //                     className="w-full"
+    //                     variant={"secondary"}
+    //                     type="button"
+    //                     onClick={onToggleUsesAddress(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "distance"
+    //                     )}
+    //                   >
+    //                     Use Distance?
+    //                   </Button>
+    //                 )}
+    //               </>
+    //             ) : (
+    //               <>
+    //                 <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+    //                   Distance (km):
+    //                 </Label>
+    //                 <Input
+    //                   type="number"
+    //                   id="distance"
+    //                   name="distance"
+    //                   className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+    //                   onChange={onDistanceChange(routeIndex, stageIndex)}
+    //                 />
+    //
+    //                 {T.isTruckTransportMethod(stage.transportMethod) && (
+    //                   <Button
+    //                     className="w-full"
+    //                     variant={"secondary"}
+    //                     type="button"
+    //                     onClick={onToggleUsesAddress(
+    //                       routeIndex,
+    //                       stageIndex,
+    //                       "address"
+    //                     )}
+    //                   >
+    //                     Use Addresses?
+    //                   </Button>
+    //                 )}
+    //               </>
+    //             )}
+    //
+    //             {route.stages.length > 1 && (
+    //               <Button
+    //                 onClick={onRemoveStage(routeIndex, stageIndex)}
+    //                 className="w-full"
+    //                 variant={"destructive"}
+    //                 type="button"
+    //               >
+    //                 Remove Stage
+    //               </Button>
+    //             )}
+    //
+    //             <Button
+    //               className="w-full"
+    //               variant={"secondary"}
+    //               type="button"
+    //               onClick={onInsertStageAfter(routeIndex, stageIndex)}
+    //             >
+    //               Add Stage
+    //             </Button>
+    //           </div>
+    //         ))}
+    //
+    //         {chain.routes.length <= 1 ? null : (
+    //           <Button
+    //             className="w-full"
+    //             variant={"destructive"}
+    //             type="button"
+    //             onClick={onRemoveRoute(routeIndex)}
+    //           >
+    //             Remove Route
+    //           </Button>
+    //         )}
+    //       </>
+    //     ))}
+    //
+    //     <UploadPopUp setChainData={setChain} chain={chain} />
+    //
+    //     <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
+    //       Calculate
+    //     </Button>
+    //   </form>
+    //
+    //   {message !== undefined && (
+    //     <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
+    //       {message}
+    //     </div>
+    //   )}
+    //   {error != undefined && (
+    //     <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
+    //       {error}
+    //     </Label>
+    //   )}
+    // </div>
   );
 };
 

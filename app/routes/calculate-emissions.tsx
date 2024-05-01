@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Calculator, * as C from "../components/calculator.tsx";
+import Calculator, * as C from "../components/calculator/Calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 
