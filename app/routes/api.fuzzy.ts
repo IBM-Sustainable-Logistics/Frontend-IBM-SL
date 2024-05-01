@@ -7,23 +7,23 @@ const backendUrl = "https://ibm-sl-api.deno.dev/";
 export const loader = async ({
   request,
 }: LoaderFunctionArgs) => {
-    if (request.method !== "GET") {
-        return new Response("Invalid method", { status: 405 });
-      }
+  if (request.method !== "GET") {
+    return new Response("Invalid method", { status: 405 });
+  }
 
-      const url = new URL(`${backendUrl}api/fuzzy`);
+  const url = new URL(`${backendUrl}api/fuzzy`);
 
-      const res = await fetch(url.toString(), {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
 
-      if (!res.ok) {
-        return new Response("Error fetching articles", { status: res.status });
-      }
+  if (!res.ok) {
+    return new Response("Error fetching articles", { status: res.status });
+  }
 
-      const data = await res.json();
-      return new Response(JSON.stringify(data), { status: 200 });
+  const data = await res.json();
+  return new Response(JSON.stringify(data), { status: 200 });
 };
 
 
