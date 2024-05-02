@@ -62,7 +62,7 @@ export default function App() {
         ></link>
       </head>
       <NavBar serverSession={serverSession} supabase={supabase} />
-      <body>
+      <body className="min-h-screen">
         <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
         <Scripts />
