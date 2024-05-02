@@ -102,6 +102,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           { label: "Distance KM", value: "distance_km" },
           { label: "From", value: "from" },
           { label: "To", value: "to" },
+          { label: "Cargo Weight", value: "cargo_weight" },
           { label: "Amount of co2 in kg", value: "amount_of_CO2" },
         ],
         content: route.stages.map((stage: Stage) => {
@@ -110,6 +111,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             distance_km: stage.usesAddress ? "" : stage.distance,
             from: stage.usesAddress ? stage.from.city : "",
             to: stage.usesAddress ? stage.to.city : "",
+            cargo_weight: stage.cargo,
             amount_of_CO2: stage.emission as number,
           };
         }),
@@ -141,6 +143,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                     <TableHead>Distance KM</TableHead>
                     <TableHead>From</TableHead>
                     <TableHead>To</TableHead>
+                    <TableHead>Cargo Weight</TableHead>
                     <TableHead className="text-right">
                       Amount of co2 in kg
                     </TableHead>
@@ -165,6 +168,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                           <TableCell>{stage.distance}</TableCell>
                         </>
                       )}
+                      <TableCell className="text-right">
+                        {stage.cargo}
+                      </TableCell>
                       <TableCell className="text-right">
                         {stage.emission ? stage.emission : 0}
                       </TableCell>
