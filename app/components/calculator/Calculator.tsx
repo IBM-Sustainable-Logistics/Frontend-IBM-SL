@@ -155,6 +155,18 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   const [message, setMessage] = useState(undefined);
   const [suggestions, setSuggestions] = useState<Address[]>([]);
 
+  // NOTE: This uses index, but routes should be identified by their names,
+  // so that we can support sorting and moving the routes around.
+  // That means that if we add a onSortRoutes function, then it should also
+  // update the routeIndex.
+  const [selectedRoute, setSelectedRoute] = useState(0);
+  const [selectedStage, setSelectedStage] = useState(0);
+
+  const onSelectRoute = (routeIndex: number) => () =>
+    setSelectedRoute(routeIndex);
+  const onSelectStage = (stageIndex: number) => () =>
+    setSelectedStage(stageIndex);
+
   /**
    * Given an index of a route and a stage, returns a combobox onChange
    * function that updates the stage's transportMethod.
@@ -398,44 +410,23 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   /**
    * TODO
    */
-  const renderSuggestion =
-    (_place: "city" | "country") =>
-    (
-      suggestion: Address,
-      {
-        query: _inputValue,
-        isHighlighted,
-      }: {
-        query: string;
-        isHighlighted: boolean;
-      }
-    ) => {
-      // const city =
-      //   place === "city" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.city.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.city}</>
-      //   );
-      //
-      // const country =
-      //   place === "country" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.country.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.country}</>
-      //   );
-
-      return (
-        <span className={isHighlighted ? "bg-blue-200" : ""}>
-          {suggestion.city}, {suggestion.country}
-        </span>
-      );
-    };
+  const renderSuggestion = (_place: "city" | "country") =>
+  (
+    suggestion: Address,
+    {
+      query: _inputValue,
+      isHighlighted,
+    }: {
+      query: string;
+      isHighlighted: boolean;
+    },
+  ) => {
+    return (
+      <span className={isHighlighted ? "bg-blue-200" : ""}>
+        {suggestion.city}, {suggestion.country}
+      </span>
+    );
+  };
 
   interface EventTarget {
     value?: string;
@@ -1098,6 +1089,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
             <ChainCard
               projectName="ProjectName"
               chain={chain}
+              onSelectRoute={onSelectRoute}
               onAddRoute={onAddRoute}
             />
           </div>
@@ -1105,15 +1097,17 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
             <div className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0">
               <RouteCard
                 chain={chain}
-                routeIndex={0}
+                routeIndex={selectedRoute}
+                onSelectStage={onSelectStage}
                 onInsertStageAfter={onInsertStageAfter}
+                onRemoveRoute={onRemoveRoute}
               />
             </div>
             <div className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 md:ml-0 mr-10 md:mr-0">
               <StageCard
                 chain={chain}
-                routeIndex={0}
-                stageIndex={0}
+                routeIndex={selectedRoute}
+                stageIndex={selectedStage}
                 suggestions={suggestions}
                 onTransportMethodChange={onTransportMethodChange}
                 onCargoChanged={onCargoChanged}

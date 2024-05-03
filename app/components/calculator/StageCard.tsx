@@ -71,7 +71,7 @@ export default ({
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         Stage {stageIndex + 1}
       </Label>
-      <br/>
+      <br />
       <Combobox
         options={C.transportMethodOptions}
         defaultOption={C.transportMethodOptions.find(
@@ -80,11 +80,11 @@ export default ({
         type="transportType"
         onChange={onTransportMethodChange(routeIndex, stageIndex)}
       />
-      <br/>
+      <br />
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         Cargo Weight (Tons):
       </Label>
-      <br/>
+      <br />
       <Input
         type="number"
         id="cargo"
@@ -92,14 +92,14 @@ export default ({
         className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
         onChange={onCargoChanged(routeIndex, stageIndex)}
       />
-      <br/>
+      <br />
       {stage.usesAddress
         ? (
           <>
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Origin Address:
             </Label>
-            <br/>
+            <br />
             <AutoSuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -135,7 +135,7 @@ export default ({
               }}
               id={String(stage.key) + "from city"}
             />
-            <br/>
+            <br />
             <AutoSuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -171,11 +171,11 @@ export default ({
               }}
               id={String(stage.key) + "from country"}
             />
-            <br/>
+            <br />
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Destination Address:
             </Label>
-            <br/>
+            <br />
             <AutoSuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -211,7 +211,7 @@ export default ({
               }}
               id={String(stage.key) + "to city"}
             />
-            <br/>
+            <br />
             <AutoSuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -247,7 +247,7 @@ export default ({
               }}
               id={String(stage.key) + "to country"}
             />
-            <br/>
+            <br />
             {stage.impossible && (
               <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
                 Error: Could not connect these addresses
@@ -275,7 +275,7 @@ export default ({
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Distance (km):
             </Label>
-            <br/>
+            <br />
             <Input
               type="number"
               id="distance"
@@ -300,7 +300,7 @@ export default ({
             )}
           </>
         )}
-      <br/>
+      <br />
       {route.stages.length > 1 && (
         <Button
           onClick={onRemoveStage(routeIndex, stageIndex)}

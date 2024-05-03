@@ -6,19 +6,23 @@ import * as C from "./Calculator.tsx";
 type Props = {
   chain: C.Chain;
   routeIndex: number;
+  onSelectStage: (stageIndex: number) => () => void;
   onInsertStageAfter: (
     routeIndex: number,
     stageIndex: number | -1,
   ) => () => void;
+  onRemoveRoute: (routeIndex: number) => () => void;
 };
 
-export default ({ chain, routeIndex, onInsertStageAfter }: Props) => {
+export default (
+  { chain, routeIndex, onSelectStage, onInsertStageAfter, onRemoveRoute }:
+    Props,
+) => {
   return (
     <>
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         {chain.routes[routeIndex].name}
       </Label>
-      <br/>
       <Button
         className="w-full"
         variant={"ibm_blue"}
@@ -27,29 +31,29 @@ export default ({ chain, routeIndex, onInsertStageAfter }: Props) => {
       >
         Add Stage
       </Button>
-      <br/>
       {chain.routes[routeIndex].stages.map((stage, stageIndex) => (
         <div key={stage.key}>
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Stage {stageIndex + 1}
-          </Label>
-          <br/>
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Transport Method: {stage.transportMethod}
-          </Label>
-          <br/>
-          {stage.cargo && (
+          <div onClick={onSelectStage(stageIndex)}>
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Cargo: {stage.cargo}
+              Stage {stageIndex + 1}
             </Label>
-          )}
-          <br/>
-          {stage.emission && (
+            <br />
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Emission: {stage.emission} kg
+              Transport Method: {stage.transportMethod}
             </Label>
-          )}
-          <br/>
+            <br />
+            {stage.cargo && (
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Cargo: {stage.cargo}
+              </Label>
+            )}
+            <br />
+            {stage.emission && (
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Emission: {stage.emission} kg
+              </Label>
+            )}
+          </div>
           <Button
             className="w-full"
             variant={"ibm_blue"}
@@ -60,6 +64,14 @@ export default ({ chain, routeIndex, onInsertStageAfter }: Props) => {
           </Button>
         </div>
       ))}
+      <Button
+        className="w-full"
+        variant={"ibm_blue"}
+        type="button"
+        onClick={onRemoveRoute(routeIndex)}
+      >
+        Remove Route
+      </Button>
     </>
   );
 };

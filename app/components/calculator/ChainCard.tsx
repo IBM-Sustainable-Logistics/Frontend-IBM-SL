@@ -6,10 +6,11 @@ import * as C from "./Calculator.tsx";
 type Props = {
   projectName: string | undefined;
   chain: C.Chain;
+  onSelectRoute: (routeIndex: number) => () => void;
   onAddRoute: () => void;
 };
 
-export default ({ projectName, chain, onAddRoute }: Props) => {
+export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
   return (
     <>
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -21,8 +22,8 @@ export default ({ projectName, chain, onAddRoute }: Props) => {
       </Label>
       <br />
       <div className="flex flex-col gap-6">
-        {chain.routes.map((route) => (
-          <div key={route.key} className=" border-2 mb-4 pt-2 pr-2 pl-2 pb-2">
+        {chain.routes.map((route, routeIndex) => (
+          <div onClick={onSelectRoute(routeIndex)} key={route.key} className=" border-2 mb-4 pt-2 pr-2 pl-2 pb-2">
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
               {route.name}
             </Label>
@@ -39,7 +40,6 @@ export default ({ projectName, chain, onAddRoute }: Props) => {
           </div>
         ))}
       </div>
-
       {chain.emission !== undefined && (
         <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Total estimated emission: {chain.emission} kg
