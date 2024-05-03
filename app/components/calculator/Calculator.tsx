@@ -742,6 +742,12 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
         throw Error("Cannot remove route index: " + index);
       }
 
+      // If you are viewing the last route and it is the one that is removed,
+      // then select a new route
+      if (selectedRoute === chain.routes.length - 1 && selectedRoute === index) {
+        setSelectedRoute(selectedRoute - 1);
+      }
+
       return {
         ...old,
         routes: [...old.routes.slice(0, index), ...old.routes.slice(index + 1)],
