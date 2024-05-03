@@ -150,7 +150,7 @@ type CalculatorProps = {
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-const Calculator = ({ chain, setChain }: CalculatorProps) => {
+const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
   const [message, setMessage] = useState(undefined);
   const [suggestions, setSuggestions] = useState<Address[]>([]);
@@ -165,10 +165,10 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   const onSelectRoute = (routeIndex: number) => () => {
     setSelectedRoute(routeIndex);
     setSelectedStage(0);
-  }
+  };
   const onSelectStage = (stageIndex: number) => () => {
     setSelectedStage(stageIndex);
-  }
+  };
 
   /**
    * Given an index of a route and a stage, returns a combobox onChange
@@ -413,23 +413,24 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   /**
    * TODO
    */
-  const renderSuggestion = (_place: "city" | "country") =>
-  (
-    suggestion: Address,
-    {
-      query: _inputValue,
-      isHighlighted,
-    }: {
-      query: string;
-      isHighlighted: boolean;
-    },
-  ) => {
-    return (
-      <span className={isHighlighted ? "bg-blue-200" : ""}>
-        {suggestion.city}, {suggestion.country}
-      </span>
-    );
-  };
+  const renderSuggestion =
+    (_place: "city" | "country") =>
+    (
+      suggestion: Address,
+      {
+        query: _inputValue,
+        isHighlighted,
+      }: {
+        query: string;
+        isHighlighted: boolean;
+      }
+    ) => {
+      return (
+        <span className={isHighlighted ? "bg-blue-200" : ""}>
+          {suggestion.city}, {suggestion.country}
+        </span>
+      );
+    };
 
   interface EventTarget {
     value?: string;
@@ -1089,7 +1090,13 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   return (
     <div className="flex flex-col gap-9 font-mono mb-52 ">
       <form onSubmit={onCalculate}>
-        <div className="flex flex-col md:flex-row items-stretch w-screen ml-4 md:divide-y-2  md:divide-solid md:divide-x-2 md:divide-black">
+        <div
+          className={
+            isCreateProject
+              ? "flex flex-col  items-stretch  ml-4 "
+              : "flex flex-col md:flex-row items-stretch w-screen ml-4 md:divide-y-2  md:divide-solid md:divide-x-2 md:divide-black"
+          }
+        >
           <div className=" px-16 flex-0 border-t-2 border-black  pt-10">
             <ChainCard
               projectName="ProjectName"
@@ -1098,8 +1105,20 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
               onAddRoute={onAddRoute}
             />
           </div>
-          <div className="flex flex-col md:flex-row md:px-96 gap-4   pt-10 ">
-            <div className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0">
+          <div
+            className={
+              isCreateProject
+                ? "flex flex-col gap-4   pt-10 "
+                : "flex flex-col md:flex-row md:px-96 gap-4   pt-10 "
+            }
+          >
+            <div
+              className={
+                isCreateProject
+                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 "
+                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0"
+              }
+            >
               <RouteCard
                 chain={chain}
                 routeIndex={selectedRoute}
