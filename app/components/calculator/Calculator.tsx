@@ -162,10 +162,13 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   const [selectedRoute, setSelectedRoute] = useState(0);
   const [selectedStage, setSelectedStage] = useState(0);
 
-  const onSelectRoute = (routeIndex: number) => () =>
+  const onSelectRoute = (routeIndex: number) => () => {
     setSelectedRoute(routeIndex);
-  const onSelectStage = (stageIndex: number) => () =>
+    setSelectedStage(0);
+  }
+  const onSelectStage = (stageIndex: number) => () => {
     setSelectedStage(stageIndex);
+  }
 
   /**
    * Given an index of a route and a stage, returns a combobox onChange
