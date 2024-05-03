@@ -7,9 +7,6 @@ import AutoSuggest from "react-autosuggest";
 import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
 
-// Slide 16 constraints satisfaction problems AC-3
-// Understand arc consistency
-
 type F<T> = (routeIndex: number, stageIndex: number) => T;
 type G<T> = (
   routeIndex: number,
