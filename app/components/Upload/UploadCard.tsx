@@ -450,9 +450,11 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
             />
           </div>
         </CardFooter>
-        <Link to="/template">
-          <Button variant="ibm_teal">Which files are supported?</Button>
-        </Link>
+        <div style={{ marginLeft: "10px" }}>
+          <a href="/template" style={{ color: "blue", fontFamily: "Arial, sans-serif", textDecoration: "underline" }}>
+            Which files are supported?
+          </a>
+        </div>
       </Card>
     </div>
   );

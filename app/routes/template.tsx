@@ -131,8 +131,8 @@ const Template = () => {
 
 
                 <p className="mb-6"><b>REMEMBER: </b>set 'use distance' on under the upload file page!</p>
-                <img src={checkdistance} alt="'use distance' should be activates if you want to provide distance numbers instead." />
-                <p className="mb-6">'use distance' should be activates if you want to provide distance numbers instead</p>
+                <img src={checkdistance} alt="'use distance' should be activated if you want to provide distance numbers instead." />
+                <p className="mb-6">'use distance' should be activated if you want to provide distance numbers instead</p>
             </div>
 
             <div style={{ maxWidth: '800px' }}>
