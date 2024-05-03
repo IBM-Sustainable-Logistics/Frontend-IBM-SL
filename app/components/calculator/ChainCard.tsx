@@ -14,11 +14,7 @@ export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
   return (
     <>
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {projectName}
-      </Label>
-      <br />
-      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        Routes: {chain.routes.length}
+        Name: {projectName}
       </Label>
       <br />
       <div className="flex flex-col gap-6">
@@ -28,7 +24,7 @@ export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
               {route.name}
             </Label>
             <br />
-            {route.emission && (
+            {route.emission !== undefined && (
               <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Emission: {route.emission} kg
               </Label>

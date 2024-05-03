@@ -612,7 +612,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 {
                   usesAddress: true,
                   transportMethod: "truck",
-                  cargo: 0,
+                  cargo: undefined,
                   from: { ...T.emptyAddress, exists: true },
                   to: { ...T.emptyAddress, exists: true },
                   impossible: false,
@@ -720,7 +720,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
               {
                 usesAddress: true,
                 transportMethod: "truck",
-                cargo: 0,
+                cargo: undefined,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,

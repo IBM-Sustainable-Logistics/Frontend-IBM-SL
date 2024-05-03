@@ -23,6 +23,7 @@ export default (
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         {chain.routes[routeIndex].name}
       </Label>
+      <br />
       <Button
         className="w-full"
         variant={"ibm_blue"}
@@ -42,13 +43,13 @@ export default (
               Transport Method: {stage.transportMethod}
             </Label>
             <br />
-            {stage.cargo && (
+            {stage.cargo !== undefined && (
               <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Cargo: {stage.cargo}
               </Label>
             )}
             <br />
-            {stage.emission && (
+            {stage.emission !== undefined && (
               <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Emission: {stage.emission} kg
               </Label>
@@ -64,6 +65,7 @@ export default (
           </Button>
         </div>
       ))}
+      <br />
       <Button
         className="w-full"
         variant={"ibm_blue"}
