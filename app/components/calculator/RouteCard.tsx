@@ -26,7 +26,7 @@ export default (
       <br />
       <Button
         className="w-full"
-        variant={"ibm_blue"}
+        variant="ibm_blue"
         type="button"
         onClick={onInsertStageAfter(routeIndex, -1)}
       >
@@ -57,7 +57,7 @@ export default (
           </div>
           <Button
             className="w-full"
-            variant={"ibm_blue"}
+            variant="ibm_blue"
             type="button"
             onClick={onInsertStageAfter(routeIndex, stageIndex)}
           >
@@ -66,14 +66,16 @@ export default (
         </div>
       ))}
       <br />
-      <Button
-        className="w-full"
-        variant={"ibm_blue"}
-        type="button"
-        onClick={onRemoveRoute(routeIndex)}
-      >
-        Remove Route
-      </Button>
+      {chain.routes.length > 1 && (
+        <Button
+          className="w-full"
+          variant="destructive"
+          type="button"
+          onClick={onRemoveRoute(routeIndex)}
+        >
+          Remove Route
+        </Button>
+      )}
     </>
   );
 };
