@@ -4,7 +4,9 @@ import badexample1 from 'public/Images/badexample1.png'
 import badexample2 from 'public/Images/badexample2.png'
 import badexample3 from 'public/Images/badexample3.png'
 import checkdistance from 'public/Images/checkdistance.png'
+import goodexample3 from 'public/Images/goodexample3.png'
 import templateZIP from 'public/Images/IBM_SL_Upload_Template_v1.zip'
+
 import { Button } from 'app/components/ui/button'
 import { useState } from 'react'
 
@@ -109,13 +111,18 @@ const Template = () => {
             </div>
 
             <div style={{ maxWidth: '800px' }}>
-                <img src={badexample1} alt="Example 2 of an invalid excel file structure." />
-                <p className="mb-6">Example 2: an invalid file structure using addresses.</p>
+                <img src={goodexample1} alt="Example 2 of a valid excel file structure." />
+                <p className="mb-6">Example 2: a valid file structure using multiple addresses.</p>
             </div>
 
             <div style={{ maxWidth: '800px' }}>
-                <img src={badexample2} alt="Example 3 of an invalid excel file structure." />
-                <p className="mb-6">Example 3: another invalid file structure using addresses.</p>
+                <img src={badexample1} alt="Example 3 of an invalid excel file structure." />
+                <p className="mb-6">Example 3: an invalid file structure using addresses.</p>
+            </div>
+
+            <div style={{ maxWidth: '800px' }}>
+                <img src={badexample2} alt="Example 4 of an invalid excel file structure." />
+                <p className="mb-6">Example 4: another invalid file structure using addresses.</p>
             </div>
 
             <div style={{ maxWidth: '800px' }}>
@@ -136,13 +143,13 @@ const Template = () => {
             </div>
 
             <div style={{ maxWidth: '800px' }}>
-                <img src={goodexample2} alt="Example 4 of a valid excel file structure." />
-                <p className="mb-6">Example 4: a valid file structure using distances.</p>
+                <img src={goodexample2} alt="Example 5 of a valid excel file structure." />
+                <p className="mb-6">Example 5: a valid file structure using distances.</p>
             </div>
 
             <div style={{ maxWidth: '800px' }}>
-                <img src={badexample3} alt="Example 5 of an invalid excel file structure." />
-                <p className="mb-6">Example 5: an invalid file structure using distances.</p>
+                <img src={badexample3} alt="Example 6 of an invalid excel file structure." />
+                <p className="mb-6">Example 6: an invalid file structure using distances.</p>
             </div>
 
         </div>
