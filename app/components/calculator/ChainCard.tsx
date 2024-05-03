@@ -15,35 +15,36 @@ export default ({ projectName, chain, onAddRoute }: Props) => {
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         {projectName}
       </Label>
-      <br/>
+      <br />
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         Routes: {chain.routes.length}
       </Label>
-      <br/>
-      {chain.routes.map((route) => (
-        <div key={route.key}>
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {route.name}
-          </Label>
-          <br/>
-          {route.emission && (
+      <br />
+      <div className="flex flex-col gap-6">
+        {chain.routes.map((route) => (
+          <div key={route.key} className=" border-2 mb-4 pt-2 pr-2 pl-2 pb-2">
             <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Emission: {route.emission} kg
+              {route.name}
             </Label>
-          )}
-          <br/>
-          <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Stages: {route.stages.length}
-          </Label>
-        </div>
-      ))}
-      <br/>
+            <br />
+            {route.emission && (
+              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Emission: {route.emission} kg
+              </Label>
+            )}
+            <br />
+            <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              Stages: {route.stages.length}
+            </Label>
+          </div>
+        ))}
+      </div>
+
       {chain.emission !== undefined && (
         <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Total estimated emission: {chain.emission} kg
         </Label>
       )}
-      <br/>
       <Button
         className="w-full"
         variant={"ibm_blue"}

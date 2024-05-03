@@ -50,31 +50,29 @@ export type Address = T.Address & {
   exists: boolean;
 };
 
-type Stage =
-  & ({
-    usesAddress: false;
-    transportMethod: T.TransportMethod;
-    distance: number | undefined;
-  } | {
-    usesAddress: true;
-    transportMethod: T.TruckTransportMethod;
-    from: Address;
-    to: Address;
-    impossible: boolean;
-  })
-  & {
-    cargo: number | undefined;
-  }
-  & Keyed
-  & T.Estimated;
+type Stage = (
+  | {
+      usesAddress: false;
+      transportMethod: T.TransportMethod;
+      distance: number | undefined;
+    }
+  | {
+      usesAddress: true;
+      transportMethod: T.TruckTransportMethod;
+      from: Address;
+      to: Address;
+      impossible: boolean;
+    }
+) & {
+  cargo: number | undefined;
+} & Keyed &
+  T.Estimated;
 
-type Route =
-  & {
-    name: string;
-    stages: Stage[];
-  }
-  & Keyed
-  & T.Estimated;
+type Route = {
+  name: string;
+  stages: Stage[];
+} & Keyed &
+  T.Estimated;
 
 export type Chain = {
   routes: Route[];
@@ -107,13 +105,11 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
   emission: undefined,
 });
 
-export const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods
-  .map(
-    (method: T.TransportMethod) => ({
-      value: method,
-      label: T.getTransportMethodLabel(method),
-    }),
-  );
+export const transportMethodOptions: ComboboxOption[] =
+  T.truckTransportMethods.map((method: T.TransportMethod) => ({
+    value: method,
+    label: T.getTransportMethodLabel(method),
+  }));
 
 export function goToUploadPage() {
   return redirect("/upload", {});
@@ -128,22 +124,22 @@ export const loadChain = (chain: T.Chain): Chain => ({
         (stage, index): Stage =>
           stage.usesAddress
             ? {
-              ...stage,
-              from: { ...stage.from, exists: true },
-              to: { ...stage.to, exists: true },
-              impossible: false,
-              key: index,
-              emission: undefined,
-            }
+                ...stage,
+                from: { ...stage.from, exists: true },
+                to: { ...stage.to, exists: true },
+                impossible: false,
+                key: index,
+                emission: undefined,
+              }
             : {
-              ...stage,
-              key: index,
-              emission: undefined,
-            },
+                ...stage,
+                key: index,
+                emission: undefined,
+              }
       ),
       key: index,
       emission: undefined,
-    }),
+    })
   ),
   emission: undefined,
 });
@@ -309,7 +305,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text()),
+            (await response.text())
         );
         setSuggestions([]);
         return;
@@ -402,43 +398,44 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   /**
    * TODO
    */
-  const renderSuggestion = (_place: "city" | "country") =>
-  (
-    suggestion: Address,
-    {
-      query: _inputValue,
-      isHighlighted,
-    }: {
-      query: string;
-      isHighlighted: boolean;
-    },
-  ) => {
-    // const city =
-    //   place === "city" ? (
-    //     <>
-    //       <b>{inputValue}</b>
-    //       {suggestion.city.slice(inputValue.length)}
-    //     </>
-    //   ) : (
-    //     <>{suggestion.city}</>
-    //   );
-    //
-    // const country =
-    //   place === "country" ? (
-    //     <>
-    //       <b>{inputValue}</b>
-    //       {suggestion.country.slice(inputValue.length)}
-    //     </>
-    //   ) : (
-    //     <>{suggestion.country}</>
-    //   );
+  const renderSuggestion =
+    (_place: "city" | "country") =>
+    (
+      suggestion: Address,
+      {
+        query: _inputValue,
+        isHighlighted,
+      }: {
+        query: string;
+        isHighlighted: boolean;
+      }
+    ) => {
+      // const city =
+      //   place === "city" ? (
+      //     <>
+      //       <b>{inputValue}</b>
+      //       {suggestion.city.slice(inputValue.length)}
+      //     </>
+      //   ) : (
+      //     <>{suggestion.city}</>
+      //   );
+      //
+      // const country =
+      //   place === "country" ? (
+      //     <>
+      //       <b>{inputValue}</b>
+      //       {suggestion.country.slice(inputValue.length)}
+      //     </>
+      //   ) : (
+      //     <>{suggestion.country}</>
+      //   );
 
-    return (
-      <span className={isHighlighted ? "bg-blue-200" : ""}>
-        {suggestion.city}, {suggestion.country}
-      </span>
-    );
-  };
+      return (
+        <span className={isHighlighted ? "bg-blue-200" : ""}>
+          {suggestion.city}, {suggestion.country}
+        </span>
+      );
+    };
 
   interface EventTarget {
     value?: string;
@@ -453,45 +450,45 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
    * The place parameter determines whether the city or
    * country input field of the address should be updated.
    */
-  const onAddressChange = (
-    routeIndex: number,
-    stageIndex: number,
-    fromOrTo: "from" | "to",
-    place: "city" | "country",
-  ) =>
-  (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { value: inputValue } = event.target as EventTarget;
+  const onAddressChange =
+    (
+      routeIndex: number,
+      stageIndex: number,
+      fromOrTo: "from" | "to",
+      place: "city" | "country"
+    ) =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      const { value: inputValue } = event.target as EventTarget;
 
-    if (inputValue === undefined) return;
+      if (inputValue === undefined) return;
 
-    setChain((oldChain: Chain): Chain => {
-      const oldRoute = oldChain.routes[routeIndex];
-      const oldStage = oldRoute.stages[stageIndex];
+      setChain((oldChain: Chain): Chain => {
+        const oldRoute = oldChain.routes[routeIndex];
+        const oldStage = oldRoute.stages[stageIndex];
 
-      if (!oldStage.usesAddress) throw Error("Stage uses distance");
+        if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-      if (inputValue !== undefined) {
-        // check which address to update
-        const addressToUpdate = fromOrTo === "from"
-          ? oldStage.from
-          : oldStage.to;
-        // addressToUpdate.exists = true;
+        if (inputValue !== undefined) {
+          // check which address to update
+          const addressToUpdate =
+            fromOrTo === "from" ? oldStage.from : oldStage.to;
+          // addressToUpdate.exists = true;
 
-        // either update the city or country
-        if (place === "city") addressToUpdate.city = inputValue;
-        else addressToUpdate.country = inputValue;
-      }
-      oldStage.impossible = false;
+          // either update the city or country
+          if (place === "city") addressToUpdate.city = inputValue;
+          else addressToUpdate.country = inputValue;
+        }
+        oldStage.impossible = false;
 
-      return {
-        ...oldChain,
-        routes: oldChain.routes.with(routeIndex, {
-          ...oldRoute,
-          stages: oldRoute.stages.with(stageIndex, oldStage),
-        }),
-      };
-    });
-  };
+        return {
+          ...oldChain,
+          routes: oldChain.routes.with(routeIndex, {
+            ...oldRoute,
+            stages: oldRoute.stages.with(stageIndex, oldStage),
+          }),
+        };
+      });
+    };
 
   /**
    * Given an index of a route and stage, returns an input onChange
@@ -561,8 +558,8 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
               stages: oldRoute.stages.with(stageIndex, {
                 ...oldStage,
                 usesAddress: true,
-                transportMethod: oldStage
-                  .transportMethod as T.TruckTransportMethod,
+                transportMethod:
+                  oldStage.transportMethod as T.TruckTransportMethod,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
@@ -637,25 +634,25 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
 
         const newStage: Stage = beforeStage.usesAddress
           ? {
-            usesAddress: true,
-            transportMethod: beforeStage.transportMethod,
-            cargo: undefined,
-            from: {
-              ...beforeStage.to,
-            },
-            to: { ...T.emptyAddress, exists: false },
-            impossible: false,
-            key: Math.random(),
-            emission: undefined,
-          }
+              usesAddress: true,
+              transportMethod: beforeStage.transportMethod,
+              cargo: undefined,
+              from: {
+                ...beforeStage.to,
+              },
+              to: { ...T.emptyAddress, exists: false },
+              impossible: false,
+              key: Math.random(),
+              emission: undefined,
+            }
           : {
-            usesAddress: false,
-            transportMethod: beforeStage.transportMethod,
-            cargo: undefined,
-            distance: 0,
-            key: Math.random(),
-            emission: undefined,
-          };
+              usesAddress: false,
+              transportMethod: beforeStage.transportMethod,
+              cargo: undefined,
+              distance: 0,
+              key: Math.random(),
+              emission: undefined,
+            };
 
         return {
           ...oldChain,
@@ -771,16 +768,21 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
           const noTo = !stage.to.city;
 
           if (noFrom || noTo) {
-            const label = noFrom && noTo
-              ? "origin and destination"
-              : noFrom
-              ? "origin"
-              : "destination";
+            const label =
+              noFrom && noTo
+                ? "origin and destination"
+                : noFrom
+                ? "origin"
+                : "destination";
 
             setError(
-              "Error! Missing " + label + " address in stage " +
-                (stageIndex + 1) + ' of route "' +
-                route.name + '".',
+              "Error! Missing " +
+                label +
+                " address in stage " +
+                (stageIndex + 1) +
+                ' of route "' +
+                route.name +
+                '".'
             );
             setMessage(undefined);
 
@@ -812,38 +814,35 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
       /** The json schema that the back-end uses for the input. */
       type Input = {
         id: string;
-        stages: (
-          & (
-            | {
+        stages: ((
+          | {
               transport_form: T.TransportMethod;
               distance_km: number;
             }
-            | {
+          | {
               transport_form: T.TruckTransportMethod;
               from: { city: string; country?: string };
               to: { city: string; country?: string };
             }
-          )
-          & {
-            cargo_t?: number;
-          }
-        )[];
+        ) & {
+          cargo_t?: number;
+        })[];
       }[];
 
       const input: Input = chain.routes.map((route: Route) => ({
         id: route.name,
         stages: route.stages.map((stage: Stage) => ({
           cargo_t: stage.cargo,
-          ...stage.usesAddress
+          ...(stage.usesAddress
             ? {
-              transport_form: stage.transportMethod,
-              from: { city: stage.from.city, country: stage.from.country },
-              to: { city: stage.to.city, country: stage.to.country },
-            }
+                transport_form: stage.transportMethod,
+                from: { city: stage.from.city, country: stage.from.country },
+                to: { city: stage.to.city, country: stage.to.country },
+              }
             : {
-              transport_form: stage.transportMethod,
-              distance_km: stage.distance || 0,
-            },
+                transport_form: stage.transportMethod,
+                distance_km: stage.distance || 0,
+              }),
         })),
       }));
 
@@ -856,41 +855,41 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
       /** The json schema that the back-end uses for the output. */
       type Output =
         | {
-          chain_kg: number;
-          routes: {
-            id: string;
-            route_kg: number;
-            stages: {
-              stage_kg: number;
-              transport_form: string;
+            chain_kg: number;
+            routes: {
+              id: string;
+              route_kg: number;
+              stages: {
+                stage_kg: number;
+                transport_form: string;
+              }[];
             }[];
-          }[];
-        }
+          }
         | {
-          error: string;
-        }
+            error: string;
+          }
         | {
-          // TODO: Should error also contains full address?
-          error: "Could not connect locations";
-          route_id: string;
-          stage_index: number;
-        }
+            // TODO: Should error also contains full address?
+            error: "Could not connect locations";
+            route_id: string;
+            stage_index: number;
+          }
         | {
-          error: "No such address";
-          route_id: string;
-          stage_index: number;
-          fromOrTo: "from" | "to";
-        }
+            error: "No such address";
+            route_id: string;
+            stage_index: number;
+            fromOrTo: "from" | "to";
+          }
         | {
-          error: "Ambiguous address";
-          route_id: string;
-          stage_index: number;
-          fromOrTo: "from" | "to";
-          addresses: {
-            city: string;
-            country?: string | undefined;
-          }[];
-        };
+            error: "Ambiguous address";
+            route_id: string;
+            stage_index: number;
+            fromOrTo: "from" | "to";
+            addresses: {
+              city: string;
+              country?: string | undefined;
+            }[];
+          };
 
       const output: Output = await response.json();
 
@@ -902,7 +901,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
 
               setChain((oldChain: Chain): Chain => {
                 const routeIndex = oldChain.routes.findIndex(
-                  (route) => route.name === output.route_id,
+                  (route) => route.name === output.route_id
                 );
                 const oldRoute = oldChain.routes[routeIndex];
                 const oldStage = oldRoute.stages[output.stage_index];
@@ -911,18 +910,27 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
 
                 const fromAddress = !oldStage.from.country
                   ? '"' + oldStage.from.city + '"'
-                  : '"' + oldStage.from.city + '" in "' +
-                    oldStage.from.country + '"';
+                  : '"' +
+                    oldStage.from.city +
+                    '" in "' +
+                    oldStage.from.country +
+                    '"';
 
                 const toAddress = !oldStage.to.country
                   ? '"' + oldStage.to.city + '"'
-                  : '"' + oldStage.to.city + '" in "' + oldStage.to.country +
+                  : '"' +
+                    oldStage.to.city +
+                    '" in "' +
+                    oldStage.to.country +
                     '"';
 
                 setError(
                   "Error! Could not connect city " +
-                    fromAddress + " to " + toAddress + ". " +
-                    "Please make sure the stage is connected by roads.",
+                    fromAddress +
+                    " to " +
+                    toAddress +
+                    ". " +
+                    "Please make sure the stage is connected by roads."
                 );
                 setMessage(undefined);
 
@@ -946,32 +954,36 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
 
               setChain((oldChain: Chain): Chain => {
                 const routeIndex = oldChain.routes.findIndex(
-                  (route) => route.name === output.route_id,
+                  (route) => route.name === output.route_id
                 );
                 const oldRoute = oldChain.routes[routeIndex];
                 const oldStage = oldRoute.stages[output.stage_index];
 
                 if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-                const address = output.fromOrTo === "from"
-                  ? oldStage.from
-                  : oldStage.to;
+                const address =
+                  output.fromOrTo === "from" ? oldStage.from : oldStage.to;
 
                 if (output.error === "No such address") {
                   if (!address.country) {
                     setError(
                       "Error! " +
                         "Could find city that matched " +
-                        '"' + address.city + '". ' +
-                        "Please make sure the address is correct.",
+                        '"' +
+                        address.city +
+                        '". ' +
+                        "Please make sure the address is correct."
                     );
                   } else {
                     setError(
                       "Error! " +
                         "Could find city that matched " +
-                        '"' + address.city + '" in "' + address.country +
+                        '"' +
+                        address.city +
+                        '" in "' +
+                        address.country +
                         '". ' +
-                        "Please make sure the address is correct.",
+                        "Please make sure the address is correct."
                     );
                   }
                 } else {
@@ -979,16 +991,21 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
                     setError(
                       "Error! " +
                         "Found multiple cities that matched " +
-                        '"' + address.city + '". ' +
-                        "Please specify the country.",
+                        '"' +
+                        address.city +
+                        '". ' +
+                        "Please specify the country."
                     );
                   } else {
                     setError(
                       "Error! " +
                         "Found multiple cities that matched " +
-                        '"' + address.city + '" in "' + address.country +
+                        '"' +
+                        address.city +
+                        '" in "' +
+                        address.country +
                         '". ' +
-                        "Please make sure the address is correct.",
+                        "Please make sure the address is correct."
                     );
                   }
                 }
@@ -1000,9 +1017,9 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
                     ...oldRoute,
                     stages: oldRoute.stages.with(output.stage_index, {
                       ...oldStage,
-                      ...output.fromOrTo === "from"
+                      ...(output.fromOrTo === "from"
                         ? { from: { ...oldStage.from, exists: false } }
-                        : { to: { ...oldStage.to, exists: false } },
+                        : { to: { ...oldStage.to, exists: false } }),
                     }),
                   }),
                 };
@@ -1012,14 +1029,14 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
           default:
             {
               setError(
-                "Error! Failed to calculate emissions. Please try again.",
+                "Error! Failed to calculate emissions. Please try again."
               );
               setMessage(undefined);
               console.error(
                 "Error! Got response code: " +
                   response.status +
                   " " +
-                  (await response.text()),
+                  (await response.text())
               );
             }
             break;
@@ -1034,7 +1051,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text()),
+            (await response.text())
         );
       }
 
@@ -1044,7 +1061,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
           emission: output.chain_kg,
           routes: oldChain.routes.map((oldRoute): Route => {
             const outputRoute = output.routes.find(
-              (route) => route.id === oldRoute.name,
+              (route) => route.id === oldRoute.name
             );
             if (outputRoute === undefined) throw Error("Route not found");
 
@@ -1055,12 +1072,11 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
                 (oldStage, index): Stage => ({
                   ...oldStage,
                   emission: outputRoute.stages[index].stage_kg,
-                  ...oldStage.usesAddress &&
-                    {
-                      from: { ...oldStage.from, exists: true },
-                      to: { ...oldStage.to, exists: true },
-                    },
-                }),
+                  ...(oldStage.usesAddress && {
+                    from: { ...oldStage.from, exists: true },
+                    to: { ...oldStage.to, exists: true },
+                  }),
+                })
               ),
             };
           }),
@@ -1075,25 +1091,25 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 font-mono ">
+    <div className="flex flex-col gap-9 font-mono mb-52 ">
       <form onSubmit={onCalculate}>
-        <div className="flex items-stretch w-screen">
-          <div className="flex-auto w-200">
+        <div className="flex flex-col md:flex-row items-stretch w-screen ml-4 md:divide-y-2  md:divide-solid md:divide-x-2 md:divide-black">
+          <div className=" px-16 flex-0 border-t-2 border-black  pt-10">
             <ChainCard
               projectName="ProjectName"
               chain={chain}
               onAddRoute={onAddRoute}
             />
           </div>
-          <div className="flex flex-auto w-200">
-            <div className="flex-none w-200">
+          <div className="flex flex-col md:flex-row md:px-96 gap-4   pt-10 ">
+            <div className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0">
               <RouteCard
                 chain={chain}
                 routeIndex={0}
                 onInsertStageAfter={onInsertStageAfter}
               />
             </div>
-            <div className="flex-none w-200">
+            <div className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 md:ml-0 mr-10 md:mr-0">
               <StageCard
                 chain={chain}
                 routeIndex={0}
@@ -1113,24 +1129,24 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
             </div>
           </div>
         </div>
+        <div className=" flex gap-4 flex-col items-center justify-center">
+          <UploadPopUp setChainData={setChain} chain={chain} />
 
-        <UploadPopUp setChainData={setChain} chain={chain} />
-
-        <Button className="w-full mt-5" variant="ibm_blue" type="submit">
-          Calculate
-        </Button>
-      </form>
-
-      {message !== undefined && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
-          {message}
+          <Button className=" px-10" variant="ibm_blue" type="submit">
+            Calculate
+          </Button>
+          {message !== undefined && (
+            <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
+              {message}
+            </div>
+          )}
+          {error !== undefined && (
+            <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
+              {error}
+            </Label>
+          )}
         </div>
-      )}
-      {error !== undefined && (
-        <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-          {error}
-        </Label>
-      )}
+      </form>
     </div>
   );
 };
