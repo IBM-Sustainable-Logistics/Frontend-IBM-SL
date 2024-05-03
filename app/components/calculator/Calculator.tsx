@@ -856,6 +856,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
               stages: {
                 stage_kg: number;
                 transport_form: string;
+                cargo_t: number;
               }[];
             }[];
           }
@@ -1069,6 +1070,7 @@ const Calculator = ({ chain, setChain }: CalculatorProps) => {
                   ...(oldStage.usesAddress && {
                     from: { ...oldStage.from, exists: true },
                     to: { ...oldStage.to, exists: true },
+                    cargo: outputRoute.stages[index].cargo_t,
                   }),
                 })
               ),

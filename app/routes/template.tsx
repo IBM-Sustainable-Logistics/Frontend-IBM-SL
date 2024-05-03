@@ -4,7 +4,7 @@ import badexample1 from 'public/Images/badexample1.png'
 import badexample2 from 'public/Images/badexample2.png'
 import badexample3 from 'public/Images/badexample3.png'
 import checkdistance from 'public/Images/checkdistance.png'
-import templateZIP from 'public/Images/IBM_SL_Upload_Template_v0.zip'
+import templateZIP from 'public/Images/IBM_SL_Upload_Template_v1.zip'
 import { Button } from 'app/components/ui/button'
 import { useState } from 'react'
 

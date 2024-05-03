@@ -63,17 +63,17 @@ type Address = T.Address & {
 
 type Stage = (
   | {
-      usesAddress: false;
-      transportMethod: T.TransportMethod;
-      distance: number | undefined;
-    }
+    usesAddress: false;
+    transportMethod: T.TransportMethod;
+    distance: number | undefined;
+  }
   | {
-      usesAddress: true;
-      transportMethod: T.TruckTransportMethod;
-      from: Address;
-      to: Address;
-      impossible: boolean;
-    }
+    usesAddress: true;
+    transportMethod: T.TruckTransportMethod;
+    from: Address;
+    to: Address;
+    impossible: boolean;
+  }
 ) &
   Keyed &
   T.Estimated;
@@ -241,6 +241,60 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
         if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
           dataMap.set(entry, jsonObj[entry]);
         }
+
+        const newStages: Stage[] = [];
+
+        for (let i = 1; i < dataMap.size; i++) {
+          const from = {
+            city: dataMap.get("Origin city").toString(),
+            country: dataMap.get("Origin country").toString(),
+            exists: true,
+          };
+
+          const to = {
+            city: dataMap.get("Destination city").toString(),
+            country: dataMap.get("Destination country").toString(),
+            exists: true,
+          };
+
+          const stage = isDistanceMode
+            ? {
+              usesAddress: false,
+              transportMethod: "truck",
+              distance: dataMap.get("Distance") as number,
+              key: Math.random(),
+              emission: undefined,
+            }
+            : {
+              usesAddress: true,
+              transportMethod: "truck",
+              from: from,
+              to: to,
+              key: Math.random(),
+              emission: undefined,
+              impossible: false,
+            };
+
+          newStages.push(stage as Stage);
+        }
+
+        setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
+
+        console.log("newStages: " + newStages)
+
+        setChainData((oldChain: Chain): Chain => {
+          return {
+            ...oldChain,
+            routes: [
+              {
+                name: "Route " + (oldChain.routes.length - 1 + 1),
+                stages: newStages,
+                key: Math.random(),
+                emission: undefined,
+              },
+            ],
+          };
+        });
       }
     };
 
@@ -272,21 +326,21 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
 
       const stage = isDistanceMode
         ? {
-            usesAddress: false,
-            transportMethod: "truck",
-            distance: rows[i][0] as number,
-            key: Math.random(),
-            emission: undefined,
-          }
+          usesAddress: false,
+          transportMethod: "truck",
+          distance: rows[i][0] as number,
+          key: Math.random(),
+          emission: undefined,
+        }
         : {
-            usesAddress: true,
-            transportMethod: "truck",
-            from: from,
-            to: to,
-            key: Math.random(),
-            emission: undefined,
-            impossible: false,
-          };
+          usesAddress: true,
+          transportMethod: "truck",
+          from: from,
+          to: to,
+          key: Math.random(),
+          emission: undefined,
+          impossible: false,
+        };
 
       newStages.push(stage as Stage);
     }
