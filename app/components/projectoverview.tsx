@@ -162,15 +162,21 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                           <TableCell></TableCell>
                           <TableCell>{stage.from.city}</TableCell>
                           <TableCell>{stage.to.city}</TableCell>
+                          <TableCell className="text-right">
+                            {stage.cargo}
+                          </TableCell>
                         </>
                       ) : (
                         <>
                           <TableCell>{stage.distance}</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell></TableCell>
+                          <TableCell className="text-right">
+                            {stage.cargo}
+                          </TableCell>
                         </>
                       )}
-                      <TableCell className="text-right">
-                        {stage.cargo}
-                      </TableCell>
+
                       <TableCell className="text-right">
                         {stage.emission ? stage.emission : 0}
                       </TableCell>
