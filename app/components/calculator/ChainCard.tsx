@@ -9,6 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card.tsx";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
+import { AspectRatio } from "../ui/aspect-ratio.tsx";
+import truck from "../../assets/truck.jpg";
 
 type Props = {
   projectName: string | undefined;
@@ -20,28 +23,38 @@ type Props = {
 export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
   return (
     <>
-      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+      <Label className="text-lg font text-gray-900 dark:text-gray-100">
         Name: {projectName}
       </Label>
       <br />
       <div className="flex flex-col gap-6">
-        {chain.routes.map((route, routeIndex) => (
-          <Card onClick={onSelectRoute(routeIndex)} key={route.key}>
-            <CardHeader>
-              <CardTitle> {route.name}</CardTitle>
-              {route.emission !== undefined && (
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Emission: {route.emission} kg
-                </Label>
-              )}
-            </CardHeader>
-            <CardContent>
-              <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Stages: {route.stages.length}
-              </Label>
-            </CardContent>
-          </Card>
-        ))}
+        <Carousel orientation="vertical">
+          <CarouselContent className=" h-[500px] w-[200px]">
+            {chain.routes.map((route, routeIndex) => (
+              <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
+                <Card
+                  onClick={onSelectRoute(routeIndex)}
+                  className="backdrop-blur-md "
+                >
+                  <CardHeader>
+                    <CardTitle> {route.name}</CardTitle>
+                    {route.emission !== undefined && (
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Emission: {route.emission} kg
+                      </Label>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      Stages: {route.stages.length}
+                    </Label>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+
         {chain.emission !== undefined && (
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Total estimated emission: {chain.emission} kg

@@ -4,6 +4,8 @@ import { Button } from "../../components/ui/button.tsx";
 import * as C from "./Calculator.tsx";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import { Card, CardContent, CardHeader } from "../ui/card.tsx";
+import { AspectRatio } from "../ui/aspect-ratio.tsx";
+import truck from "../../assets/truck-green.svg";
 
 type Props = {
   chain: C.Chain;
@@ -43,9 +45,12 @@ export default ({
           {chain.routes[routeIndex].stages.map((stage, stageIndex) => (
             <CarouselItem
               key={stage.key}
-              className="flex flex-col gap-4 pt-1 basis-1/2"
+              className="flex flex-col gap-4 pt-1 basis-1/3  mt-4"
             >
               <Card onClick={onSelectStage(stageIndex)}>
+                <AspectRatio ratio={16 / 9}>
+                  <img src={truck} />
+                </AspectRatio>
                 <CardHeader>Stage {stageIndex + 1}</CardHeader>
                 <CardContent>
                   <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">

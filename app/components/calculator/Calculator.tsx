@@ -11,6 +11,9 @@ import ChainCard from "./ChainCard.tsx";
 import RouteCard from "./RouteCard.tsx";
 import StageCard from "./StageCard.tsx";
 import { Card } from "../ui/card.tsx";
+import { MessageDialog } from "../ui/messagedialog.tsx";
+import { string } from "../../../../.cache/deno/npm/registry.npmjs.org/@types/prop-types/15.7.12/index.d.ts";
+import { ErrorDialog } from "../ui/errordialog.tsx";
 
 /* Termonology:
  * - Chain:
@@ -153,8 +156,10 @@ type CalculatorProps = {
 
 const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
-  const [message, setMessage] = useState(undefined);
+  const [message, setMessage] = useState("");
   const [suggestions, setSuggestions] = useState<Address[]>([]);
+  const [open, setOpen] = useState(false);
+  const [openError, setOpenError] = useState(false);
 
   // NOTE: This uses index, but routes should be identified by their names,
   // so that we can support sorting and moving the routes around.
@@ -789,6 +794,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 route.name +
                 '".'
             );
+            setOpenError(true);
             setMessage(undefined);
 
             setChain((oldChain: Chain): Chain => {
@@ -938,6 +944,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                     ". " +
                     "Please make sure the stage is connected by roads."
                 );
+                setOpenError(true);
                 setMessage(undefined);
 
                 return {
@@ -980,6 +987,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   } else {
                     setError(
                       "Error! " +
@@ -991,6 +999,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   }
                 } else {
                   if (!address.country) {
@@ -1002,6 +1011,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                         '". ' +
                         "Please specify the country."
                     );
+                    setOpenError(true);
                   } else {
                     setError(
                       "Error! " +
@@ -1013,6 +1023,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   }
                 }
                 setMessage(undefined);
@@ -1037,6 +1048,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
               setError(
                 "Error! Failed to calculate emissions. Please try again."
               );
+              setOpenError(true);
               setMessage(undefined);
               console.error(
                 "Error! Got response code: " +
@@ -1052,6 +1064,8 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
 
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
+        setOpenError(true);
+
         setMessage(undefined);
         console.error(
           "Error! Got response code: " +
@@ -1091,6 +1105,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
       });
 
       setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
+      setOpen(true);
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -1154,23 +1169,24 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
               />
+              <div className=" flex gap-4 flex-col items-center justify-center">
+                <Button className=" px-10" variant="ibm_blue" type="submit">
+                  Calculate
+                </Button>
+                <MessageDialog
+                  message={message as string}
+                  open={open}
+                  setopen={setOpen}
+                />
+
+                <ErrorDialog
+                  message={error}
+                  open={openError}
+                  setopen={setOpenError}
+                />
+              </div>
             </Card>
           </div>
-        </div>
-        <div className=" flex gap-4 flex-col items-center justify-center">
-          <Button className=" px-10" variant="ibm_blue" type="submit">
-            Calculate
-          </Button>
-          {message !== undefined && (
-            <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
-              {message}
-            </div>
-          )}
-          {error !== undefined && (
-            <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-              {error}
-            </Label>
-          )}
         </div>
       </form>
       <UploadPopUp setChainData={setChain} chain={chain} />
