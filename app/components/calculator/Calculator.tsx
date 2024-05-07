@@ -5,7 +5,6 @@ import { Combobox, ComboboxOption } from "../ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
 import { Input } from "../ui/input.tsx";
 import * as T from "../../lib/Transport.ts";
-import { redirect } from "@remix-run/react";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
 import ChainCard from "./ChainCard.tsx";
 import RouteCard from "./RouteCard.tsx";
@@ -114,10 +113,6 @@ export const transportMethodOptions: ComboboxOption[] =
     value: method,
     label: T.getTransportMethodLabel(method),
   }));
-
-export function goToUploadPage() {
-  return redirect("/upload", {});
-}
 
 export const loadChain = (chain: T.Chain): Chain => ({
   routes: chain.routes.map(
@@ -1119,7 +1114,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           className={
             isCreateProject
               ? "flex flex-col  items-stretch  ml-4 "
-              : "flex flex-col md:flex-row items-stretch w-screen ml-4 md:divide-y-2  md:divide-solid md:divide-x-2 md:divide-black"
+              : "flex flex-col lg:flex-row items-stretch w-screen ml-4 lg:divide-y-2  lg:divide-solid lg:divide-x-2 lg:divide-black"
           }
         >
           <div className=" px-16 flex-0 border-t-2 border-black  pt-10">
@@ -1134,15 +1129,15 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           <div
             className={
               isCreateProject
-                ? "flex flex-col gap-4   pt-10 "
-                : "flex flex-col md:flex-row md:px-96 gap-4   pt-10 "
+                ? "flex flex-col gap-4  pt-10 "
+                : "flex flex-col lg:flex-row lg:px-96 gap-4   pt-10  "
             }
           >
             <Card
               className={
                 isCreateProject
-                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 "
-                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0 flex flex-col gap-4"
+                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]"
+                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 lg:ml-0 mr-10 lg:mr-0 flex flex-col gap-4 lg:w-[300px]"
               }
             >
               <RouteCard
@@ -1153,7 +1148,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onRemoveRoute={onRemoveRoute}
               />
             </Card>
-            <Card className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 md:ml-0 mr-10 md:mr-0 flex flex-col gap-4 ">
+            <Card className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 lg:ml-0 mr-10 lg:mr-0 flex flex-col gap-4 lg:w-[300px]">
               <StageCard
                 chain={chain}
                 routeIndex={selectedRoute}
@@ -1171,9 +1166,14 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onRemoveStage={onRemoveStage}
               />
               <div className=" flex gap-4 flex-col items-center justify-center">
-                <Button className=" px-10" variant="ibm_blue" type="submit">
+                <Button
+                  className=" px-10"
+                  variant="submit_button"
+                  type="submit"
+                >
                   Calculate
                 </Button>
+
                 <MessageDialog
                   message={message as string}
                   open={open}

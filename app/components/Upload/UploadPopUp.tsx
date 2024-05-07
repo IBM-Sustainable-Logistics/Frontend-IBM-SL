@@ -17,7 +17,7 @@ const UploadPopUp: React.FC<Props> = ({ setChainData, chain }) => {
   return (
     <Dialog>
       <DialogTrigger className=" mt-3">
-        <Button type="button" variant={"ibm_blue"}>
+        <Button type="button" variant={"submit_button2"}>
           Upload file
         </Button>
       </DialogTrigger>

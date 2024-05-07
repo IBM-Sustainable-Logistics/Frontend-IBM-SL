@@ -11,16 +11,22 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        ibm_blue: "bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]",
-        ibm_green: "bg-[#198038] text-primary-foreground hover:bg-[#6fdc8c]",
-        ibm_teal: "bg-[#007d79] text-primary-foreground hover:bg-[#9ef0f0]",
+        ibm_blue:
+          "bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]/90 shadow-md fold-bold px-3 py-1",
+        ibm_green: "bg-[#198038] text-primary-foreground hover:bg-[#6fdc8c]/90",
+        ibm_teal:
+          "bg-[#007d79] text-primary-foreground hover:bg-[#9ef0f0]/90 shadow-md",
+        submit_button:
+          "shadow-md fold-bold relative inline-block h-full w-full rounded border-2 border-black bg-white px-3 py-1 text-base font-bold text-black transition duration-100 hover:bg-[#6fdc8c] hover:text-gray-900 ",
+        submit_button2:
+          "fold-bold relative inline-block h-full w-full rounded border-2 border-black bg-black px-3 py-1 text-base font-bold text-white transition duration-100 hover:bg-gray-900 hover:text-yellow-50 shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",

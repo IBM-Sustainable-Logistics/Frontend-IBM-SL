@@ -11,13 +11,12 @@ import {
 } from "../ui/card.tsx";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import { AspectRatio } from "../ui/aspect-ratio.tsx";
-import truck from "../../assets/truck.jpg";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
 type Props = {
   projectName: string | undefined;
   chain: C.Chain;
-  setChain: () => void;
+  setChain: React.Dispatch<React.SetStateAction<C.Chain>>;
   onSelectRoute: (routeIndex: number) => () => void;
   onAddRoute: () => void;
 };
@@ -37,7 +36,7 @@ export default ({
       <br />
       <div className="flex flex-col gap-6">
         <Carousel orientation="vertical">
-          <CarouselContent className="h-[200px] md:h-[500px] md:w-[300px]">
+          <CarouselContent className="h-[200px] lg:h-[500px] lg:w-[300px]">
             {chain.routes.map((route, routeIndex) => (
               <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
                 <Card
