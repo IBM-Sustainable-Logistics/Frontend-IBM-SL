@@ -35,6 +35,8 @@
       "npm:d3@^7.9.0": "npm:d3@7.9.0_d3-selection@3.0.0",
       "npm:deno@^0.1.1": "npm:deno@0.1.1",
       "npm:dotenv@^16.4.5": "npm:dotenv@16.4.5",
+      "npm:embla-carousel-react": "npm:embla-carousel-react@8.0.2_react@18.2.0_embla-carousel@8.0.2",
+      "npm:embla-carousel-react@^8.0.4": "npm:embla-carousel-react@8.0.4_react@18.2.0_embla-carousel@8.0.4",
       "npm:framer-motion@^11.0.8": "npm:framer-motion@11.0.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:isbot@^4.1.0": "npm:isbot@4.4.0",
       "npm:json-as-xlsx@^2.5.6": "npm:json-as-xlsx@2.5.6",
@@ -6602,6 +6604,42 @@
           "minimalistic-assert": "minimalistic-assert@1.0.1",
           "minimalistic-crypto-utils": "minimalistic-crypto-utils@1.0.1"
         }
+      },
+      "embla-carousel-react@8.0.2_react@18.2.0_embla-carousel@8.0.2": {
+        "integrity": "sha512-RHe1GKLulOW8EDN+cJgbFbVVfRXcaLT2/89dyVw3ONGgVpZjD19wB87I1LUZ1aCzOSrTccx0PFSQanK4OOfGPA==",
+        "dependencies": {
+          "embla-carousel": "embla-carousel@8.0.2",
+          "embla-carousel-reactive-utils": "embla-carousel-reactive-utils@8.0.2_embla-carousel@8.0.2",
+          "react": "react@18.2.0"
+        }
+      },
+      "embla-carousel-react@8.0.4_react@18.2.0_embla-carousel@8.0.4": {
+        "integrity": "sha512-3NlOmBmRhaGhtI0It9243yg9fz2wPRML5gGLDIE69Oyb/CuGsJnxpcgG74j905NQBDgReTEfFJwzOtIFAjeBfg==",
+        "dependencies": {
+          "embla-carousel": "embla-carousel@8.0.4",
+          "embla-carousel-reactive-utils": "embla-carousel-reactive-utils@8.0.4_embla-carousel@8.0.4",
+          "react": "react@18.2.0"
+        }
+      },
+      "embla-carousel-reactive-utils@8.0.2_embla-carousel@8.0.2": {
+        "integrity": "sha512-nLZqDkQdO0hvOP49/dUwjkkepMnUXgIzhyRuDjwGqswpB4Ibnc5M+w7rSQQAM+uMj0cPaXnYOTlv8XD7I/zVNw==",
+        "dependencies": {
+          "embla-carousel": "embla-carousel@8.0.2"
+        }
+      },
+      "embla-carousel-reactive-utils@8.0.4_embla-carousel@8.0.4": {
+        "integrity": "sha512-7lWM+8hanIF2roTAjxwfqfr0+VTbr9rYVlAs0r5PwPOVpz1G3/+bRelgAYvwcfWVm5Vydo2pKXVfFOPQjznF7w==",
+        "dependencies": {
+          "embla-carousel": "embla-carousel@8.0.4"
+        }
+      },
+      "embla-carousel@8.0.2": {
+        "integrity": "sha512-bogsDO8xosuh/l3PxIvA5AMl3+BnRVAse9sDW/60amzj4MbGS5re4WH5eVEXiuH8G1/3G7QUAX2QNr3Yx8z5rA==",
+        "dependencies": {}
+      },
+      "embla-carousel@8.0.4": {
+        "integrity": "sha512-INndmilrV9KY4Wnb4F2tI55DuQnFjf3GPOaPDT2LGYiKhIWVNUhv1nz/RI7CZ6WoIZ8MYHP4t6Qm/cqpcGHknA==",
+        "dependencies": {}
       },
       "emittery@0.10.2": {
         "integrity": "sha512-aITqOwnLanpHLNXZJENbOgjUBeHocD+xsSJmNrjovKBW5HbSpW3d1pEls7GFQPUWXiwG9+0P4GtHfEqC/4M0Iw==",
@@ -13942,6 +13980,7 @@
         "npm:d3@^7.9.0",
         "npm:deno@^0.1.1",
         "npm:dotenv@^16.4.5",
+        "npm:embla-carousel-react@^8.0.4",
         "npm:framer-motion@^11.0.8",
         "npm:isbot@^4.1.0",
         "npm:json-as-xlsx@^2.5.6",

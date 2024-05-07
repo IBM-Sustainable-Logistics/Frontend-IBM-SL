@@ -38,6 +38,7 @@
     "d3": "^7.9.0",
     "deno": "^0.1.1",
     "dotenv": "^16.4.5",
+    "embla-carousel-react": "^8.0.4",
     "framer-motion": "^11.0.8",
     "isbot": "^4.1.0",
     "json-as-xlsx": "^2.5.6",

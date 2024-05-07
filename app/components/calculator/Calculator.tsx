@@ -10,6 +10,7 @@ import UploadPopUp from "../Upload/UploadPopUp.tsx";
 import ChainCard from "./ChainCard.tsx";
 import RouteCard from "./RouteCard.tsx";
 import StageCard from "./StageCard.tsx";
+import { Card } from "../ui/card.tsx";
 
 /* Termonology:
  * - Chain:
@@ -744,7 +745,10 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
 
       // If you are viewing the last route and it is the one that is removed,
       // then select a new route
-      if (selectedRoute === chain.routes.length - 1 && selectedRoute === index) {
+      if (
+        selectedRoute === chain.routes.length - 1 &&
+        selectedRoute === index
+      ) {
         setSelectedRoute(selectedRoute - 1);
       }
 
@@ -1118,11 +1122,11 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 : "flex flex-col md:flex-row md:px-96 gap-4   pt-10 "
             }
           >
-            <div
+            <Card
               className={
                 isCreateProject
-                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 "
-                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0"
+                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 "
+                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 md:ml-0 mr-10 md:mr-0 flex flex-col gap-4"
               }
             >
               <RouteCard
@@ -1132,8 +1136,8 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onInsertStageAfter={onInsertStageAfter}
                 onRemoveRoute={onRemoveRoute}
               />
-            </div>
-            <div className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 md:ml-0 mr-10 md:mr-0">
+            </Card>
+            <Card className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 md:ml-0 mr-10 md:mr-0 flex flex-col gap-4 ">
               <StageCard
                 chain={chain}
                 routeIndex={selectedRoute}
@@ -1150,12 +1154,10 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
               />
-            </div>
+            </Card>
           </div>
         </div>
         <div className=" flex gap-4 flex-col items-center justify-center">
-          <UploadPopUp setChainData={setChain} chain={chain} />
-
           <Button className=" px-10" variant="ibm_blue" type="submit">
             Calculate
           </Button>
@@ -1171,6 +1173,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           )}
         </div>
       </form>
+      <UploadPopUp setChainData={setChain} chain={chain} />
     </div>
   );
 };
