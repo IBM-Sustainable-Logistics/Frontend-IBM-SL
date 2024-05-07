@@ -1108,13 +1108,13 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-9 font-mono  ">
+    <div className="flex flex-col gap-9 font-mono justify-center items-center ">
       <form onSubmit={onCalculate}>
         <div
           className={
             isCreateProject
-              ? "flex flex-col  items-stretch  ml-4 "
-              : "flex flex-col lg:flex-row items-stretch w-screen ml-4 lg:divide-y-2  lg:divide-solid lg:divide-x-2 lg:divide-black"
+              ? "flex flex-col  ml-4 "
+              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y-2  lg:divide-solid lg:divide-x-2 lg:divide-black"
           }
         >
           <div className=" px-16 flex-0 border-t-2 border-black  pt-10">
