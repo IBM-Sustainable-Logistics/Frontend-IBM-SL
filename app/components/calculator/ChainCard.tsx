@@ -12,15 +12,23 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import { AspectRatio } from "../ui/aspect-ratio.tsx";
 import truck from "../../assets/truck.jpg";
+import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
 type Props = {
   projectName: string | undefined;
   chain: C.Chain;
+  setChain: () => void;
   onSelectRoute: (routeIndex: number) => () => void;
   onAddRoute: () => void;
 };
 
-export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
+export default ({
+  projectName,
+  chain,
+  onSelectRoute,
+  onAddRoute,
+  setChain,
+}: Props) => {
   return (
     <>
       <Label className="text-lg font text-gray-900 dark:text-gray-100">
@@ -29,7 +37,7 @@ export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
       <br />
       <div className="flex flex-col gap-6">
         <Carousel orientation="vertical">
-          <CarouselContent className=" h-[500px] w-[200px]">
+          <CarouselContent className="h-[200px] md:h-[500px] md:w-[300px]">
             {chain.routes.map((route, routeIndex) => (
               <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
                 <Card
@@ -68,6 +76,7 @@ export default ({ projectName, chain, onSelectRoute, onAddRoute }: Props) => {
         >
           Add Route
         </Button>
+        <UploadPopUp setChainData={setChain} chain={chain} />
       </div>
     </>
   );

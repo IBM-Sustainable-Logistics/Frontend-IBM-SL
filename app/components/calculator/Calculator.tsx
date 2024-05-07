@@ -1113,7 +1113,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-9 font-mono mb-52 ">
+    <div className="flex flex-col gap-9 font-mono  ">
       <form onSubmit={onCalculate}>
         <div
           className={
@@ -1128,6 +1128,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
               chain={chain}
               onSelectRoute={onSelectRoute}
               onAddRoute={onAddRoute}
+              setChain={setChain}
             />
           </div>
           <div
@@ -1180,7 +1181,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 />
 
                 <ErrorDialog
-                  message={error}
+                  message={error as string}
                   open={openError}
                   setopen={setOpenError}
                 />
@@ -1189,7 +1190,6 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           </div>
         </div>
       </form>
-      <UploadPopUp setChainData={setChain} chain={chain} />
     </div>
   );
 };
