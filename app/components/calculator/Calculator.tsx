@@ -1114,10 +1114,10 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           className={
             isCreateProject
               ? "flex flex-col  ml-4 "
-              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y-2  lg:divide-solid lg:divide-x-2 lg:divide-black"
+              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y  lg:divide-solid lg:divide-x lg:divide-black"
           }
         >
-          <div className=" px-16 flex-0 border-t-2 border-black  pt-10">
+          <div className=" px-16 flex-0 border-t border-black  pt-10">
             <ChainCard
               projectName="ProjectName"
               chain={chain}
@@ -1148,7 +1148,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onRemoveRoute={onRemoveRoute}
               />
             </Card>
-            <Card className="border-2 pl-3  pr-3 pt-3 pb-3 ml-10 lg:ml-0 mr-10 lg:mr-0 flex flex-col gap-4 lg:w-[300px]">
+            <Card className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]">
               <StageCard
                 chain={chain}
                 routeIndex={selectedRoute}

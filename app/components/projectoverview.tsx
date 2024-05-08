@@ -27,6 +27,13 @@ import { useRevalidator } from "@remix-run/react";
 import xlsx from "https://esm.sh/json-as-xlsx@2.5.6";
 import { stagger } from "npm:framer-motion@^11.0.8";
 import { Sheet } from "./ui/sheet.tsx";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel.tsx";
 
 interface Props {
   project: project;
@@ -123,8 +130,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
 
   return (
     /* create a project page */
-    <div className="flex flex-col justify-center items-center p-2 sm:p-10">
-      <Card className="w-full sm:w-auto">
+    <div className="flex flex-col justify-center items-center  ">
+      <Card className="w-full max-w-md md:max-w-2xl ">
         <CardHeader>
           <CardTitle>{project.title}</CardTitle>
           <CardDescription>{project.description}</CardDescription>
@@ -182,21 +189,27 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             </>
           ))}
 
-          {calculators.map((calculator: CalculatorInstance) => (
-            <div key={calculator.id} className=" w-full">
-              <Calculator
-                isCreateProject={true}
-                chain={chain}
-                setChain={setChain}
-              />
-              <Button
-                variant="destructive"
-                onClick={() => deleteCalculator(calculator.id)}
-              >
-                Delete
-              </Button>
-            </div>
-          ))}
+          <Carousel orientation="horizontal">
+            <CarouselContent>
+              {calculators.map((calculator: CalculatorInstance) => (
+                <CarouselItem key={calculator.id}>
+                  <div className="flex flex-col justify-center items-center gap-4">
+                    <Calculator
+                      isCreateProject={true}
+                      chain={chain}
+                      setChain={setChain}
+                    />
+                    <Button
+                      variant="destructive"
+                      onClick={() => deleteCalculator(calculator.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </CardContent>
         <CardFooter>
           <div className=" flex gap-4 flex-col w-full">
