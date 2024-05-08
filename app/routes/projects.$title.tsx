@@ -30,11 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const ProjectById = () => {
   const { project, userId } = useLoaderData<typeof loader>();
 
-  return (
-    <div className="max-h-lvh">
-      <ProjectOverview project={project} />
-    </div>
-  );
+  return <ProjectOverview project={project} />;
 };
 
 export default ProjectById;

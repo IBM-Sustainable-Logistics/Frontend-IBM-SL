@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { Button } from "../components/ui/button.tsx";
-import { Label } from "./ui/label.tsx";
-import { Combobox, ComboboxOption } from "./ui/combobox.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { Label } from "../ui/label.tsx";
+import { Combobox, ComboboxOption } from "../ui/combobox.tsx";
 import AutoSuggest from "react-autosuggest";
-import { Input } from "./ui/input.tsx";
-import * as T from "../lib/Transport.ts";
-import { redirect } from "@remix-run/react";
-import UploadPopUp from "./Upload/UploadPopUp.tsx";
+import { Input } from "../ui/input.tsx";
+import * as T from "../../lib/Transport.ts";
+import UploadPopUp from "../Upload/UploadPopUp.tsx";
+import ChainCard from "./ChainCard.tsx";
+import RouteCard from "./RouteCard.tsx";
+import StageCard from "./StageCard.tsx";
+import { Card } from "../ui/card.tsx";
+import { MessageDialog } from "../ui/messagedialog.tsx";
+import { string } from "../../../../.cache/deno/npm/registry.npmjs.org/@types/prop-types/15.7.12/index.d.ts";
+import { ErrorDialog } from "../ui/errordialog.tsx";
 
 /* Termonology:
  * - Chain:
@@ -43,7 +49,7 @@ type Keyed = {
   key: number;
 };
 
-type Address = T.Address & {
+export type Address = T.Address & {
   exists: boolean;
 };
 
@@ -102,16 +108,11 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
   emission: undefined,
 });
 
-const transportMethodOptions: ComboboxOption[] = T.truckTransportMethods.map(
-  (method: T.TransportMethod) => ({
+export const transportMethodOptions: ComboboxOption[] =
+  T.truckTransportMethods.map((method: T.TransportMethod) => ({
     value: method,
     label: T.getTransportMethodLabel(method),
-  })
-);
-
-export function goToUploadPage() {
-  return redirect("/upload", {});
-}
+  }));
 
 export const loadChain = (chain: T.Chain): Chain => ({
   routes: chain.routes.map(
@@ -148,10 +149,27 @@ type CalculatorProps = {
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
+const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
-  const [message, setMessage] = useState(undefined);
+  const [message, setMessage] = useState("");
   const [suggestions, setSuggestions] = useState<Address[]>([]);
+  const [open, setOpen] = useState(false);
+  const [openError, setOpenError] = useState(false);
+
+  // NOTE: This uses index, but routes should be identified by their names,
+  // so that we can support sorting and moving the routes around.
+  // That means that if we add a onSortRoutes function, then it should also
+  // update the routeIndex.
+  const [selectedRoute, setSelectedRoute] = useState(0);
+  const [selectedStage, setSelectedStage] = useState(0);
+
+  const onSelectRoute = (routeIndex: number) => () => {
+    setSelectedRoute(routeIndex);
+    setSelectedStage(0);
+  };
+  const onSelectStage = (stageIndex: number) => () => {
+    setSelectedStage(stageIndex);
+  };
 
   /**
    * Given an index of a route and a stage, returns a combobox onChange
@@ -408,26 +426,6 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
         isHighlighted: boolean;
       }
     ) => {
-      // const city =
-      //   place === "city" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.city.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.city}</>
-      //   );
-      //
-      // const country =
-      //   place === "country" ? (
-      //     <>
-      //       <b>{inputValue}</b>
-      //       {suggestion.country.slice(inputValue.length)}
-      //     </>
-      //   ) : (
-      //     <>{suggestion.country}</>
-      //   );
-
       return (
         <span className={isHighlighted ? "bg-blue-200" : ""}>
           {suggestion.city}, {suggestion.country}
@@ -615,7 +613,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                 {
                   usesAddress: true,
                   transportMethod: "truck",
-                  cargo: 0,
+                  cargo: undefined,
                   from: { ...T.emptyAddress, exists: true },
                   to: { ...T.emptyAddress, exists: true },
                   impossible: false,
@@ -723,7 +721,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
               {
                 usesAddress: true,
                 transportMethod: "truck",
-                cargo: 0,
+                cargo: undefined,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
@@ -743,6 +741,15 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
     setChain((old: Chain): Chain => {
       if (index < 0 || index >= old.routes.length || old.routes.length <= 1) {
         throw Error("Cannot remove route index: " + index);
+      }
+
+      // If you are viewing the last route and it is the one that is removed,
+      // then select a new route
+      if (
+        selectedRoute === chain.routes.length - 1 &&
+        selectedRoute === index
+      ) {
+        setSelectedRoute(selectedRoute - 1);
       }
 
       return {
@@ -782,6 +789,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                 route.name +
                 '".'
             );
+            setOpenError(true);
             setMessage(undefined);
 
             setChain((oldChain: Chain): Chain => {
@@ -931,6 +939,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                     ". " +
                     "Please make sure the stage is connected by roads."
                 );
+                setOpenError(true);
                 setMessage(undefined);
 
                 return {
@@ -973,6 +982,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   } else {
                     setError(
                       "Error! " +
@@ -984,6 +994,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   }
                 } else {
                   if (!address.country) {
@@ -995,6 +1006,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                         '". ' +
                         "Please specify the country."
                     );
+                    setOpenError(true);
                   } else {
                     setError(
                       "Error! " +
@@ -1006,6 +1018,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
                         '". ' +
                         "Please make sure the address is correct."
                     );
+                    setOpenError(true);
                   }
                 }
                 setMessage(undefined);
@@ -1030,6 +1043,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
               setError(
                 "Error! Failed to calculate emissions. Please try again."
               );
+              setOpenError(true);
               setMessage(undefined);
               console.error(
                 "Error! Got response code: " +
@@ -1045,6 +1059,8 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
 
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
+        setOpenError(true);
+
         setMessage(undefined);
         console.error(
           "Error! Got response code: " +
@@ -1084,6 +1100,7 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
       });
 
       setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
+      setOpen(true);
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -1091,334 +1108,88 @@ const Calculator = ({ isCreateProject, chain, setChain }: CalculatorProps) => {
   };
 
   return (
-    <div
-      className={
-        isCreateProject
-          ? "justify-center items-center flex flex-col gap-4  font-mono"
-          : "flex flex-col gap-4 font-mono "
-      }
-    >
-      <h1 className=" text-primary text-4xl font-bold font-mono">
-        {isCreateProject ? "" : "Calculate Emissions"}
-      </h1>
+    <div className="flex flex-col gap-9 font-mono justify-center items-center ">
       <form onSubmit={onCalculate}>
-        <Button
-          className="w-full"
-          variant={"secondary"}
-          type="button"
-          onClick={onAddRoute}
+        <div
+          className={
+            isCreateProject
+              ? "flex flex-col  ml-4 "
+              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y  lg:divide-solid lg:divide-x lg:divide-black"
+          }
         >
-          Add Route
-        </Button>
-
-        {chain.routes.map((route, routeIndex) => (
-          <>
-            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
-              {route.name}
-            </h2>
-            <Button
-              className="w-full"
-              variant={"secondary"}
-              type="button"
-              onClick={onInsertStageAfter(routeIndex, -1)}
+          <div className=" px-16 flex-0 border-t border-black  pt-10">
+            <ChainCard
+              projectName="ProjectName"
+              chain={chain}
+              onSelectRoute={onSelectRoute}
+              onAddRoute={onAddRoute}
+              setChain={setChain}
+            />
+          </div>
+          <div
+            className={
+              isCreateProject
+                ? "flex flex-col gap-4  pt-10 "
+                : "flex flex-col lg:flex-row lg:px-96 gap-4   pt-10  "
+            }
+          >
+            <Card
+              className={
+                isCreateProject
+                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]"
+                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 lg:ml-0 mr-10 lg:mr-0 flex flex-col gap-4 lg:w-[300px]"
+              }
             >
-              Add Stage
-            </Button>
-
-            {route.stages.map((stage, stageIndex) => (
-              <div className=" flex flex-col gap-4 " key={stage.key}>
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  {route.stages.length <= 1 ? (
-                    <>Transport Method:</>
-                  ) : (
-                    <>Route Stage {stageIndex + 1}:</>
-                  )}
-                </Label>
-
-                <Combobox
-                  options={transportMethodOptions}
-                  defaultOption={
-                    transportMethodOptions.find(
-                      (option) => option.value === "truck"
-                    )!
-                  }
-                  type="transportType"
-                  onChange={onTransportMethodChange(routeIndex, stageIndex)}
-                />
-
-                <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Cargo Weight (Tons):
-                </Label>
-                <Input
-                  value={stage.cargo === undefined ? "" : String(stage.cargo)}
-                  type="number"
-                  id="cargo"
-                  name="cargo"
-                  className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                  onChange={onCargoChanged(routeIndex, stageIndex)}
-                />
-
-                {stage.usesAddress ? (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Origin Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions as Address[]}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city
-                      }
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.from.city,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists
-                            ? " outline outline-offset-2 outline-red-500"
-                            : " outline-none "),
-                        placeholder: "City",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "from",
-                          "city"
-                        ),
-                      }}
-                      id={String(stage.key) + "from city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "from"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country
-                      }
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.from.country,
-                        type: "string",
-                        id: "from",
-                        name: "from",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.from.exists
-                            ? " outline outline-offset-2 outline-red-500"
-                            : " outline-none "),
-                        placeholder: "Country",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "from",
-                          "country"
-                        ),
-                      }}
-                      id={String(stage.key) + "from country"}
-                    />
-
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Destination Address:
-                    </Label>
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.city
-                      }
-                      renderSuggestion={renderSuggestion("city")}
-                      inputProps={{
-                        value: stage.to.city,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists
-                            ? " outline outline-offset-2 outline-red-500"
-                            : " outline-none "),
-                        placeholder: "City",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "to",
-                          "city"
-                        ),
-                      }}
-                      id={String(stage.key) + "to city"}
-                    />
-                    <AutoSuggest
-                      suggestions={suggestions}
-                      onSuggestionsFetchRequested={onSuggestionsRequested(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      onSuggestionsClearRequested={() => setSuggestions([])}
-                      onSuggestionSelected={onSuggestionSelected(
-                        routeIndex,
-                        stageIndex,
-                        "to"
-                      )}
-                      getSuggestionValue={(suggestion: Address) =>
-                        suggestion.country
-                      }
-                      renderSuggestion={renderSuggestion("country")}
-                      inputProps={{
-                        value: stage.to.country,
-                        type: "string",
-                        id: "to",
-                        name: "to",
-                        className:
-                          "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
-                          (!stage.to.exists
-                            ? " outline outline-offset-2 outline-red-500"
-                            : " outline-none "),
-                        placeholder: "Country",
-                        onChange: onAddressChange(
-                          routeIndex,
-                          stageIndex,
-                          "to",
-                          "country"
-                        ),
-                      }}
-                      id={String(stage.key) + "to country"}
-                    />
-
-                    {stage.impossible && (
-                      <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-                        Error: Could not connect these addresses
-                      </Label>
-                    )}
-
-                    {T.isTruckTransportMethod(stage.transportMethod) && (
-                      <Button
-                        className="w-full"
-                        variant={"secondary"}
-                        type="button"
-                        onClick={onToggleUsesAddress(
-                          routeIndex,
-                          stageIndex,
-                          "distance"
-                        )}
-                      >
-                        Use Distance?
-                      </Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Distance (km):
-                    </Label>
-                    <Input
-                      type="number"
-                      id="distance"
-                      name="distance"
-                      className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-                      onChange={onDistanceChange(routeIndex, stageIndex)}
-                    />
-
-                    {T.isTruckTransportMethod(stage.transportMethod) && (
-                      <Button
-                        className="w-full"
-                        variant={"secondary"}
-                        type="button"
-                        onClick={onToggleUsesAddress(
-                          routeIndex,
-                          stageIndex,
-                          "address"
-                        )}
-                      >
-                        Use Addresses?
-                      </Button>
-                    )}
-                  </>
-                )}
-
-                {route.stages.length > 1 && (
-                  <Button
-                    onClick={onRemoveStage(routeIndex, stageIndex)}
-                    className="w-full"
-                    variant={"destructive"}
-                    type="button"
-                  >
-                    Remove Stage
-                  </Button>
-                )}
-
+              <RouteCard
+                chain={chain}
+                routeIndex={selectedRoute}
+                onSelectStage={onSelectStage}
+                onInsertStageAfter={onInsertStageAfter}
+                onRemoveRoute={onRemoveRoute}
+              />
+            </Card>
+            <Card className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]">
+              <StageCard
+                chain={chain}
+                routeIndex={selectedRoute}
+                stageIndex={selectedStage}
+                suggestions={suggestions}
+                onTransportMethodChange={onTransportMethodChange}
+                onCargoChanged={onCargoChanged}
+                onSuggestionsRequested={onSuggestionsRequested}
+                onSuggestionsClear={() => setSuggestions([])}
+                onSuggestionSelected={onSuggestionSelected}
+                renderSuggestion={renderSuggestion}
+                onAddressChange={onAddressChange}
+                onDistanceChange={onDistanceChange}
+                onToggleUsesAddress={onToggleUsesAddress}
+                onRemoveStage={onRemoveStage}
+              />
+              <div className=" flex gap-4 flex-col items-center justify-center">
                 <Button
-                  className="w-full"
-                  variant={"secondary"}
-                  type="button"
-                  onClick={onInsertStageAfter(routeIndex, stageIndex)}
+                  className=" px-10"
+                  variant="submit_button"
+                  type="submit"
                 >
-                  Add Stage
+                  Calculate
                 </Button>
+
+                <MessageDialog
+                  message={message as string}
+                  open={open}
+                  setopen={setOpen}
+                />
+
+                <ErrorDialog
+                  message={error as string}
+                  open={openError}
+                  setopen={setOpenError}
+                />
               </div>
-            ))}
-
-            {chain.routes.length <= 1 ? null : (
-              <Button
-                className="w-full"
-                variant={"destructive"}
-                type="button"
-                onClick={onRemoveRoute(routeIndex)}
-              >
-                Remove Route
-              </Button>
-            )}
-          </>
-        ))}
-
-        <UploadPopUp setChainData={setChain} chain={chain} />
-
-        <Button className="w-full mt-5" variant={"ibm_blue"} type="submit">
-          Calculate
-        </Button>
-      </form>
-
-      {message !== undefined && (
-        <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800 w-[400px]">
-          {message}
+            </Card>
+          </div>
         </div>
-      )}
-      {error != undefined && (
-        <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
-          {error}
-        </Label>
-      )}
+      </form>
     </div>
   );
 };

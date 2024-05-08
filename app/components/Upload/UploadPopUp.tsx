@@ -16,8 +16,10 @@ type Props = {
 const UploadPopUp: React.FC<Props> = ({ setChainData, chain }) => {
   return (
     <Dialog>
-      <DialogTrigger className="w-full mt-3">
-        <Button variant={"ibm_blue"}>Upload file</Button>
+      <DialogTrigger className=" mt-3">
+        <Button type="button" variant={"submit_button2"}>
+          Upload file
+        </Button>
       </DialogTrigger>
       <DialogContent className="bg-transparent border-0">
         {/* here i will add the upload */}

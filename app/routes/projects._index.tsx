@@ -27,11 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const ProjectsPage = () => {
   const { projects, userId } = useLoaderData<typeof loader>();
 
-  return (
-    <div className="max-h-lvh">
-      <Dashboard Projects={projects} UserId={userId} />
-    </div>
-  );
+  return <Dashboard Projects={projects} UserId={userId} />;
 };
 
 export default ProjectsPage;
