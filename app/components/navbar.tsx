@@ -50,6 +50,14 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
       value: "Dashboard",
       href: "/projects",
     },
+    {
+      value: "How To Guide",
+      href: "/guide",
+    },
+    {
+      value: "Template",
+      href: "/template",
+    },
   ];
 
   return (
