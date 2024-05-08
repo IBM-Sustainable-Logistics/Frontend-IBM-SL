@@ -13983,6 +13983,7 @@
         "npm:dotenv@^16.4.5",
         "npm:embla-carousel-react@^8.0.4",
         "npm:framer-motion@^11.0.8",
+        "npm:git-truck@^1.8.2",
         "npm:isbot@^4.1.0",
         "npm:json-as-xlsx@^2.5.6",
         "npm:lucide-react@^0.312.0",
