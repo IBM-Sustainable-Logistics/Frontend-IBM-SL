@@ -5,17 +5,16 @@ import * as C from "./Calculator.tsx";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "../ui/card.tsx";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
-import { AspectRatio } from "../ui/aspect-ratio.tsx";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
 type Props = {
   projectName: string | undefined;
   chain: C.Chain;
+  selectedRoute: number;
   setChain: React.Dispatch<React.SetStateAction<C.Chain>>;
   onSelectRoute: (routeIndex: number) => () => void;
   onAddRoute: () => void;
@@ -24,6 +23,7 @@ type Props = {
 export default ({
   projectName,
   chain,
+  selectedRoute,
   onSelectRoute,
   onAddRoute,
   setChain,
@@ -41,10 +41,14 @@ export default ({
               <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
                 <Card
                   onClick={onSelectRoute(routeIndex)}
-                  className="backdrop-blur-md "
+                  className={"backdrop-blur-md mx-[3px]" +
+                    (routeIndex === selectedRoute
+                      ? " outline outline-offset-0 outline-blue-500"
+                      : " outline-none"
+                    )}
                 >
                   <CardHeader>
-                    <CardTitle> {route.name}</CardTitle>
+                    <CardTitle>{route.name}</CardTitle>
                     {route.emission !== undefined && (
                       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Emission: {route.emission} kg

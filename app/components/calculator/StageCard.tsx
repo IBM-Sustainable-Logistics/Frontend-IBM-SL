@@ -27,9 +27,9 @@ type I<T> = (
 
 type Props = {
   chain: C.Chain;
-  routeIndex: number;
-  stageIndex: number;
-  suggestions: C.Address[];
+  selectedRoute: number;
+  selectedStage: number;
+  suggestions: C.Suggestions;
   onTransportMethodChange: F<(_: string, __: T.TransportMethod) => void>;
   onCargoChanged: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
   onSuggestionsRequested: G<(_: { value: string }) => Promise<void>>;
@@ -55,8 +55,8 @@ const renderSuggestion =
 
 export default ({
   chain,
-  routeIndex,
-  stageIndex,
+  selectedRoute,
+  selectedStage,
   suggestions,
   onTransportMethodChange,
   onCargoChanged,
@@ -68,13 +68,13 @@ export default ({
   onToggleUsesAddress,
   onRemoveStage,
 }: Props) => {
-  const route = chain.routes[routeIndex];
-  const stage = route.stages[stageIndex];
+  const route = chain.routes[selectedRoute];
+  const stage = route.stages[selectedStage];
 
   return (
     <>
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        Stage {stageIndex + 1}
+        Stage {selectedStage + 1}
       </Label>
       <Combobox
         options={C.transportMethodOptions}
@@ -82,7 +82,7 @@ export default ({
           C.transportMethodOptions.find((option) => option.value === "truck")!
         }
         type="transportType"
-        onChange={onTransportMethodChange(routeIndex, stageIndex)}
+        onChange={onTransportMethodChange(selectedRoute, selectedStage)}
       />
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         Cargo Weight (Tons):
@@ -93,7 +93,7 @@ export default ({
         name="cargo"
         className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
         value={stage.cargo}
-        onChange={onCargoChanged(routeIndex, stageIndex)}
+        onChange={onCargoChanged(selectedRoute, selectedStage)}
       />
       {stage.usesAddress ? (
         <>
@@ -101,16 +101,16 @@ export default ({
             Origin Address:
           </Label>
           <AutoSuggest
-            suggestions={suggestions}
+            suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "from"
             )}
             onSuggestionsClearRequested={onSuggestionsClear}
             onSuggestionSelected={onSuggestionSelected(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "from"
             )}
             getSuggestionValue={(suggestion) => suggestion.city}
@@ -124,24 +124,24 @@ export default ({
               className:
                 "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
                 (!stage.from.exists
-                  ? " outline outline-offset-2 outline-red-500"
+                  ? " outline outline-offset-0 outline-red-500"
                   : " outline-none "),
               placeholder: "City",
-              onChange: onAddressChange(routeIndex, stageIndex, "from", "city"),
+              onChange: onAddressChange(selectedRoute, selectedStage, "from", "city"),
             }}
             id={String(stage.key) + "from city"}
           />
           <AutoSuggest
-            suggestions={suggestions}
+            suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "from"
             )}
             onSuggestionsClearRequested={onSuggestionsClear}
             onSuggestionSelected={onSuggestionSelected(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "from"
             )}
             getSuggestionValue={(suggestion) => suggestion.country}
@@ -155,12 +155,12 @@ export default ({
               className:
                 "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
                 (!stage.from.exists
-                  ? " outline outline-offset-2 outline-red-500"
+                  ? " outline outline-offset-0 outline-red-500"
                   : " outline-none "),
               placeholder: "Country",
               onChange: onAddressChange(
-                routeIndex,
-                stageIndex,
+                selectedRoute,
+                selectedStage,
                 "from",
                 "country"
               ),
@@ -171,16 +171,16 @@ export default ({
             Destination Address:
           </Label>
           <AutoSuggest
-            suggestions={suggestions}
+            suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "to"
             )}
             onSuggestionsClearRequested={onSuggestionsClear}
             onSuggestionSelected={onSuggestionSelected(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "to"
             )}
             getSuggestionValue={(suggestion) => suggestion.city}
@@ -194,24 +194,24 @@ export default ({
               className:
                 "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
                 (!stage.to.exists
-                  ? " outline outline-offset-2 outline-red-500"
+                  ? " outline outline-offset-0 outline-red-500"
                   : " outline-none "),
               placeholder: "City",
-              onChange: onAddressChange(routeIndex, stageIndex, "to", "city"),
+              onChange: onAddressChange(selectedRoute, selectedStage, "to", "city"),
             }}
             id={String(stage.key) + "to city"}
           />
           <AutoSuggest
-            suggestions={suggestions}
+            suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "to"
             )}
             onSuggestionsClearRequested={onSuggestionsClear}
             onSuggestionSelected={onSuggestionSelected(
-              routeIndex,
-              stageIndex,
+              selectedRoute,
+              selectedStage,
               "to"
             )}
             getSuggestionValue={(suggestion) => suggestion.country}
@@ -225,12 +225,12 @@ export default ({
               className:
                 "w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100" +
                 (!stage.to.exists
-                  ? " outline outline-offset-2 outline-red-500"
+                  ? " outline outline-offset-0 outline-red-500"
                   : " outline-none "),
               placeholder: "Country",
               onChange: onAddressChange(
-                routeIndex,
-                stageIndex,
+                selectedRoute,
+                selectedStage,
                 "to",
                 "country"
               ),
@@ -248,7 +248,7 @@ export default ({
               className="w-full"
               variant={"secondary"}
               type="button"
-              onClick={onToggleUsesAddress(routeIndex, stageIndex, "distance")}
+              onClick={onToggleUsesAddress(selectedRoute, selectedStage, "distance")}
             >
               Use Distance?
             </Button>
@@ -264,7 +264,7 @@ export default ({
             id="distance"
             name="distance"
             className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-            onChange={onDistanceChange(routeIndex, stageIndex)}
+            onChange={onDistanceChange(selectedRoute, selectedStage)}
           />
 
           {T.isTruckTransportMethod(stage.transportMethod) && (
@@ -272,7 +272,7 @@ export default ({
               className="w-full"
               variant={"secondary"}
               type="button"
-              onClick={onToggleUsesAddress(routeIndex, stageIndex, "address")}
+              onClick={onToggleUsesAddress(selectedRoute, selectedStage, "address")}
             >
               Use Addresses?
             </Button>
@@ -281,7 +281,7 @@ export default ({
       )}
       {route.stages.length > 1 && (
         <Button
-          onClick={onRemoveStage(routeIndex, stageIndex)}
+          onClick={onRemoveStage(selectedRoute, selectedStage)}
           className="w-full"
           variant={"destructive"}
           type="button"

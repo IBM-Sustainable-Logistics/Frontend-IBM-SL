@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../../components/ui/button.tsx";
-import { Label } from "../ui/label.tsx";
-import { Combobox, ComboboxOption } from "../ui/combobox.tsx";
-import AutoSuggest from "react-autosuggest";
-import { Input } from "../ui/input.tsx";
+import { ComboboxOption } from "../ui/combobox.tsx";
 import * as T from "../../lib/Transport.ts";
-import UploadPopUp from "../Upload/UploadPopUp.tsx";
 import ChainCard from "./ChainCard.tsx";
 import RouteCard from "./RouteCard.tsx";
 import StageCard from "./StageCard.tsx";
@@ -52,6 +48,16 @@ type Keyed = {
 export type Address = T.Address & {
   exists: boolean;
 };
+
+export type Suggestions = {
+  values: Address[];
+  time: number;
+};
+
+const emptySuggestions = () => ({
+  values: [],
+  time: Date.now(),
+});
 
 type Stage = (
   | {
@@ -152,7 +158,7 @@ type CalculatorProps = {
 const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
   const [message, setMessage] = useState("");
-  const [suggestions, setSuggestions] = useState<Address[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestions>(emptySuggestions());
   const [open, setOpen] = useState(false);
   const [openError, setOpenError] = useState(false);
 
@@ -276,6 +282,10 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
       });
     };
 
+  const onSuggestionsClear = () => {
+    setSuggestions(emptySuggestions());
+  }
+
   /**
    * Given an index of a stage and whether it should use
    * the from or to address, returns an auto-suggest
@@ -285,6 +295,9 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const onSuggestionsRequested =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
     async ({ value }: { value: string }) => {
+
+      const timeOfRequest = Date.now();
+
       const route = chain.routes[routeIndex];
       const stage = route.stages[stageIndex];
 
@@ -293,7 +306,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
       setError(undefined);
 
       if (value.length === 0) {
-        setSuggestions([]);
+        onSuggestionsClear();
         return;
       }
 
@@ -323,7 +336,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
             " " +
             (await response.text())
         );
-        setSuggestions([]);
+        onSuggestionsClear();
         return;
       }
 
@@ -335,55 +348,66 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
 
       const output: Output = await response.json();
 
-      if (output.length === 0) {
+      setSuggestions((oldSuggestions: Suggestions): Suggestions => {
+
+        // We don't want to keep old suggestions that might have taken longer
+        // to fetch than the newest ones.
+        if (timeOfRequest <= oldSuggestions.time) return oldSuggestions;
+
+        if (output.length === 0) {
+          setChain((oldChain: Chain): Chain => {
+            const oldRoute = oldChain.routes[routeIndex];
+            const oldStage = oldRoute.stages[stageIndex];
+
+            if (!oldStage.usesAddress) throw Error("Stage uses distance");
+
+            if (fromOrTo === "from") oldStage.from.exists = false;
+            else oldStage.to.exists = false;
+
+            return {
+              ...oldChain,
+              routes: oldChain.routes.with(routeIndex, {
+                ...oldRoute,
+                stages: oldRoute.stages.with(stageIndex, oldStage),
+              }),
+            };
+          });
+
+          return emptySuggestions();
+        }
+
         setChain((oldChain: Chain): Chain => {
           const oldRoute = oldChain.routes[routeIndex];
           const oldStage = oldRoute.stages[stageIndex];
 
           if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-          if (fromOrTo === "from") oldStage.from.exists = false;
-          else oldStage.to.exists = false;
-
           return {
             ...oldChain,
             routes: oldChain.routes.with(routeIndex, {
               ...oldRoute,
-              stages: oldRoute.stages.with(stageIndex, oldStage),
+              stages: oldRoute.stages.with(stageIndex, {
+                ...oldStage,
+                from: {
+                  ...oldStage.from,
+                  exists: fromOrTo === "from" ? true : oldStage.from.exists,
+                },
+                to: {
+                  ...oldStage.to,
+                  exists: fromOrTo === "to" ? true : oldStage.to.exists,
+                },
+              }),
             }),
           };
         });
 
-        setSuggestions([]);
-        return;
-      }
+        const values = output.map((suggestion): Address => ({
+          ...suggestion,
+          exists: true,
+        }));
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
-
-        if (!oldStage.usesAddress) throw Error("Stage uses distance");
-
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, {
-              ...oldStage,
-              from: {
-                ...oldStage.from,
-                exists: fromOrTo === "from" ? true : oldStage.from.exists,
-              },
-              to: {
-                ...oldStage.to,
-                exists: fromOrTo === "to" ? true : oldStage.to.exists,
-              },
-            }),
-          }),
-        };
+        return { values: values, time: timeOfRequest };
       });
-
-      setSuggestions(output);
     };
 
   /**
@@ -1086,19 +1110,20 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-9 font-mono justify-center items-center ">
+    <div className="flex flex-col gap-9 font-mono justify-center items-center">
       <form onSubmit={onCalculate}>
         <div
           className={
             isCreateProject
-              ? "flex flex-col  ml-4 "
-              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y  lg:divide-solid lg:divide-x lg:divide-black-500"
+              ? "flex flex-col ml-4 "
+              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500"
           }
         >
-          <div className=" px-16 flex-0 border-t border-black  pt-10">
+          <div className="px-16 flex-0 border-t border-black-500 pt-10">
             <ChainCard
               projectName="ProjectName"
               chain={chain}
+              selectedRoute={selectedRoute}
               onSelectRoute={onSelectRoute}
               onAddRoute={onAddRoute}
               setChain={setChain}
@@ -1107,44 +1132,45 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           <div
             className={
               isCreateProject
-                ? "flex flex-col gap-4  pt-10 "
-                : "flex flex-col lg:flex-row lg:px-96 gap-4   pt-10  "
+                ? "flex flex-col gap-4 pt-10"
+                : "flex flex-col lg:flex-row lg:px-64 gap-4 pt-10"
             }
           >
             <Card
               className={
                 isCreateProject
-                  ? "border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]"
-                  : "border-2 pl-3 pr-3  pt-3 pb-3  ml-10 lg:ml-0 mr-10 lg:mr-0 flex flex-col gap-4 lg:w-[300px]"
+                  ? "border-2 px-3 py-3 mx-10         flex flex-col gap-4 lg:w-[400px]"
+                  : "border-2 px-3 py-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"
               }
             >
               <RouteCard
                 chain={chain}
-                routeIndex={selectedRoute}
+                selectedRoute={selectedRoute}
+                selectedStage={selectedStage}
                 onSelectStage={onSelectStage}
                 onInsertStageAfter={onInsertStageAfter}
                 onRemoveRoute={onRemoveRoute}
               />
             </Card>
-            <Card className="border-2 pl-3 pr-3  pt-3 pb-3  ml-10  mr-10 flex flex-col gap-4 lg:w-[400px]">
+            <Card className="border-2 px-3 py-3 mx-10 flex flex-col gap-4 lg:w-[400px]">
               <StageCard
                 chain={chain}
-                routeIndex={selectedRoute}
-                stageIndex={selectedStage}
+                selectedRoute={selectedRoute}
+                selectedStage={selectedStage}
                 suggestions={suggestions}
                 onTransportMethodChange={onTransportMethodChange}
                 onCargoChanged={onCargoChanged}
                 onSuggestionsRequested={onSuggestionsRequested}
-                onSuggestionsClear={() => setSuggestions([])}
+                onSuggestionsClear={onSuggestionsClear}
                 onSuggestionSelected={onSuggestionSelected}
                 onAddressChange={onAddressChange}
                 onDistanceChange={onDistanceChange}
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
               />
-              <div className=" flex gap-4 flex-col items-center justify-center">
+              <div className="flex gap-4 flex-col items-center justify-center">
                 <Button
-                  className=" px-10"
+                  className="px-10"
                   variant="submit_button"
                   type="submit"
                 >
