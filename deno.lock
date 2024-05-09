@@ -4,6 +4,7 @@
     "specifiers": {
       "npm:@playwright/test@^1.42.1": "npm:@playwright/test@1.42.1",
       "npm:@radix-ui/react-accordion@^1.1.2": "npm:@radix-ui/react-accordion@1.1.2_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
+      "npm:@radix-ui/react-aspect-ratio@^1.0.3": "npm:@radix-ui/react-aspect-ratio@1.0.3_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:@radix-ui/react-dialog@^1.0.5": "npm:@radix-ui/react-dialog@1.0.5_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:@radix-ui/react-hover-card@^1.0.7": "npm:@radix-ui/react-hover-card@1.0.7_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:@radix-ui/react-icons@^1.3.0": "npm:@radix-ui/react-icons@1.3.0_react@18.2.0",
@@ -37,6 +38,7 @@
       "npm:dotenv@^16.4.5": "npm:dotenv@16.4.5",
       "npm:embla-carousel-react": "npm:embla-carousel-react@8.0.2_react@18.2.0_embla-carousel@8.0.2",
       "npm:embla-carousel-react@^8.0.4": "npm:embla-carousel-react@8.0.4_react@18.2.0_embla-carousel@8.0.4",
+      "npm:embla-carousel@^8.0.4": "npm:embla-carousel@8.0.4",
       "npm:framer-motion@^11.0.8": "npm:framer-motion@11.0.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
       "npm:isbot@^4.1.0": "npm:isbot@4.4.0",
       "npm:json-as-xlsx@^2.5.6": "npm:json-as-xlsx@2.5.6",
@@ -54,6 +56,7 @@
       "npm:tailwind-merge@^2.2.0": "npm:tailwind-merge@2.2.2",
       "npm:tailwindcss-animate@^1.0.7": "npm:tailwindcss-animate@1.0.7_tailwindcss@3.4.1__postcss@8.4.38",
       "npm:tailwindcss@^3.4.1": "npm:tailwindcss@3.4.1_postcss@8.4.38",
+      "npm:three@^0.164.1": "npm:three@0.164.1",
       "npm:vanilla-cookieconsent@^3.0.1": "npm:vanilla-cookieconsent@3.0.1",
       "npm:xlsx@^0.18.5": "npm:xlsx@0.18.5"
     },
@@ -2649,6 +2652,17 @@
       },
       "@radix-ui/react-arrow@1.0.3_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0": {
         "integrity": "sha512-wSP+pHsB/jQRaL6voubsQ/ZlrGBHHrOjmBnr19hxYgtS0WvAFwZhK2WP/YY5yF9uKECCEEDGxuLxq1NBK51wFA==",
+        "dependencies": {
+          "@babel/runtime": "@babel/runtime@7.24.4",
+          "@radix-ui/react-primitive": "@radix-ui/react-primitive@1.0.3_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
+          "@types/react": "@types/react@18.2.74",
+          "@types/react-dom": "@types/react-dom@18.2.24",
+          "react": "react@18.2.0",
+          "react-dom": "react-dom@18.2.0_react@18.2.0"
+        }
+      },
+      "@radix-ui/react-aspect-ratio@1.0.3_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0": {
+        "integrity": "sha512-fXR5kbMan9oQqMuacfzlGG/SQMcmMlZ4wrvpckv8SgUulD0MMpspxJrxg/Gp/ISV3JfV1AeSWTYK9GvxA4ySwA==",
         "dependencies": {
           "@babel/runtime": "@babel/runtime@7.24.4",
           "@radix-ui/react-primitive": "@radix-ui/react-primitive@1.0.3_@types+react@18.2.74_@types+react-dom@18.2.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
@@ -12697,6 +12711,10 @@
         "integrity": "sha512-xfCYj4RnlozReCmUd+XQzj6/5OjDNHBy5nT6rVwrOKGENAvpXe2z1jL+DZYaMu4/9pNsjH/4Os/VvS9IrH7IOQ==",
         "dependencies": {}
       },
+      "three@0.164.1": {
+        "integrity": "sha512-iC/hUBbl1vzFny7f5GtqzVXYjMJKaTPxiCxXfrvVdBi1Sf+jhd1CAkitiFwC7mIBFCo3MrDLJG97yisoaWig0w==",
+        "dependencies": {}
+      },
       "throat@5.0.0": {
         "integrity": "sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==",
         "dependencies": {}
@@ -13982,6 +14000,7 @@
         "npm:deno@^0.1.1",
         "npm:dotenv@^16.4.5",
         "npm:embla-carousel-react@^8.0.4",
+        "npm:embla-carousel@^8.0.4",
         "npm:framer-motion@^11.0.8",
         "npm:git-truck@^1.8.2",
         "npm:isbot@^4.1.0",
@@ -14000,6 +14019,7 @@
         "npm:tailwind-merge@^2.2.0",
         "npm:tailwindcss-animate@^1.0.7",
         "npm:tailwindcss@^3.4.1",
+        "npm:three@^0.164.1",
         "npm:vanilla-cookieconsent@^3.0.1",
         "npm:xlsx@^0.18.5"
       ]

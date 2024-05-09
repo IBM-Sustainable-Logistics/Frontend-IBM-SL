@@ -32,6 +32,7 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselNext,
+  CarouselPagination,
   CarouselPrevious,
 } from "./ui/carousel.tsx";
 
@@ -215,6 +216,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <CarouselPagination />
           </Carousel>
         </CardContent>
         <CardFooter>
