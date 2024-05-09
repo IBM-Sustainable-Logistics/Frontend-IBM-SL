@@ -2,6 +2,7 @@ import React from "react";
 import { Label } from "../ui/label.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import * as C from "./Calculator.tsx";
+import * as T from "../../lib/Transport.ts";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import { Card, CardContent, CardHeader } from "../ui/card.tsx";
 import { AspectRatio } from "../ui/aspect-ratio.tsx";
@@ -54,13 +55,15 @@ export default ({
                 <CardHeader>Stage {stageIndex + 1}</CardHeader>
                 <CardContent>
                   <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Transport Method: {stage.transportMethod}
+                    Transport Method: {T.getTransportMethodLabel(stage.transportMethod)}
                   </Label>
+                  <br />
                   {stage.cargo !== undefined && (
                     <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Cargo: {stage.cargo}
+                      Cargo: {stage.cargo} t
                     </Label>
                   )}
+                  <br />
                   {stage.emission !== undefined && (
                     <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                       Emission: {stage.emission} kg

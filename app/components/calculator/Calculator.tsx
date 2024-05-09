@@ -411,28 +411,6 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
       });
     };
 
-  /**
-   * TODO
-   */
-  const renderSuggestion =
-    (_place: "city" | "country") =>
-    (
-      suggestion: Address,
-      {
-        query: _inputValue,
-        isHighlighted,
-      }: {
-        query: string;
-        isHighlighted: boolean;
-      }
-    ) => {
-      return (
-        <span className={isHighlighted ? "bg-blue-200" : ""}>
-          {suggestion.city}, {suggestion.country}
-        </span>
-      );
-    };
-
   interface EventTarget {
     value?: string;
   }
@@ -1114,7 +1092,7 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           className={
             isCreateProject
               ? "flex flex-col  ml-4 "
-              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y  lg:divide-solid lg:divide-x lg:divide-black"
+              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y  lg:divide-solid lg:divide-x lg:divide-black-500"
           }
         >
           <div className=" px-16 flex-0 border-t border-black  pt-10">
@@ -1159,7 +1137,6 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
                 onSuggestionsRequested={onSuggestionsRequested}
                 onSuggestionsClear={() => setSuggestions([])}
                 onSuggestionSelected={onSuggestionSelected}
-                renderSuggestion={renderSuggestion}
                 onAddressChange={onAddressChange}
                 onDistanceChange={onDistanceChange}
                 onToggleUsesAddress={onToggleUsesAddress}

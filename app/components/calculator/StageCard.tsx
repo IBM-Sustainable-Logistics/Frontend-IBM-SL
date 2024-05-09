@@ -35,16 +35,22 @@ type Props = {
   onSuggestionsRequested: G<(_: { value: string }) => Promise<void>>;
   onSuggestionsClear: () => void;
   onSuggestionSelected: G<(_: any, __: { suggestion: C.Address }) => void>;
-  renderSuggestion: (
-    place: "city" | "country"
-  ) => (
-    _: C.Address,
-    __: { query: string; isHighlighted: boolean }
-  ) => React.JSX;
   onAddressChange: H<(_: React.ChangeEvent<HTMLInputElement>) => void>;
   onDistanceChange: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
   onToggleUsesAddress: I<() => void>;
   onRemoveStage: F<() => void>;
+};
+
+const renderSuggestion =
+(
+  suggestion: C.Address,
+  data: { query: string; isHighlighted: boolean }
+) => {
+  return (
+    <span className={data.isHighlighted ? "bg-blue-200" : ""}>
+      {suggestion.city}, {suggestion.country}
+    </span>
+  );
 };
 
 export default ({
@@ -57,7 +63,6 @@ export default ({
   onSuggestionsRequested,
   onSuggestionsClear,
   onSuggestionSelected,
-  renderSuggestion,
   onAddressChange,
   onDistanceChange,
   onToggleUsesAddress,
@@ -108,7 +113,8 @@ export default ({
               "from"
             )}
             getSuggestionValue={(suggestion) => suggestion.city}
-            renderSuggestion={renderSuggestion("city")}
+            renderSuggestion={renderSuggestion}
+            focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.from.city,
               type: "string",
@@ -138,7 +144,8 @@ export default ({
               "from"
             )}
             getSuggestionValue={(suggestion) => suggestion.country}
-            renderSuggestion={renderSuggestion("country")}
+            renderSuggestion={renderSuggestion}
+            focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.from.country,
               type: "string",
@@ -176,7 +183,8 @@ export default ({
               "to"
             )}
             getSuggestionValue={(suggestion) => suggestion.city}
-            renderSuggestion={renderSuggestion("city")}
+            renderSuggestion={renderSuggestion}
+            focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.to.city,
               type: "string",
@@ -206,7 +214,8 @@ export default ({
               "to"
             )}
             getSuggestionValue={(suggestion) => suggestion.country}
-            renderSuggestion={renderSuggestion("country")}
+            renderSuggestion={renderSuggestion}
+            focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.to.country,
               type: "string",
