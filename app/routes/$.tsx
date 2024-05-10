@@ -1,18 +1,31 @@
 import React from "react";
 import { useOutletContext } from "@remix-run/react";
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
-import { Database } from "../lib/utils/types.ts";
 import { SupabaseOutletContext } from "../lib/supabase.ts";
-import { LoaderFunctionArgs } from "@remix-run/deno";
-import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
-import { redirect } from "@remix-run/deno";
-import { json } from "@remix-run/deno";
-import { ForgotForm } from "../components/account/ForgotForm.tsx";
+import Hero from "../components/hero.tsx";
+import { Link } from "@remix-run/react";
+import { Button } from "../components/ui/button.tsx";
 
 const notfound = () => {
   const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
 
-  return <div>404</div>;
+  return (
+    <main
+      className='flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-16 
+      md:mt-20
+      md:gap-32'
+    >
+      <Hero
+        jsx={(<>
+          <h1 className='text-4xl lg:text-[3vw] leading-[3rem] font-bold min-[1800px]:leading-[4.25rem]'>
+            Whoops, 404!
+          </h1>
+          <p className='text-2xl lg:text-[1.5vw] min-[1800px]:leading-[3.5rem]'>
+            We could not find the page that you are looking for.
+          </p>
+        </>)}
+      />
+    </main>
+  );
 };
 
 export default notfound;
