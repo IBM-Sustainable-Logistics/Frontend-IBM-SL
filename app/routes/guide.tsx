@@ -94,7 +94,7 @@ const GuidePage = () => {
             </div>
             <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">The right section of the calculator page will be your main point in which you provide the data
-                    (again unless you <a href='/calculate-emissions' style={{ color: "#3d815c" }}>upload a file</a>). In this section, you will provide the actual data that you wish to include in
+                    (again unless you <a href='/template' style={{ color: "#3d815c" }}>upload a file</a>). In this section, you will provide the actual data that you wish to include in
                     your calculations. </p>
 
                 <p className="mb-6">There are four main pieces of information that you’ll need to provide: the transport type
