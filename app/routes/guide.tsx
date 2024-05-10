@@ -77,12 +77,6 @@ const GuidePage = () => {
                     you want to add Stockholm to Copenhagen as the next destination, you can simply press ‘Add Stage’ to create the
                     next stage going from Stockholm to Copenhagen. </p>
 
-                <p className="mb-6">In the middle section, you can find information about the current information that you have
-                    provided for the current stage. Upon entering the page for the first time, or just creating a new route, this
-                    section will not show much, other than the route number (which is just number one), as well as a base stage only
-                    showing the transport method. If you have multiple stages that you’ll like to provide, then you can just press
-                    the blue ‘Add Stage’ button to add the next stage of your transportation. </p>
-
                 <p className="mb-6">Note: when adding a new stage, our calculator will create a new stage where the origin address is
                     just the destination address of the last stage. Of course, you can edit this if you wish. </p>
 
@@ -100,7 +94,7 @@ const GuidePage = () => {
             </div>
             <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">The right section of the calculator page will be your main point in which you provide the data
-                    (again unless you upload a file). In this section, you will provide the actual data that you wish to include in
+                    (again unless you <a href='/calculate-emissions' style={{ color: "#3d815c" }}>upload a file</a>). In this section, you will provide the actual data that you wish to include in
                     your calculations. </p>
 
                 <p className="mb-6">There are four main pieces of information that you’ll need to provide: the transport type
