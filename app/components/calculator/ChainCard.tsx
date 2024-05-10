@@ -2,12 +2,7 @@ import React from "react";
 import { Label } from "../ui/label.tsx";
 import { Button } from "../../components/ui/button.tsx";
 import * as C from "./Calculator.tsx";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../ui/card.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card.tsx";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
@@ -36,16 +31,17 @@ export default ({
       <br />
       <div className="flex flex-col gap-6">
         <Carousel orientation="vertical">
-          <CarouselContent className="h-[200px] lg:h-[500px] lg:w-[300px]">
+          <CarouselContent className="h-[300px] lg:h-[500px] lg:w-[300px]">
             {chain.routes.map((route, routeIndex) => (
               <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
                 <Card
                   onClick={onSelectRoute(routeIndex)}
-                  className={"backdrop-blur-md mx-[3px]" +
+                  className={
+                    "backdrop-blur-md mx-[3px]" +
                     (routeIndex === selectedRoute
                       ? " outline outline-offset-0 outline-blue-500"
-                      : " outline-none"
-                    )}
+                      : " outline-none")
+                  }
                 >
                   <CardHeader>
                     <CardTitle>{route.name}</CardTitle>
