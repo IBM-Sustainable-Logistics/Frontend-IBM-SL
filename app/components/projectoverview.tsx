@@ -192,7 +192,11 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                   ))}
                 </TableBody>
               </Table>
-              <DataVisualization stages={route.stages} />
+              <Carousel>
+                <CarouselContent>
+                  <DataVisualization stages={route.stages} />
+                </CarouselContent>
+              </Carousel>
             </>
           ))}
 
