@@ -25,7 +25,7 @@ const UploadPopUp: React.FC<Props> = ({ setChainData, chain }) => {
         {/* here i will add the upload */}
         <UploadCard setChainData={setChainData} chain={chain} />
         <DialogClose>
-          <Button>cancel</Button>
+          <Button variant="destructive">cancel</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>

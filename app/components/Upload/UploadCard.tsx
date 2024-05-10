@@ -63,17 +63,17 @@ type Address = T.Address & {
 
 type Stage = (
   | {
-    usesAddress: false;
-    transportMethod: T.TransportMethod;
-    distance: number | undefined;
-  }
+      usesAddress: false;
+      transportMethod: T.TransportMethod;
+      distance: number | undefined;
+    }
   | {
-    usesAddress: true;
-    transportMethod: T.TruckTransportMethod;
-    from: Address;
-    to: Address;
-    impossible: boolean;
-  }
+      usesAddress: true;
+      transportMethod: T.TruckTransportMethod;
+      from: Address;
+      to: Address;
+      impossible: boolean;
+    }
 ) &
   Keyed &
   T.Estimated;
@@ -259,28 +259,28 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
 
           const stage = isDistanceMode
             ? {
-              usesAddress: false,
-              transportMethod: "truck",
-              distance: dataMap.get("Distance") as number,
-              key: Math.random(),
-              emission: undefined,
-            }
+                usesAddress: false,
+                transportMethod: "truck",
+                distance: dataMap.get("Distance") as number,
+                key: Math.random(),
+                emission: undefined,
+              }
             : {
-              usesAddress: true,
-              transportMethod: "truck",
-              from: from,
-              to: to,
-              key: Math.random(),
-              emission: undefined,
-              impossible: false,
-            };
+                usesAddress: true,
+                transportMethod: "truck",
+                from: from,
+                to: to,
+                key: Math.random(),
+                emission: undefined,
+                impossible: false,
+              };
 
           newStages.push(stage as Stage);
         }
 
         setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
 
-        console.log("newStages: " + newStages)
+        console.log("newStages: " + newStages);
 
         setChainData((oldChain: Chain): Chain => {
           return {
@@ -326,28 +326,28 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
 
       const stage = isDistanceMode
         ? {
-          usesAddress: false,
-          transportMethod: "truck",
-          distance: rows[i][0] as number,
-          key: Math.random(),
-          emission: undefined,
-        }
+            usesAddress: false,
+            transportMethod: "truck",
+            distance: rows[i][0] as number,
+            key: Math.random(),
+            emission: undefined,
+          }
         : {
-          usesAddress: true,
-          transportMethod: "truck",
-          from: from,
-          to: to,
-          key: Math.random(),
-          emission: undefined,
-          impossible: false,
-        };
+            usesAddress: true,
+            transportMethod: "truck",
+            from: from,
+            to: to,
+            key: Math.random(),
+            emission: undefined,
+            impossible: false,
+          };
 
       newStages.push(stage as Stage);
     }
 
     setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
 
-    console.log("newStages: " + newStages)
+    console.log("newStages: " + newStages);
 
     setChainData((oldChain: Chain): Chain => {
       return {
@@ -450,8 +450,8 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
             />
           </div>
         </CardFooter>
-        <div style={{ marginLeft: "10px" }}>
-          <a href="/template" style={{ color: "blue", fontFamily: "Arial, sans-serif", textDecoration: "underline" }}>
+        <div className=" flex flex-start ml-5 mb-4">
+          <a href="/template" className=" text-blue-500 text-sm">
             Which files are supported?
           </a>
         </div>

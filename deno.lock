@@ -40,6 +40,7 @@
       "npm:embla-carousel-react@^8.0.4": "npm:embla-carousel-react@8.0.4_react@18.2.0_embla-carousel@8.0.4",
       "npm:embla-carousel@^8.0.4": "npm:embla-carousel@8.0.4",
       "npm:framer-motion@^11.0.8": "npm:framer-motion@11.0.24_react@18.2.0_react-dom@18.2.0__react@18.2.0",
+      "npm:git-truck@^1.8.2": "npm:git-truck@1.12.0",
       "npm:isbot@^4.1.0": "npm:isbot@4.4.0",
       "npm:json-as-xlsx@^2.5.6": "npm:json-as-xlsx@2.5.6",
       "npm:lucide-react@^0.312.0": "npm:lucide-react@0.312.0_react@18.2.0",
@@ -7665,6 +7666,10 @@
       },
       "get-value@2.0.6": {
         "integrity": "sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==",
+        "dependencies": {}
+      },
+      "git-truck@1.12.0": {
+        "integrity": "sha512-V2kpr3W95mq5SCIkAmgcoTjizaTePfow627UNAm2u2IdJ3tTp1OXHcQYEs7+UVWMVBx2zlYoQj+lrGZrU9DPyg==",
         "dependencies": {}
       },
       "glob-parent@3.1.0": {
