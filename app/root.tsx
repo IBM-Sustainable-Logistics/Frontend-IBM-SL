@@ -24,6 +24,7 @@ import {
   getSupabaseWithSessionAndHeaders,
 } from "./lib/supabase-server.ts";
 import { useSupabase } from "./lib/supabase.ts";
+import { MessageDialog } from "./components/ui/messagedialog.tsx";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -47,6 +48,9 @@ export default function App() {
 
   const { supabase } = useSupabase({ env, serverSession });
 
+  const [openSign, setOpenSign] = React.useState(false); // Add state for sign-in pop-up
+  const [message, setMessage] = React.useState(""); // Add state for message in pop-up
+
   return (
     <html lang="en">
       <head>
@@ -62,12 +66,20 @@ export default function App() {
         ></link>
       </head>
       <NavBar serverSession={serverSession} supabase={supabase} />
+
       <body className="min-h-full">
-        <Outlet context={{ supabase, domainUrl }} />
+        <MessageDialog
+          message={message}
+          open={openSign}
+          setopen={setOpenSign}
+        />
+
+        <Outlet context={{ supabase, domainUrl, setOpenSign, setMessage }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload port={8002} />
       </body>
+
       <Footer />
     </html>
   );

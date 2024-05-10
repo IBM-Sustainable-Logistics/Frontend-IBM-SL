@@ -16,6 +16,11 @@ type SupabaseEnv = {
   SUPABASE_ANON_KEY: string;
 };
 
+
+export type SiginOutletContext = {
+  setOpenSign: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+};
 type UseSupabase = {
   env: SupabaseEnv;
   serverSession: Session | null;

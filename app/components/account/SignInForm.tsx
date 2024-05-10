@@ -11,9 +11,15 @@ interface FormState {
 
 interface SignInFormProps {
   supabase: SupabaseClient<Database>;
+  setSignIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessagesign: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
+export const SignInForm: React.FC<SignInFormProps> = ({
+  supabase,
+  setMessagesign,
+  setSignIn,
+}) => {
   const initialFormState: FormState = {
     email: "",
     password: "",
@@ -24,7 +30,6 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
-  const [open, setOpen] = useState(false);
 
   const [counter, setCounter] = useState(0);
 
@@ -81,7 +86,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
         }
       } else {
         setMessage("You have been signed in");
-        setOpen(true);
+        setMessagesign("You have been signed in");
+        setSignIn(true);
       }
     } catch (error) {
       console.error(error);
@@ -166,7 +172,6 @@ export const SignInForm: React.FC<SignInFormProps> = ({ supabase }) => {
           {errorMessage}
         </div>
       )}
-      <MessageDialog message={message} open={open} setopen={setOpen} />
     </div>
   );
 };
