@@ -51,7 +51,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
       href: "/projects",
     },
     {
-      value: "How To Guide",
+      value: "How to Guide",
       href: "/guide",
     },
     {

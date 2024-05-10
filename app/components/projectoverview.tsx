@@ -206,7 +206,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                 <CarouselItem key={calculator.id}>
                   <div className="flex flex-col justify-center items-center gap-4">
                     <Calculator
-                      isCreateProject={true}
+                      isProject={true}
+                      projectTitle={titleProject}
                       chain={chain}
                       setChain={setChain}
                     />

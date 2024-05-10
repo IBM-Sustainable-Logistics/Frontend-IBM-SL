@@ -80,7 +80,8 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
               {calculators.map((calculator: CalculatorInstance) => (
                 <div key={calculator.id} className=" w-full">
                   <Calculator
-                    isCreateProject={true}
+                    isProject={true}
+                    projectTitle={titleProject}
                     chain={chain}
                     setChain={setChain}
                   />

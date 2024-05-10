@@ -57,9 +57,9 @@ export const Combobox: React.FC<ComboboxProps> = ({
               <CommandItem
                 key={option.value}
                 value={option.value}
-                onSelect={(currentValue: string) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  onChange(type, currentValue);
+                onSelect={(inputValue: string) => {
+                  setValue(inputValue);
+                  onChange(type, inputValue);
                   setOpen(false);
                 }}
               >

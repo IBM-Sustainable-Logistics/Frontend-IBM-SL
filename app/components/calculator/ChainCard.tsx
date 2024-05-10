@@ -7,7 +7,8 @@ import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
 type Props = {
-  projectName: string | undefined;
+  isProject: boolean;
+  projectTitle: string | undefined;
   chain: C.Chain;
   selectedRoute: number;
   setChain: React.Dispatch<React.SetStateAction<C.Chain>>;
@@ -16,7 +17,8 @@ type Props = {
 };
 
 export default ({
-  projectName,
+  isProject,
+  projectTitle,
   chain,
   selectedRoute,
   onSelectRoute,
@@ -26,12 +28,14 @@ export default ({
   return (
     <>
       <Label className="text-lg font text-gray-900 dark:text-gray-100">
-        Name: {projectName}
+        {projectTitle !== undefined
+          ? <>Name: {projectTitle}</>
+          : <>Logistics Chain</>}
       </Label>
       <br />
       <div className="flex flex-col gap-6">
         <Carousel orientation="vertical">
-          <CarouselContent className="h-[300px] lg:h-[500px] lg:w-[300px]">
+          <CarouselContent className="h-[300px] lg:h-[550px] lg:w-[300px]">
             {chain.routes.map((route, routeIndex) => (
               <CarouselItem key={route.key} className="pt-1 basis-1/4 mt-4">
                 <Card
@@ -45,13 +49,13 @@ export default ({
                 >
                   <CardHeader>
                     <CardTitle>{route.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     {route.emission !== undefined && (
                       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Emission: {route.emission} kg
                       </Label>
                     )}
-                  </CardHeader>
-                  <CardContent>
                     <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                       Stages: {route.stages.length}
                     </Label>
@@ -75,6 +79,16 @@ export default ({
         >
           Add Route
         </Button>
+        {!isProject && (<p className="text-sm w-full">
+          Need help gettings started? Check out our &nbsp;
+          <a
+            className="text-blue-500 underline"
+            href="/guide"
+          >
+            How to Guide
+          </a>
+          .
+        </p>)}
         <UploadPopUp setChainData={setChain} chain={chain} />
       </div>
     </>

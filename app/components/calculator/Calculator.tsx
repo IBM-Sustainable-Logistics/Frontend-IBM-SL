@@ -150,12 +150,13 @@ export const loadChain = (chain: T.Chain): Chain => ({
 });
 
 type CalculatorProps = {
-  isCreateProject: boolean;
+  isProject: boolean;
+  projectTitle: string | undefined;
   chain: Chain;
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
+const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorProps) => {
   const [error, setError] = useState(undefined);
   const [message, setMessage] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestions>(emptySuggestions());
@@ -637,8 +638,9 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
               cargo: undefined,
               from: {
                 ...beforeStage.to,
+                exists: true,
               },
-              to: { ...T.emptyAddress, exists: false },
+              to: { ...T.emptyAddress, exists: true },
               impossible: false,
               key: Math.random(),
               emission: undefined,
@@ -673,6 +675,21 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
   const onRemoveStage = (routeIndex: number, stageIndex: number) => () => {
     setChain((oldChain: Chain): Chain => {
       const oldRoute = oldChain.routes[routeIndex];
+
+      if (stageIndex < 0 || stageIndex >= oldRoute.stages.length || oldRoute.stages.length <= 1) {
+        throw Error("Cannot remove stage index: " + stageIndex);
+      }
+
+      console.log("routeIndex = " + routeIndex + ", stageIndex = " + stageIndex + ", oldRoute.stages.length = " + oldRoute.stages.length);
+
+      // If you are viewing the last stage and it is the one that is removed,
+      // then select another stage
+      if (
+        selectedStage === oldRoute.stages.length - 1 &&
+        selectedStage === stageIndex
+      ) {
+        setSelectedStage(selectedStage - 1);
+      }
 
       return {
         ...oldChain,
@@ -739,24 +756,24 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
     });
   };
 
-  const onRemoveRoute = (index: number) => () => {
-    setChain((old: Chain): Chain => {
-      if (index < 0 || index >= old.routes.length || old.routes.length <= 1) {
-        throw Error("Cannot remove route index: " + index);
+  const onRemoveRoute = (routeIndex: number) => () => {
+    setChain((oldChain: Chain): Chain => {
+      if (routeIndex < 0 || routeIndex >= oldChain.routes.length || oldChain.routes.length <= 1) {
+        throw Error("Cannot remove route index: " + routeIndex);
       }
 
       // If you are viewing the last route and it is the one that is removed,
-      // then select a new route
+      // then select another route
       if (
-        selectedRoute === chain.routes.length - 1 &&
-        selectedRoute === index
+        selectedRoute === oldChain.routes.length - 1 &&
+        selectedRoute === routeIndex
       ) {
         setSelectedRoute(selectedRoute - 1);
       }
 
       return {
-        ...old,
-        routes: [...old.routes.slice(0, index), ...old.routes.slice(index + 1)],
+        ...oldChain,
+        routes: [...oldChain.routes.slice(0, routeIndex), ...oldChain.routes.slice(routeIndex + 1)],
       };
     });
   };
@@ -1114,14 +1131,20 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
       <form onSubmit={onCalculate}>
         <div
           className={
-            isCreateProject
+            isProject
               ? "flex flex-col ml-4 "
               : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500"
           }
         >
-          <div className="px-16 flex-0 border-t border-black-500 pt-10">
+          {/*
+            pt-12 puts the project title ever so slightly above the route and
+            stage titles. This is to mitigate the "optical illusion" that make
+            it look like the project title lower than it actually is.
+          */}
+          <div className="px-16 flex-0 border-t border-black-500 pt-12">
             <ChainCard
-              projectName="ProjectName"
+              isProject={isProject}
+              projectTitle={projectTitle}
               chain={chain}
               selectedRoute={selectedRoute}
               onSelectRoute={onSelectRoute}
@@ -1131,14 +1154,14 @@ const Calculator = ({ chain, setChain, isCreateProject }: CalculatorProps) => {
           </div>
           <div
             className={
-              isCreateProject
+              isProject
                 ? "flex flex-col gap-4 pt-10"
                 : "flex flex-col lg:flex-row lg:px-64 gap-4 pt-10"
             }
           >
             <Card
               className={
-                isCreateProject
+                isProject
                   ? "border-2 px-3 py-3 mx-10         flex flex-col gap-4 lg:w-[400px]"
                   : "border-2 px-3 py-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"
               }

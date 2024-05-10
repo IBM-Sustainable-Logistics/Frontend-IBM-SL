@@ -85,13 +85,14 @@ export default ({
         onChange={onTransportMethodChange(selectedRoute, selectedStage)}
       />
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        Cargo Weight (Tons):
+        Cargo Weight (tons):
       </Label>
       <Input
         type="number"
         id="cargo"
         name="cargo"
         className="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+        placeholder="Weight"
         value={stage.cargo}
         onChange={onCargoChanged(selectedRoute, selectedStage)}
       />
@@ -129,6 +130,7 @@ export default ({
               placeholder: "City",
               onChange: onAddressChange(selectedRoute, selectedStage, "from", "city"),
             }}
+            renderInputComponent={inputProps => <Input {...inputProps} />}
             id={String(stage.key) + "from city"}
           />
           <AutoSuggest
@@ -165,6 +167,7 @@ export default ({
                 "country"
               ),
             }}
+            renderInputComponent={inputProps => <Input {...inputProps} />}
             id={String(stage.key) + "from country"}
           />
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -199,6 +202,7 @@ export default ({
               placeholder: "City",
               onChange: onAddressChange(selectedRoute, selectedStage, "to", "city"),
             }}
+            renderInputComponent={inputProps => <Input {...inputProps} />}
             id={String(stage.key) + "to city"}
           />
           <AutoSuggest
@@ -235,6 +239,7 @@ export default ({
                 "country"
               ),
             }}
+            renderInputComponent={inputProps => <Input {...inputProps} />}
             id={String(stage.key) + "to country"}
           />
           {stage.impossible && (
