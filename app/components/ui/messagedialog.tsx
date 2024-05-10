@@ -18,7 +18,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
       <DialogContent>
         <p className="text-gray-500">{message}</p>
         <DialogClose>
-          <Button>Close</Button>
+          <Button>Dismiss</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>
