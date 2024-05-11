@@ -21,6 +21,10 @@ const CalculateEmissionsPage = () => {
 
   const [chain, setChain] = useState<C.Chain>(initialChain);
 
+  window.onbeforeunload = function () {
+    return true;
+  };
+
   return (
     <div className=" min-h-screen flex items-center justify-center">
       <Calculator
