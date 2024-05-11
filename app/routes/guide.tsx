@@ -1,3 +1,4 @@
+import React from "react";
 import wholepage1 from 'public/Images/CalculatorWholePage1.png'
 import leftside1 from 'public/Images/CalculatorLeftSection1.png'
 import middleside1 from 'public/Images/CalculatorMiddleSection1.png'
@@ -8,8 +9,6 @@ import rightsidedist1 from 'public/Images/CalculatorRightSectionDist1.png'
 import rightsidedist2 from 'public/Images/CalculatorRightSectionDist2.png'
 
 const GuidePage = () => {
-
-
     return (
         <div className="min-h-screen flex items-center justify-center flex-col">
 
