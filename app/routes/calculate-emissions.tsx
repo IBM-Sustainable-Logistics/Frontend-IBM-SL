@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Calculator, * as C from "../components/calculator/Calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
@@ -13,6 +14,21 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const CalculateEmissionsPage = () => {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const unloadHandler = (event: BeforeUnloadEvent) => {
+        event.preventDefault();
+    };
+    window.addEventListener('beforeunload', unloadHandler);
+
+    return () => {
+      window.removeEventListener('beforeunload', unloadHandler);
+    };
+  }, [location]);
+
   const initialChain: C.Chain = C.defaultChain(
     // Use these two cities as examples for the user. Maybe change later.
     { city: "", country: "" },
