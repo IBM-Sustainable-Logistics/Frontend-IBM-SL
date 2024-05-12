@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/button.tsx";
 import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel.tsx";
-import { Card, CardContent, CardHeader } from "../ui/card.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card.tsx";
 import { AspectRatio } from "../ui/aspect-ratio.tsx";
 import truck from "../../assets/truck-green.svg";
 
@@ -35,7 +35,7 @@ export default ({
       </Label>
       <div className={"divide-y-2" /* TODO add working divider */}>
         <Carousel orientation="vertical">
-          <CarouselContent className="h-[500px]">
+          <CarouselContent className="h-[564px]">
               <Button
                 className="w-full"
                 variant="ibm_blue"
@@ -60,23 +60,27 @@ export default ({
                     <AspectRatio ratio={16 / 7}>
                       <img src={truck} />
                     </AspectRatio>
-                    <CardHeader>Stage {stageIndex + 1}</CardHeader>
+                    <CardHeader>
+                      <CardTitle>
+                        <h1>Stage {stageIndex + 1}</h1>
+                      </CardTitle>
+                    </CardHeader>
                     <CardContent>
                       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Transport Method: {T.getTransportMethodLabel(stage.transportMethod)}
                       </Label>
-                      <br />
-                      {stage.cargo !== undefined && (
+                      {stage.cargo !== undefined && (<>
+                        <br />
                         <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                           Cargo: {stage.cargo} t
                         </Label>
-                      )}
-                      <br />
-                      {stage.emission !== undefined && (
+                      </>)}
+                      {stage.emission !== undefined && (<>
+                        <br />
                         <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                           Emission: {stage.emission} kg
                         </Label>
-                      )}
+                      </>)}
                     </CardContent>
                   </Card>
                   <Button
@@ -92,7 +96,6 @@ export default ({
           </CarouselContent>
         </Carousel>
       </div>
-      <br />
       {chain.routes.length > 1 && (
         <Button
           className="w-full"
@@ -100,7 +103,7 @@ export default ({
           type="button"
           onClick={onRemoveRoute(selectedRoute)}
         >
-          Remove Route
+          Remove {chain.routes[selectedRoute].name}
         </Button>
       )}
     </>

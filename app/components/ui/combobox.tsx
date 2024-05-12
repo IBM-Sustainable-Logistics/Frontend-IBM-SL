@@ -14,24 +14,24 @@ import {
 } from "./command.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.tsx";
 
-export interface ComboboxOption {
-  value: string;
+export interface ComboboxOption<T> {
+  value: T;
   label: string;
 }
 
-interface ComboboxProps {
-  options: ComboboxOption[];
-  defaultOption: ComboboxOption;
+interface ComboboxProps<T> {
+  options: ComboboxOption<T>[];
+  defaultOption: ComboboxOption<T>;
   type: string;
-  onChange: (name: string, value: string) => void;
+  onChange: (name: string, value: T) => void;
 }
 
-export const Combobox: React.FC<ComboboxProps> = ({
+export function Combobox<T>({
   options,
   defaultOption,
   type,
   onChange,
-}: ComboboxProps) => {
+}: ComboboxProps<T>) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultOption.value);
 
@@ -58,8 +58,8 @@ export const Combobox: React.FC<ComboboxProps> = ({
                 key={option.value}
                 value={option.value}
                 onSelect={(inputValue: string) => {
-                  setValue(inputValue);
-                  onChange(type, inputValue);
+                  setValue(inputValue as T);
+                  onChange(type, inputValue as T);
                   setOpen(false);
                 }}
               >

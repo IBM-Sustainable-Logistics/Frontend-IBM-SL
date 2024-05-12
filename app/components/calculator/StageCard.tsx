@@ -32,10 +32,10 @@ type Props = {
   suggestions: C.Suggestions;
   onTransportMethodChange: F<(_: string, __: T.TransportMethod) => void>;
   onCargoChanged: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
-  onSuggestionsRequested: G<(_: { value: string }) => Promise<void>>;
-  onSuggestionsClear: () => void;
-  onSuggestionSelected: G<(_: any, __: { suggestion: C.Address }) => void>;
-  onAddressChange: H<(_: React.ChangeEvent<HTMLInputElement>) => void>;
+  onSuggestionsRequested: G<AutoSuggest.SuggestionsFetchRequested>;
+  onSuggestionsClear: AutoSuggest.OnSuggestionsClearRequested;
+  onSuggestionSelected: G<AutoSuggest.OnSuggestionSelected<C.Address>>;
+  onAddressChange: H<(_: React.FormEvent<HTMLElement>, __: AutoSuggest.ChangeEvent) => void>;
   onDistanceChange: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
   onToggleUsesAddress: I<() => void>;
   onRemoveStage: F<() => void>;

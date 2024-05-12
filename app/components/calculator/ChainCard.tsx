@@ -32,7 +32,6 @@ export default ({
           ? <>Name: {projectTitle}</>
           : <>Logistics Chain</>}
       </Label>
-      <br />
       <div className="flex flex-col gap-6">
         <Carousel orientation="vertical">
           <CarouselContent className="h-[300px] lg:h-[550px] lg:w-[300px]">
@@ -48,14 +47,17 @@ export default ({
                   }
                 >
                   <CardHeader>
-                    <CardTitle>{route.name}</CardTitle>
+                    <CardTitle>
+                      <h1>{route.name}</h1>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {route.emission !== undefined && (
+                    {route.emission !== undefined && (<>
                       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Emission: {route.emission} kg
                       </Label>
-                    )}
+                      <br />
+                    </>)}
                     <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                       Stages: {route.stages.length}
                     </Label>

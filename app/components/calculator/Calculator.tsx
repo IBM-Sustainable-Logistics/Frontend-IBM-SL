@@ -9,6 +9,7 @@ import { Card } from "../ui/card.tsx";
 import { MessageDialog } from "../ui/messagedialog.tsx";
 import { string } from "../../../../.cache/deno/npm/registry.npmjs.org/@types/prop-types/15.7.12/index.d.ts";
 import { ErrorDialog } from "../ui/errordialog.tsx";
+import AutoSuggest from "react-autosuggest";
 
 /* Termonology:
  * - Chain:
@@ -54,7 +55,7 @@ export type Suggestions = {
   time: number;
 };
 
-const emptySuggestions = () => ({
+const emptySuggestions = (): Suggestions => ({
   values: [],
   time: Date.now(),
 });
@@ -157,10 +158,10 @@ type CalculatorProps = {
 };
 
 const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorProps) => {
-  const [error, setError] = useState(undefined);
-  const [message, setMessage] = useState("");
-  const [suggestions, setSuggestions] = useState<Suggestions>(emptySuggestions());
-  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+  const [message, setMessage] = useState<string | undefined>();
+  const [suggestions, setSuggestions] = useState(emptySuggestions());
+  const [openMessage, setOpenMessage] = useState(false);
   const [openError, setOpenError] = useState(false);
 
   // NOTE: This uses index, but routes should be identified by their names,
@@ -252,9 +253,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
    */
   const onCargoChanged =
     (routeIndex: number, stageIndex: number) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value: inputValue } = e.target as EventTarget;
-
+    ({ target: { value: inputValue }}: React.ChangeEvent<HTMLInputElement>) => {
       let inputNumber: number | undefined;
 
       if (inputValue === "") {
@@ -416,7 +415,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
    */
   const onSuggestionSelected =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
-    (_: any, { suggestion }: { suggestion: Address }) => {
+    (_: React.FormEvent<HTMLElement>, { suggestion }: { suggestion: Address }) => {
       setChain((oldChain: Chain): Chain => {
         const oldRoute = oldChain.routes[routeIndex];
         const oldStage = oldRoute.stages[stageIndex];
@@ -436,10 +435,6 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
       });
     };
 
-  interface EventTarget {
-    value?: string;
-  }
-
   /**
    * Given an index of a route and a stage, whether it refers to the
    * "from" or "to" address, and whether it refers to the "city" input or
@@ -456,8 +451,8 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
       fromOrTo: "from" | "to",
       place: "city" | "country"
     ) =>
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
-      const { value: inputValue } = event.target as EventTarget;
+    (_: React.FormEvent<HTMLElement>, data: AutoSuggest.ChangeEvent): void => {
+      const inputValue = data.newValue;
 
       if (inputValue === undefined) return;
 
@@ -495,9 +490,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
    */
   const onDistanceChange =
     (routeIndex: number, stageIndex: number) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value: inputValue } = e.target as EventTarget;
-
+    ({ target: { value: inputValue }}: React.ChangeEvent<HTMLInputElement>) => {
       let inputNumber: number | undefined = Number(inputValue);
 
       if (inputValue === "") {
@@ -1119,7 +1112,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
       });
 
       setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
-      setOpen(true);
+      setOpenMessage(true);
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -1130,10 +1123,10 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
     <div className="flex flex-col gap-9 font-mono justify-center items-center">
       <form onSubmit={onCalculate}>
         <div
-          className={
+          className={ // Yea.. I removed the divider, because I think it is more consistent with the rest of the website without it. Just revert it if you disagree.
             isProject
               ? "flex flex-col ml-4 "
-              : "flex flex-col lg:flex-row w-screen ml-4 lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500"
+              : "flex flex-col lg:flex-row w-screen ml-4" /* lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500" */
           }
         >
           {/*
@@ -1141,7 +1134,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
             stage titles. This is to mitigate the "optical illusion" that make
             it look like the project title lower than it actually is.
           */}
-          <div className="px-16 flex-0 border-t border-black-500 pt-12">
+          <div className={"px-16 flex-0 pt-12" /* border-t border-black-500"*/}>
             <ChainCard
               isProject={isProject}
               projectTitle={projectTitle}
@@ -1202,8 +1195,8 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
 
                 <MessageDialog
                   message={message as string}
-                  open={open}
-                  setopen={setOpen}
+                  open={openMessage}
+                  setopen={setOpenMessage}
                 />
 
                 <ErrorDialog
