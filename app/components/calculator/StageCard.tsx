@@ -76,7 +76,7 @@ export default ({
       <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
         Stage {selectedStage + 1}
       </Label>
-      <div className="flex flex-col flex-grow justify-between gap-4">
+      <div className="flex flex-col flex-grow justify-between gap-4 overflow-y-hidden">
         <div className="flex flex-col gap-4">
           <Combobox
             options={C.transportMethodOptions}

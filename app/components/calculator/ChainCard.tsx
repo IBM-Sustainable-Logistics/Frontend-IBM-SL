@@ -27,9 +27,7 @@ export default ({
   return (
     <>
       <Label className="text-lg font text-gray-900 dark:text-gray-100">
-        {projectTitle !== undefined
-          ? <>Name: {projectTitle}</>
-          : <>Logistics Chain</>}
+        Logistics Chain
       </Label>
       <div className="flex flex-col gap-6 lg:w-[300px]">
         <div className="h-[300px] lg:h-[550px] overflow-auto">

@@ -131,8 +131,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
 
   return (
     /* create a project page */
-    <div className="flex flex-col justify-center items-center  ">
-      <Card className="w-full max-w-md md:max-w-2xl ">
+    <div className="flex flex-col justify-center items-center">
+      <Card className="w-full max-w-md md:max-w-2xl">
         <CardHeader>
           <CardTitle>
             <h1>{project.title}</h1>
@@ -202,53 +202,57 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             </>
           ))}
 
-          <Carousel orientation="horizontal">
-            <CarouselContent>
-              {calculators.map((calculator: CalculatorInstance) => (
-                <CarouselItem key={calculator.id}>
-                  <div className="flex flex-col justify-center items-center gap-4">
-                    <Calculator
-                      isProject={true}
-                      projectTitle={titleProject}
-                      chain={chain}
-                      setChain={setChain}
-                    />
-                    <Button
-                      variant="destructive"
-                      onClick={() => deleteCalculator(calculator.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPagination />
-          </Carousel>
         </CardContent>
-        <CardFooter>
-          <div className=" flex gap-4 flex-col w-full">
-            <Button onClick={handleDownload}>Download as spreadsheet</Button>
-            <Button onClick={addCalculator} className="w-full">
-              {calculators.length === 0
-                ? "Update calculator "
-                : "Add another calculator"}
-            </Button>
-            <Button
-              className="border-black border rounded"
-              variant="ibm_blue"
-              onClick={handleUpdateProject}
-            >
-              update
-            </Button>
-            {message != "" && (
-              <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
-                {message}
-              </div>
-            )}
-          </div>
-        </CardFooter>
       </Card>
+
+      <Carousel className="w-full" orientation="horizontal">
+        <div className="flex flex-col justify-center items-center gap-4">
+          <CarouselContent className="max-w-full">
+            {calculators.map((calculator: CalculatorInstance) => (
+              <CarouselItem key={calculator.id}>
+                <div className="flex flex-col justify-center items-center gap-4">
+                  <Calculator
+                    isProject={true}
+                    projectTitle={titleProject}
+                    chain={chain}
+                    setChain={setChain}
+                  />
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteCalculator(calculator.id)}
+                  >
+                    Delete Chain
+                  </Button>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPagination />
+        </div>
+      </Carousel>
+
+      <CardFooter className="pt-4">
+        <div className="flex gap-4 flex-col w-full">
+          <Button onClick={handleDownload}>Download as spreadsheet</Button>
+          <Button onClick={addCalculator} className="w-full">
+            {calculators.length === 0
+              ? "Modify Chain"
+              : "Add Another Chain"}
+          </Button>
+          <Button
+            className="border-black border rounded"
+            variant="ibm_blue"
+            onClick={handleUpdateProject}
+          >
+            Update Project
+          </Button>
+          {message != "" && (
+            <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
+              {message}
+            </div>
+          )}
+        </div>
+      </CardFooter>
     </div>
   );
 };

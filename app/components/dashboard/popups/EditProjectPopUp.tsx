@@ -80,7 +80,7 @@ export const EditProjectPopUp: React.FC<Props> = ({
               variant="default"
               onClick={handleUpdateProject}
             >
-              update
+              Update
             </Button>
           </DialogClose>
 

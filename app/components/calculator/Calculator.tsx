@@ -1123,11 +1123,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
     <div className="flex flex-col gap-9 font-mono justify-center items-center">
       <form onSubmit={onCalculate}>
         <div
-          className={ // Yea.. I removed the divider, because I think it is more consistent with the rest of the website without it. Just revert it if you disagree.
-            isProject
-              ? "flex flex-col ml-4 "
-              : "flex flex-col lg:flex-row w-screen ml-4" /* lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500" */
-          }
+          className={"flex flex-col lg:flex-row w-screen ml-4" /* lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500" */}
         >
           {/*
             pt-12 puts the project title ever so slightly above the route and
@@ -1146,18 +1142,10 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
             />
           </div>
           <div
-            className={
-              isProject
-                ? "flex flex-col                      gap-4 pt-10 lg:max-h-[800px]"
-                : "flex flex-col lg:flex-row lg:px-64 gap-4 pt-10 lg:max-h-[800px]"
-            }
+            className={"flex flex-col lg:flex-row lg:px-64 gap-4 pt-10 lg:max-h-[800px]"}
           >
             <Card
-              className={
-                isProject
-                  ? "border-2 p-3 mx-10         flex flex-col gap-4 lg:w-[400px]"
-                  : "border-2 p-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"
-              }
+              className={"border-2 p-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"}
             >
               <RouteCard
                 chain={chain}
