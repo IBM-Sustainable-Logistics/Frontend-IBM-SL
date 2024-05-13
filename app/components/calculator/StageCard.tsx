@@ -6,6 +6,8 @@ import { Input } from "../ui/input.tsx";
 import AutoSuggest from "react-autosuggest";
 import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
+import { CommandGroup, CommandItem } from "../ui/command.tsx";
+import { CommandList } from "../ui/command.tsx";
 
 type F<T> = (routeIndex: number, stageIndex: number) => T;
 type G<T> = (
@@ -47,7 +49,7 @@ const renderSuggestion =
   data: { query: string; isHighlighted: boolean }
 ) => {
   return (
-    <span className={data.isHighlighted ? "bg-blue-200" : ""}>
+    <span className={data.isHighlighted ? "bg-blue-200 relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" : "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"}> 
       {suggestion.city}, {suggestion.country}
     </span>
   );
@@ -101,6 +103,7 @@ export default ({
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Origin Address:
           </Label>
+          
           <AutoSuggest
             suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -116,6 +119,17 @@ export default ({
             )}
             getSuggestionValue={(suggestion) => suggestion.city}
             renderSuggestion={renderSuggestion}
+            renderSuggestionsContainer={
+              ({ containerProps, children, query }) => (
+                <div {...containerProps} >
+                  <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                     <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
+                      {children}
+                     </div>
+                  </div>
+                </div>
+              )
+            }
             focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.from.city,
@@ -133,6 +147,7 @@ export default ({
             renderInputComponent={inputProps => <Input {...inputProps} />}
             id={String(stage.key) + "from city"}
           />
+
           <AutoSuggest
             suggestions={suggestions.values}
             onSuggestionsFetchRequested={onSuggestionsRequested(
@@ -148,6 +163,17 @@ export default ({
             )}
             getSuggestionValue={(suggestion) => suggestion.country}
             renderSuggestion={renderSuggestion}
+            renderSuggestionsContainer={
+              ({ containerProps, children, query }) => (
+                <div {...containerProps} >
+                  <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                     <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
+                      {children}
+                     </div>
+                  </div>
+                </div>
+              )
+            }
             focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.from.country,
@@ -167,9 +193,10 @@ export default ({
                 "country"
               ),
             }}
-            renderInputComponent={inputProps => <Input {...inputProps} />}
+            renderInputComponent={inputProps => 
+            <Input {...inputProps} />}
             id={String(stage.key) + "from country"}
-          />
+          /> 
           <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Destination Address:
           </Label>
@@ -186,6 +213,17 @@ export default ({
               selectedStage,
               "to"
             )}
+            renderSuggestionsContainer={
+              ({ containerProps, children, query }) => (
+                <div {...containerProps} >
+                  <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                     <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
+                      {children}
+                     </div>
+                  </div>
+                </div>
+              )
+            }
             getSuggestionValue={(suggestion) => suggestion.city}
             renderSuggestion={renderSuggestion}
             focusInputOnSuggestionClick={false}
@@ -218,8 +256,20 @@ export default ({
               selectedStage,
               "to"
             )}
+
             getSuggestionValue={(suggestion) => suggestion.country}
             renderSuggestion={renderSuggestion}
+            renderSuggestionsContainer={
+              ({ containerProps, children, query }) => (
+                <div {...containerProps} >
+                  <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                     <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
+                      {children}
+                     </div>
+                  </div>
+                </div>
+              )
+            }
             focusInputOnSuggestionClick={false}
             inputProps={{
               value: stage.to.country,
