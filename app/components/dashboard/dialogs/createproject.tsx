@@ -14,6 +14,7 @@ import { Button } from "../../ui/button.tsx";
 import { PlusIcon } from "../../../lib/Icons.tsx";
 import { Input } from "../../ui/input.tsx";
 import Calculator, { Chain, defaultChain } from "../../calculator/Calculator.tsx";
+import { Carousel, CarouselContent, CarouselItem, CarouselPagination } from "../../ui/carousel.tsx";
 
 interface Props {
   UserId: string;
@@ -60,11 +61,11 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
           <PlusIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-2/3 overflow-y-auto">
+      <DialogContent className="h-2/3 overflow-y-auto max-w-md md:max-w-xl">
         <DialogHeader>
           <DialogTitle>Create a project</DialogTitle>
           <DialogDescription>
-            <div className="flex flex-col gap-4" style={{ maxHeight: "90vh" }}>
+            <div className="flex flex-col gap-4 max-w-md md:max-w-xl" style={{ maxHeight: "90vh" }}>
               <Input
                 type="text"
                 placeholder="Title"
@@ -77,24 +78,31 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
                 className="w-full"
                 onChange={(e: any) => setDescriptionProject(e.target.value)}
               />
-              {calculators.map((calculator: CalculatorInstance) => (
-                <div key={calculator.id} className=" w-full">
-                  <Calculator
-                    isProject={true}
-                    projectTitle={titleProject}
-                    chain={chain}
-                    setChain={setChain}
-                  />
-                  <Button
-                    variant="destructive"
-                    onClick={() => deleteCalculator(calculator.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              ))}
+              <Carousel orientation="horizontal">
+                <CarouselContent>
+                  {calculators.map((calculator: CalculatorInstance) => (
+                    <CarouselItem key={calculator.id}>
+                      <div className="flex flex-col justify-center items-center gap-4">
+                        <Calculator
+                          isProject={true}
+                          projectTitle={titleProject}
+                          chain={chain}
+                          setChain={setChain}
+                        />
+                        <Button
+                          variant="destructive"
+                          onClick={() => deleteCalculator(calculator.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPagination />
+              </Carousel>
               <Button className="w-full" onClick={addCalculator}>
-                Add transport method
+                Add new calculator
               </Button>
               <DialogClose asChild>
                 <Button
