@@ -63,17 +63,17 @@ type Address = T.Address & {
 
 type Stage = (
   | {
-      usesAddress: false;
-      transportMethod: T.TransportMethod;
-      distance: number | undefined;
-    }
+    usesAddress: false;
+    transportMethod: T.TransportMethod;
+    distance: number | undefined;
+  }
   | {
-      usesAddress: true;
-      transportMethod: T.TruckTransportMethod;
-      from: Address;
-      to: Address;
-      impossible: boolean;
-    }
+    usesAddress: true;
+    transportMethod: T.TruckTransportMethod;
+    from: Address;
+    to: Address;
+    impossible: boolean;
+  }
 ) &
   Keyed &
   T.Estimated;
@@ -236,66 +236,79 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
       // Structure the data into readable array
       const jsonObj = JSON.parse(csvDataAsJSON.slice(1, -1));
 
+      const newStages: Stage[] = [];
+
       // Iterate over each data in csv and save to a local map
       for (const entry in jsonObj) {
         if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
           dataMap.set(entry, jsonObj[entry]);
+          console.log("Received key: ", entry, ", value:", jsonObj[entry])
         }
-
-        const newStages: Stage[] = [];
-
-        for (let i = 1; i < dataMap.size; i++) {
-          const from = {
-            city: dataMap.get("Origin city").toString(),
-            country: dataMap.get("Origin country").toString(),
-            exists: true,
-          };
-
-          const to = {
-            city: dataMap.get("Destination city").toString(),
-            country: dataMap.get("Destination country").toString(),
-            exists: true,
-          };
-
-          const stage = isDistanceMode
-            ? {
-                usesAddress: false,
-                transportMethod: "truck",
-                distance: dataMap.get("Distance") as number,
-                key: Math.random(),
-                emission: undefined,
-              }
-            : {
-                usesAddress: true,
-                transportMethod: "truck",
-                from: from,
-                to: to,
-                key: Math.random(),
-                emission: undefined,
-                impossible: false,
-              };
-
-          newStages.push(stage as Stage);
-        }
-
-        setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
-
-        console.log("newStages: " + newStages);
-
-        setChainData((oldChain: Chain): Chain => {
-          return {
-            ...oldChain,
-            routes: [
-              {
-                name: "Route " + (oldChain.routes.length - 1 + 1),
-                stages: newStages,
-                key: Math.random(),
-                emission: undefined,
-              },
-            ],
-          };
-        });
       }
+
+
+      for (let i = 1; i < dataMap.size; i++) {
+
+        var from;
+        var to;
+        var getDistance;
+
+        try {
+          from = {
+            city: dataMap.get("Origin city ").toString(),
+            country: dataMap.get("Origin country ").toString(),
+            exists: true,
+          };
+
+          to = {
+            city: dataMap.get("Destination city ").toString(),
+            country: dataMap.get("Destination country ").toString(),
+            exists: true,
+          };
+          console.log(i + " -> " + from.city, ", ", from.country, ", ", to.city, ", ", to.country)
+        } catch (error) {
+          getDistance = dataMap.get("Distance") as number;
+          console.log(i + " -> " + "Distance: ", getDistance)
+        }
+
+        const stage = isDistanceMode
+          ? {
+            usesAddress: false,
+            transportMethod: "truck",
+            distance: getDistance,
+            key: Math.random(),
+            emission: undefined,
+          }
+          : {
+            usesAddress: true,
+            transportMethod: "truck",
+            from: from,
+            to: to,
+            key: Math.random(),
+            emission: undefined,
+            impossible: false,
+          };
+
+        newStages.push(stage as Stage);
+      }
+
+      setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
+
+      console.log("newStages: " + newStages);
+
+      setChainData((oldChain: Chain): Chain => {
+        return {
+          ...oldChain,
+          routes: [
+            {
+              name: "Route " + (oldChain.routes.length - 1 + 1),
+              stages: newStages,
+              key: Math.random(),
+              emission: undefined,
+            },
+          ],
+        };
+      });
     };
 
     filereader.readAsText(file);
@@ -312,35 +325,44 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
     const newStages: Stage[] = [];
 
     for (let i = 1; i < rows.length; i++) {
-      const from = {
-        city: rows[i][0].toString(),
-        country: rows[i][1].toString(),
-        exists: true,
-      };
+      var from;
+      var to;
+      var getDistance;
+      try {
+        from = {
+          city: rows[i][0].toString(),
+          country: rows[i][1].toString(),
+          exists: true,
+        };
 
-      const to = {
-        city: rows[i][2].toString(),
-        country: rows[i][3].toString(),
-        exists: true,
-      };
+        to = {
+          city: rows[i][2].toString(),
+          country: rows[i][3].toString(),
+          exists: true,
+        };
 
+        console.log(from.city, ", ", from.country, ", ", to.city, ", ", to.country)
+      } catch (error) {
+        getDistance = rows[i][0] as number;
+        console.log(i + " -> " + "Distance: ", getDistance)
+      }
       const stage = isDistanceMode
         ? {
-            usesAddress: false,
-            transportMethod: "truck",
-            distance: rows[i][0] as number,
-            key: Math.random(),
-            emission: undefined,
-          }
+          usesAddress: false,
+          transportMethod: "truck",
+          distance: getDistance,
+          key: Math.random(),
+          emission: undefined,
+        }
         : {
-            usesAddress: true,
-            transportMethod: "truck",
-            from: from,
-            to: to,
-            key: Math.random(),
-            emission: undefined,
-            impossible: false,
-          };
+          usesAddress: true,
+          transportMethod: "truck",
+          from: from,
+          to: to,
+          key: Math.random(),
+          emission: undefined,
+          impossible: false,
+        };
 
       newStages.push(stage as Stage);
     }
