@@ -99,7 +99,6 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPagination />
               </Carousel>
               <Button className="w-full" onClick={addCalculator}>
                 Add new calculator
