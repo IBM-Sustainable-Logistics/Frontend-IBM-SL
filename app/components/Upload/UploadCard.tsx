@@ -395,7 +395,9 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
         }}
       >
         <CardHeader>
-          <CardTitle>Upload your file here</CardTitle>
+          <CardTitle>
+            <h1>Upload your file here</h1>
+          </CardTitle>
           <CardDescription>
             You can drag and drop your file here. Alternatively, you can click
             the 'Choose file' button below:

@@ -134,7 +134,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
     <div className="flex flex-col justify-center items-center  ">
       <Card className="w-full max-w-md md:max-w-2xl ">
         <CardHeader>
-          <CardTitle>{project.title}</CardTitle>
+          <CardTitle>
+            <h1>{project.title}</h1>
+          </CardTitle>
           <CardDescription>{project.description}</CardDescription>
           <img src={tree} alt="IBM Logo" className="h-40" />
         </CardHeader>

@@ -115,7 +115,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
   emission: undefined,
 });
 
-export const transportMethodOptions: ComboboxOption[] =
+export const transportMethodOptions: ComboboxOption<T.TransportMethod>[] =
   T.truckTransportMethods.map((method: T.TransportMethod) => ({
     value: method,
     label: T.getTransportMethodLabel(method),
@@ -1148,15 +1148,15 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
           <div
             className={
               isProject
-                ? "flex flex-col gap-4 pt-10"
-                : "flex flex-col lg:flex-row lg:px-64 gap-4 pt-10"
+                ? "flex flex-col                      gap-4 pt-10 lg:max-h-[800px]"
+                : "flex flex-col lg:flex-row lg:px-64 gap-4 pt-10 lg:max-h-[800px]"
             }
           >
             <Card
               className={
                 isProject
-                  ? "border-2 px-3 py-3 mx-10         flex flex-col gap-4 lg:w-[400px]"
-                  : "border-2 px-3 py-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"
+                  ? "border-2 p-3 mx-10         flex flex-col gap-4 lg:w-[400px]"
+                  : "border-2 p-3 mx-10 lg:mx-0 flex flex-col gap-4 lg:w-[400px]"
               }
             >
               <RouteCard
@@ -1168,7 +1168,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 onRemoveRoute={onRemoveRoute}
               />
             </Card>
-            <Card className="border-2 px-3 py-3 mx-10 flex flex-col gap-4 lg:w-[400px]">
+            <Card className="border-2 p-3 mx-10 flex flex-col gap-4 lg:w-[400px]">
               <StageCard
                 chain={chain}
                 selectedRoute={selectedRoute}
@@ -1184,30 +1184,20 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
               />
-              <div className="flex gap-4 flex-col items-center justify-center">
-                <Button
-                  className="px-10"
-                  variant="submit_button"
-                  type="submit"
-                >
-                  Calculate
-                </Button>
-
-                <MessageDialog
-                  message={message as string}
-                  open={openMessage}
-                  setopen={setOpenMessage}
-                />
-
-                <ErrorDialog
-                  message={error as string}
-                  open={openError}
-                  setopen={setOpenError}
-                />
-              </div>
             </Card>
           </div>
         </div>
+        <MessageDialog
+          message={message as string}
+          open={openMessage}
+          setopen={setOpenMessage}
+        />
+
+        <ErrorDialog
+          message={error as string}
+          open={openError}
+          setopen={setOpenError}
+        />
       </form>
     </div>
   );
