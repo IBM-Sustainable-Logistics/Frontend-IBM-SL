@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Dialog, DialogClose, DialogContent } from "../ui/dialog.tsx";
+import React, { useState } from "react";
 import { Button } from "../ui/button.tsx";
 import {
   Card,
@@ -9,17 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card.tsx";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card.tsx";
-import { Link, useFetcher } from "@remix-run/react";
 import readXlsxFile from "read-excel-file";
 import { Label } from "../ui/label.tsx";
 import { Switch } from "../ui/switch.tsx";
 import * as d3 from "d3";
-import { redirect } from "@remix-run/deno";
 import * as T from "../../lib/Transport.ts";
 
 /* Termonology:
@@ -93,20 +85,24 @@ type Props = {
   setChainData: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
+export const isValidFileSize = (method: File): boolean => {
+  if (method.size <= 1048576) {
+    return true
+  } else {
+    return false;
+  }
+}
+
 const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
-  const [stages, setStage] = useState<Stage[]>([]);
+  const [_stages, setStage] = useState<Stage[]>([]);
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
-  const [shouldSpin, setShouldSpin] = useState(false);
 
   const [isDistanceMode, setIsDistanceMode] = useState(false);
 
   // metadata for the chosen file
-  const [fileIsSent, setIsSent] = useState(false);
   var [file, setFile] = useState<File | null>(null);
   const dataMap = new Map();
-
-  const fetcher = useFetcher();
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -185,10 +181,9 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
    */
   async function readUploadedFile() {
     if (file != null) {
-      console.log("File size: " + file.size);
 
       // File size limit is 15MB
-      if (file.size <= 1048576) {
+      if (isValidFileSize(file)) {
         await readFile();
       } else {
         alert("Please upload a file less than 15 MB!");
