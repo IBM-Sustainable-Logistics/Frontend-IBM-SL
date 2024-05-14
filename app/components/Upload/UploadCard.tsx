@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogClose, DialogContent } from "../ui/dialog.tsx";
 import { Button } from "../ui/button.tsx";
 import {
   Card,
@@ -8,10 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card.tsx";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card.tsx";
+import { Link, useFetcher } from "@remix-run/react";
 import readXlsxFile from "read-excel-file";
 import { Label } from "../ui/label.tsx";
 import { Switch } from "../ui/switch.tsx";
 import * as d3 from "d3";
+import { redirect } from "@remix-run/deno";
 import * as T from "../../lib/Transport.ts";
 
 /* Termonology:
@@ -85,39 +93,20 @@ type Props = {
   setChainData: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-/**
- * Test method for verifying that the size of the uploaded files are calculated correctly. 
- * @param method The file whose size is to be tested.
- * @returns Test file size (in bytes).
- */
-export const getFileSize = (method: File): number => {
-  return method.size;
-}
-
-/**
- * Test method for verifying that the size of the uploaded files equals/less than 15 megabytes. 
- * @param method The file whose size is to be tested.
- * @returns Whether the filesize is acceptable.
- */
-export const isValidFileSize = (method: File): boolean => {
-  if (method.size <= 1048576) {
-    return true
-  } else {
-    return false;
-  }
-}
-
 const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
-  const [_stages, setStage] = useState<Stage[]>([]);
+  const [stages, setStage] = useState<Stage[]>([]);
   const [hasUploaded, setHasUploaded] = useState(false);
   const [onHover, setOnHover] = useState(false);
+  const [shouldSpin, setShouldSpin] = useState(false);
 
   const [isDistanceMode, setIsDistanceMode] = useState(false);
 
   // metadata for the chosen file
+  const [fileIsSent, setIsSent] = useState(false);
   var [file, setFile] = useState<File | null>(null);
-  var [fileSize, setFileSize] = useState(0);
   const dataMap = new Map();
+
+  const fetcher = useFetcher();
 
   /**
    * Code template taken from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
@@ -196,14 +185,13 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
    */
   async function readUploadedFile() {
     if (file != null) {
-      setFileSize(file.size);
-      console.log("File size: " + fileSize);
+      console.log("File size: " + file.size);
 
       // File size limit is 15MB
-      if (fileSize <= 1048576) {
+      if (file.size <= 1048576) {
         await readFile();
       } else {
-        alert("Please upload a file less than 15 MB! The file size that you have uploaded is: " + fileSize);
+        alert("Please upload a file less than 15 MB!");
       }
     }
   }
@@ -215,7 +203,6 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
     console.log("Deleting file: " + file);
     setFile(null);
     setHasUploaded(false);
-    setFileSize(0);
 
     if (document.getElementById("fileInput") as HTMLInputElement) {
       (document.getElementById("fileInput") as HTMLInputElement).value = "";
