@@ -46,7 +46,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
         }, 5000);
       } else {
         setShowMessage(true);
-        setMessage("Reset link sent to your email. If the proved email is registered in our database, then you should receive the link very soon.");
+        setMessage("Reset link sent to your email. If the provided email is registered in our database, then you should receive the link very soon.");
         setTimeout(() => {
           setShowMessage(false);
         }, 5000);
