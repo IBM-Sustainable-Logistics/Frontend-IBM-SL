@@ -75,17 +75,17 @@ const pluginConfig: CookieConsentConfig = {
             {
               title: 'Cookie Usage',
               description:
-                'I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href="#" class="cc__link">privacy policy</a>.',
+                'We use cookies to ensure the basic functionalities of our website and to enhance your online experience. You can choose to opt-in or opt-out of each category at any time. For more details about cookies and how we handle your sensitive data, please read our full <a href="#" class="cc__link">privacy policy</a>.',
             },
             {
               title: 'Strictly necessary cookies',
-              description: 'Description',
+              description: 'These cookies are essential for the website to function properly. They ensure basic functionalities and security features of the website, anonymously.',
               linkedCategory: 'necessary',
             },
             {
               title: 'More information',
               description:
-                'For any queries in relation to my policy on cookies and your choices, please <a class="cc__link" href="#hananinas.com">contact me</a>.',
+                'For any queries regarding our policy on cookies and your choices, please <a class="cc__link" href="#hananinas.com">contact us</a>.',
             },
           ],
         },
