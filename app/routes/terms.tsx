@@ -9,23 +9,14 @@ const Terms = () => {
       <section className="terms-and-conditions px-4 sm:px-8 lg:px-16">
         <h2 className="text-3xl font-bold mt-8 mb-4">Terms and Conditions</h2>
         <p>
-          These Terms and Conditions ("Terms") govern your use of our website.
-          By accessing or using the site, you agree to be bound by these Terms.
-          If you do not agree with any part of these Terms, you must not access
-          the site.
+          These Terms and Conditions ("Terms") govern your use of our website. By accessing or using the site, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you must not access the site.
         </p>
 
         <h3 className="text-2xl font-semibold mt-6 mb-2">
           1. Intellectual Property Rights
         </h3>
         <p>
-          Unless otherwise indicated, the site and all content and other
-          materials on the site, including, without limitation, the logo, and
-          all designs, text, graphics, pictures, information, data, software,
-          sound files, other files, and the selection and arrangement thereof
-          (collectively, "Site Content") are the proprietary property of IBM or our licensors or users and are protected by
-          copyright, trademark, patent, and other intellectual property and
-          proprietary rights laws.
+          Unless otherwise indicated, the site and all content and other materials on the site, including, without limitation, the logo, and all designs, text, graphics, pictures, information, data, software, sound files, other files, and the selection and arrangement thereof (collectively, "Site Content") are the proprietary property of IBM or our licensors or users and are protected by copyright, trademark, patent, and other intellectual property and proprietary rights laws.
         </p>
 
         <h3 className="text-2xl font-semibold mt-6 mb-2">
@@ -194,7 +185,24 @@ const Terms = () => {
         </p>
 
         <h3 className="text-2xl font-semibold mt-6 mb-2">
-          16. Contact Us
+          16. GDPR Compliance
+        </h3>
+        <p>
+          We are committed to protecting your personal data and respecting your privacy. In accordance with the General Data Protection Regulation (GDPR), we ensure the following:
+        </p>
+        <ul className="list-disc list-inside">
+          <li><strong>Data Collection:</strong> We collect and process personal data only for specified, explicit, and legitimate purposes. The types of personal data we collect include [list types of personal data, e.g., name, email address, etc.].</li>
+          <li><strong>Legal Basis for Processing:</strong> We process your personal data based on your consent, the necessity to perform a contract, compliance with a legal obligation, or our legitimate interests.</li>
+          <li><strong>Data Subject Rights:</strong> You have the right to access, rectify, erase, restrict processing of, and object to the processing of your personal data. You also have the right to data portability and to lodge a complaint with a supervisory authority.</li>
+          <li><strong>International Data Transfers:</strong> If we transfer your personal data outside the EU, we will ensure appropriate safeguards are in place, such as standard contractual clauses or Privacy Shield certification.</li>
+          <li><strong>Data Retention:</strong> We retain your personal data only for as long as necessary to fulfill the purposes for which it was collected or as required by law.</li>
+          <li><strong>Consent:</strong> Where consent is the basis for processing, you have the right to withdraw your consent at any time.</li>
+          <li><strong>Security Measures:</strong> We implement appropriate technical and organizational measures to protect your personal data from unauthorized access, disclosure, alteration, or destruction.</li>
+          <li><strong>Breach Notification:</strong> In the event of a data breach, we will notify the relevant supervisory authority and affected individuals as required by law.</li>
+        </ul>
+
+        <h3 className="text-2xl font-semibold mt-6 mb-2">
+          17. Contact Us
         </h3>
         <p>
           In order to resolve a complaint regarding the site or to receive further information regarding use of the site, please contact us at:
