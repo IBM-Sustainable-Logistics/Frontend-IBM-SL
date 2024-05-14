@@ -11,7 +11,7 @@ export default function Footer() {
         <Link className="text-xs hover:underline underline-offset-4" to="#">
           Terms of Service
         </Link>
-        <Link className="text-xs hover:underline underline-offset-4" to="#">
+        <Link className="text-xs hover:underline underline-offset-4" to="/privacy">
           Privacy Policy
         </Link>
         <CookieConsentComponent />
@@ -19,3 +19,4 @@ export default function Footer() {
     </footer>
   );
 }
+
