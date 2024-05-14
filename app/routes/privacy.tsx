@@ -33,10 +33,6 @@ const privacy = () => {
         <ul className="list-disc list-inside">
           <li><strong>Personal Data:</strong> Personally identifiable information, such as your name, shipping address, email address, and telephone number, and demographic information, such as your age, gender, hometown, and interests, that you voluntarily give to us when you register with the site or when you choose to participate in various activities related to the site, such as online chat and message boards.</li>
           <li><strong>Derivative Data:</strong> Information our servers automatically collect when you access the site, such as your IP address, your browser type, your operating system, your access times, and the pages you have viewed directly before and after accessing the site.</li>
-          // Only relevant if we are gonna implement a payment system.
-          // <li><strong>Financial Data:</strong> Financial information, such as data related to your payment method (e.g., valid credit card number, card brand, expiration date) that we may collect when you purchase, order, return, exchange, or request information about our services from the site.</li>
-          // Not relevant as of now. 
-          // <li><strong>Data From Social Networks:</strong> User information from social networking sites, such as Facebook, Google+, Instagram, Pinterest, Twitter, including your name, your social network username, location, gender, birth date, email address, profile picture, and public data for contacts, if you connect your account to such social networks.</li>
         </ul>
 
         <h3 className="text-2xl font-semibold mt-6 mb-2">2. Use of Your Information</h3>
