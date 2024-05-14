@@ -4,25 +4,35 @@ import {
 import {
     getFileSize,
     isValidFileSize,
-} from "../../app/components/Upload/UploadFileTest";
-import testFile1MiB from '../test-files/1MiB.txt';
-import testFile20KiB from '../test-files/20KiB.txt';
+} from "../../app/components/Upload/UploadFileTest.ts";
 
-Deno.test("getFileSize should return correct file size in bytes", () => {
-    var file = new File(testFile1MiB, "testFIle1MiB");
+Deno.test("getFileSize (1MiB.txt) should return correct file size in bytes", async () => {
+    const path = './test-files/1MiB.txt';
+    const readFileContent = await Deno.readFile(path); 
+
+    const file = new File([readFileContent], "1MiB.txt");
     assertEquals(getFileSize(file), 1048576);
 });
-Deno.test("isValidFileSize should return true", () => {
-    var file = new File(testFile1MiB, "testFIle1MiB");
+Deno.test("isValidFileSize (1MiB.txt) should return true", async () => {
+    const path = './test-files/1MiB.txt';
+    const readFileContent = await Deno.readFile(path); 
+
+    const file = new File([readFileContent], "1MiB.txt");
     assertEquals(isValidFileSize(file), true);
 });
 
-Deno.test("getFileSize should return correct file size in bytes", () => {
-    var file = new File(testFile20KiB, "testFile20KiB");
+Deno.test("getFileSize (20KiB.txt) should return correct file size in bytes", async () => {
+    const path = './test-files/20KiB.txt';
+    const readFileContent = await Deno.readFile(path); 
+
+    const file = new File([readFileContent], "20KiB.txt");
     assertEquals(getFileSize(file), 20480);
 });
-Deno.test("isValidFileSize should return true", () => {
-    var file = new File(testFile20KiB, "testFile20KiB");
+Deno.test("isValidFileSize (20KiB.txt) should return true", async () => {
+    const path = './test-files/20KiB.txt';
+    const readFileContent = await Deno.readFile(path); 
+
+    const file = new File([readFileContent], "20KiB.txt");
     assertEquals(isValidFileSize(file), true);
 });
 
