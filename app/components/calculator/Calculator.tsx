@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "../../components/ui/button.tsx";
 import { ComboboxOption } from "../ui/combobox.tsx";
 import * as T from "../../lib/Transport.ts";
 import ChainCard from "./ChainCard.tsx";
