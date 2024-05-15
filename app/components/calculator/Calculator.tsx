@@ -10,6 +10,7 @@ import { MessageDialog } from "../ui/messagedialog.tsx";
 import { string } from "../../../../.cache/deno/npm/registry.npmjs.org/@types/prop-types/15.7.12/index.d.ts";
 import { ErrorDialog } from "../ui/errordialog.tsx";
 import AutoSuggest from "react-autosuggest";
+import { Progress } from "../ui/progress.tsx";
 
 /* Termonology:
  * - Chain:
@@ -163,6 +164,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
   const [suggestions, setSuggestions] = useState(emptySuggestions());
   const [openMessage, setOpenMessage] = useState(false);
   const [openError, setOpenError] = useState(false);
+  const [progress, setProgress] = useState<number | undefined>();
 
   // NOTE: This uses index, but routes should be identified by their names,
   // so that we can support sorting and moving the routes around.
@@ -828,6 +830,8 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
       }
     }
 
+    setProgress(10);
+
     try {
       /** The json schema that the back-end uses for the input. */
       type Input = {
@@ -864,11 +868,18 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         })),
       }));
 
+      setProgress(50)
+
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       });
+
+      setProgress(80);
+
+  
+
 
       /** The json schema that the back-end uses for the output. */
       type Output =
@@ -1069,6 +1080,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         return;
       }
 
+
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
         setOpenError(true);
@@ -1081,6 +1093,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
             (await response.text())
         );
       }
+
 
       setChain((oldChain: Chain): Chain => {
         return {
@@ -1111,8 +1124,11 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         };
       });
 
+      setProgress(100);
+
       setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
       setOpenMessage(true);
+      setProgress(undefined);
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -1183,6 +1199,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 onDistanceChange={onDistanceChange}
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
+                progress={progress}
               />
               <div className="flex gap-4 flex-col items-center justify-center">
                 <Button
@@ -1192,7 +1209,9 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 >
                   Calculate
                 </Button>
-
+                {progress != undefined && (
+                  <Progress value={progress}/>
+                )}
                 <MessageDialog
                   message={message as string}
                   open={openMessage}

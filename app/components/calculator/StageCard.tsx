@@ -8,6 +8,7 @@ import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
 import { CommandGroup, CommandItem } from "../ui/command.tsx";
 import { CommandList } from "../ui/command.tsx";
+import { Progress } from "../ui/progress.tsx";
 
 type F<T> = (routeIndex: number, stageIndex: number) => T;
 type G<T> = (
@@ -31,6 +32,7 @@ type Props = {
   chain: C.Chain;
   selectedRoute: number;
   selectedStage: number;
+  progress: number | undefined;
   suggestions: C.Suggestions;
   onTransportMethodChange: F<(_: string, __: T.TransportMethod) => void>;
   onCargoChanged: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
@@ -334,6 +336,8 @@ export default ({
           )}
         </>
       )}
+      
+
       {route.stages.length > 1 && (
         <Button
           onClick={onRemoveStage(selectedRoute, selectedStage)}
