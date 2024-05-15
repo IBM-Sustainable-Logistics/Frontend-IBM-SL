@@ -32,7 +32,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   >([]);
 
   useEffect(() => {
-    console.log(UserId);
     const filtered = Projects.filter((project) => project.user_id === UserId);
     setFilteredProjectsByUser(filtered);
   }, [Projects, UserId]);

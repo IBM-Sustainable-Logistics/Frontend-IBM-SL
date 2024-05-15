@@ -35,6 +35,7 @@ import {
   CarouselPagination,
   CarouselPrevious,
 } from "./ui/carousel.tsx";
+import { Car } from "npm:lucide-react@^0.312.0";
 
 interface Props {
   project: project;
@@ -51,7 +52,6 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   const fetcher = useFetcher();
 
   const handleUpdateProject = () => {
-    console.log(calcChain, project.chain);
     if (
       calcChain.emission != project.chain.emission ||
       calcChain.routes.length != project.chain.routes.length
@@ -125,62 +125,68 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                     <img src={tree} alt="IBM Logo" className="h-40" />
                   </CardHeader>
                   <CardContent >
-                    {project.routes.map((route) => (
-                      <>
-                        <Table>
-                          <TableCaption>
-                            Emissions in total: {project.emissions} for route {route.name}
-                          </TableCaption>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="w-[100px]">Transport Form</TableHead>
-                              <TableHead>Distance (km)</TableHead>
-                              <TableHead>From</TableHead>
-                              <TableHead>To</TableHead>
-                              <TableHead>Cargo Weight</TableHead>
-                              <TableHead className="text-right">
-                                Amount of CO2 (kg)
-                              </TableHead>
-                            </TableRow>
-                          </TableHeader>
-
-                          <TableBody>
-                            {route.stages.map((stage: Stage, index: number) => (
-                              <TableRow key={index}>
-                                <TableCell>
-                                  {getTransportMethodLabel(stage.transportMethod)}
-                                </TableCell>
-
-                                {stage.usesAddress ? (
-                                  <>
-                                    <TableCell>{stage.distance_km}</TableCell>
-                                    <TableCell>{stage.from.city}</TableCell>
-                                    <TableCell>{stage.to.city}</TableCell>
-                                    <TableCell className="text-right">
-                                      {stage.cargo}
-                                    </TableCell>
-                                  </>
-                                ) : (
-                                  <>
-                                    <TableCell>{stage.distance}</TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell className="text-right">
-                                      {stage.cargo}
-                                    </TableCell>
-                                  </>
-                                )}
-
-                                <TableCell className="text-right">
-                                  {stage.emission ? stage.emission : 0}
-                                </TableCell>
+                    <Carousel>
+                      <CarouselContent>
+                      {project.routes.map((route) => (
+                        <CarouselItem>
+                          <Table>
+                            <TableCaption>
+                              Emissions in total: {project.emissions} for route {route.name}
+                            </TableCaption>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="w-[100px]">Transport Form</TableHead>
+                                <TableHead>Distance (km)</TableHead>
+                                <TableHead>From</TableHead>
+                                <TableHead>To</TableHead>
+                                <TableHead>Cargo Weight</TableHead>
+                                <TableHead className="text-right">
+                                  Amount of CO2 (kg)
+                                </TableHead>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                        <DataVisualization stages={route.stages} />
-                      </>
-                    ))}
+                            </TableHeader>
+
+                            <TableBody>
+                              {route.stages.map((stage: Stage, index: number) => (
+                                <TableRow key={index}>
+                                  <TableCell>
+                                    {getTransportMethodLabel(stage.transportMethod)}
+                                  </TableCell>
+
+                                  {stage.usesAddress ? (
+                                    <>
+                                      <TableCell>{stage.distance_km}</TableCell>
+                                      <TableCell>{stage.from.city}</TableCell>
+                                      <TableCell>{stage.to.city}</TableCell>
+                                      <TableCell className="text-right">
+                                        {stage.cargo}
+                                      </TableCell>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <TableCell>{stage.distance}</TableCell>
+                                      <TableCell></TableCell>
+                                      <TableCell></TableCell>
+                                      <TableCell className="text-right">
+                                        {stage.cargo}
+                                      </TableCell>
+                                    </>
+                                  )}
+
+                                  <TableCell className="text-right">
+                                    {stage.emission ? stage.emission : 0}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <DataVisualization stages={route.stages} />
+                        </CarouselItem>
+                      ))}
+
+                      </CarouselContent>
+                    </Carousel>
+                    
                   </CardContent>
                 </Card>
                 <CarouselNext>
