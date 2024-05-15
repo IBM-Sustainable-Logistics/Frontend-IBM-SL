@@ -71,6 +71,7 @@ type Stage = (
       transportMethod: T.TruckTransportMethod;
       from: Address;
       to: Address;
+      distance_km: number | undefined;
       impossible: boolean;
     }
 ) & {
@@ -106,6 +107,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
           impossible: false,
           key: Math.random(),
           emission: undefined,
+          distance_km: undefined,
         },
       ],
       key: Math.random(),
@@ -136,6 +138,7 @@ export const loadChain = (chain: T.Chain): Chain => ({
                 impossible: false,
                 key: index,
                 emission: undefined,
+                distance_km: undefined,
               }
             : {
                 ...stage,
@@ -163,6 +166,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
   const [suggestions, setSuggestions] = useState(emptySuggestions());
   const [openMessage, setOpenMessage] = useState(false);
   const [openError, setOpenError] = useState(false);
+  const [progress, setProgress] = useState<number | undefined>();
 
   // NOTE: This uses index, but routes should be identified by their names,
   // so that we can support sorting and moving the routes around.
@@ -555,6 +559,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
+                distance_km: undefined,
               }),
             }),
           };
@@ -615,6 +620,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                   impossible: false,
                   key: Math.random(),
                   emission: undefined,
+                  distance_km: undefined,
                 },
                 ...oldRoute.stages,
               ],
@@ -739,6 +745,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 impossible: false,
                 key: Math.random(),
                 emission: undefined,
+                distance_km: undefined,
               },
             ],
             key: Math.random(),
@@ -828,6 +835,8 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
       }
     }
 
+    setProgress(10);
+
     try {
       /** The json schema that the back-end uses for the input. */
       type Input = {
@@ -864,11 +873,18 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         })),
       }));
 
+      setProgress(50)
+
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       });
+
+      setProgress(80);
+
+  
+
 
       /** The json schema that the back-end uses for the output. */
       type Output =
@@ -881,6 +897,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 stage_kg: number;
                 transport_form: string;
                 cargo_t: number;
+                distance_km: number;
               }[];
             }[];
           }
@@ -908,6 +925,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
               city: string;
               country?: string | undefined;
             }[];
+        
           };
 
       const output: Output = await response.json();
@@ -1069,6 +1087,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         return;
       }
 
+
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
         setOpenError(true);
@@ -1081,6 +1100,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
             (await response.text())
         );
       }
+
 
       setChain((oldChain: Chain): Chain => {
         return {
@@ -1103,6 +1123,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                     from: { ...oldStage.from, exists: true },
                     to: { ...oldStage.to, exists: true },
                     cargo: outputRoute.stages[index].cargo_t,
+                    distance_km: outputRoute.stages[index].distance_km,
                   }),
                 })
               ),
@@ -1111,8 +1132,11 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
         };
       });
 
+      setProgress(100);
+
       setMessage("Total estimated CO2 emission: " + output.chain_kg + " kg.");
       setOpenMessage(true);
+      setProgress(undefined);
       setError(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -1171,6 +1195,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 onDistanceChange={onDistanceChange}
                 onToggleUsesAddress={onToggleUsesAddress}
                 onRemoveStage={onRemoveStage}
+                progress={progress}
               />
             </Card>
           </div>

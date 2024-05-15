@@ -63,6 +63,7 @@ export type Stage = ({
   transportMethod: TruckTransportMethod,
   from: Address,
   to: Address,
+  distance_km: number,
 }) & {
   cargo: number,
 }

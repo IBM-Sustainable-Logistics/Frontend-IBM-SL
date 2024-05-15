@@ -6,6 +6,7 @@ import { Input } from "../ui/input.tsx";
 import AutoSuggest from "react-autosuggest";
 import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
+import { Progress } from "../ui/progress.tsx";
 
 type F<T> = (routeIndex: number, stageIndex: number) => T;
 type G<T> = (
@@ -39,6 +40,7 @@ type Props = {
   onDistanceChange: F<(_: React.ChangeEvent<HTMLInputElement>) => void>;
   onToggleUsesAddress: I<() => void>;
   onRemoveStage: F<() => void>;
+  progress: number | undefined;
 };
 
 const renderSuggestion =
@@ -67,6 +69,7 @@ export default ({
   onDistanceChange,
   onToggleUsesAddress,
   onRemoveStage,
+  progress,
 }: Props) => {
   const route = chain.routes[selectedRoute];
   const stage = route.stages[selectedStage];
@@ -353,6 +356,9 @@ export default ({
           >
             Calculate
           </Button>
+          {progress !== undefined && (
+            <Progress value={progress}/>
+          )}
         </div>
       </div>
     </>
