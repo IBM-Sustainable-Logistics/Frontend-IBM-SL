@@ -183,8 +183,8 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                           <DataVisualization stages={route.stages} />
                         </CarouselItem>
                       ))}
-
                       </CarouselContent>
+                      <CarouselPagination />
                     </Carousel>
                     
                   </CardContent>

@@ -284,6 +284,7 @@ const CarouselPagination = React.forwardRef<
 
   return (
     <div className="flex flex-wrap justify-start items-center mr-[calc((2.6rem-1.4rem)/2*-1)] gap-4">
+      <h4>Select stage: </h4>
       {scrollSnaps.map((_, index) => (
         <DotButton
           key={index}
