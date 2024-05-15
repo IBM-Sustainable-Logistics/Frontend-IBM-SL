@@ -457,6 +457,7 @@
         "npm:read-excel-file@^5.7.1",
         "npm:remix@^2.8.1",
         "npm:tailwind-merge@^2.2.0",
+        "npm:tailwind-scrollbar-hide@^1.1.7",
         "npm:tailwindcss-animate@^1.0.7",
         "npm:tailwindcss@^3.4.1",
         "npm:three@^0.164.1",

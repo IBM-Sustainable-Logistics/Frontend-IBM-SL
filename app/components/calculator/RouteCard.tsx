@@ -33,7 +33,7 @@ export default ({
         {chain.routes[selectedRoute].name}
       </Label>
       <div className="flex flex-col flex-grow justify-between gap-4 min-h-0">
-        <div className="flex flex-col gap-4 overflow-auto">
+        <div className="flex flex-col gap-4 overflow-scroll scrollbar-hide h-[500px] lg:h-auto">
           <Button
             className="w-full"
             variant="ibm_blue"
