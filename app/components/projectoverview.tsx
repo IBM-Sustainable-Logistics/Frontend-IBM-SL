@@ -115,7 +115,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
       <Carousel className="w-full" orientation="horizontal">
           <CarouselContent className="max-w-full">
             <CarouselItem>
-              <div className="flex flex-col justify-center items-center gap-4">
+              <div className="flex flex-col justify-between items-center gap-4">
                 <Card className="w-full max-w-md md:max-w-2xl">
                   <CardHeader>
                     <CardTitle>
@@ -178,11 +178,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                             ))}
                           </TableBody>
                         </Table>
-                        <Carousel>
-                          <CarouselContent>
-                            <DataVisualization stages={route.stages} />
-                          </CarouselContent>
-                        </Carousel>
+                        <DataVisualization stages={route.stages} />
                       </>
                     ))}
                   </CardContent>
@@ -194,7 +190,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
             </CarouselItem>
 
             <CarouselItem>
-              <div className="flex flex-col justify-center items-center gap-4">
+              <div className="flex flex-col justify-between items-center gap-4 h-full">
                 <Calculator
                   isProject={true}
                   projectTitle={titleProject}
