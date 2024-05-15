@@ -116,7 +116,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         content: route.stages.map((stage: Stage) => {
           return {
             transport_form: getTransportMethodLabel(stage.transportMethod),
-            distance_km: stage.usesAddress ? "" : stage.distance,
+            distance_km: stage.usesAddress ? stage.distance_km : stage.distance,
             from: stage.usesAddress ? stage.from.city : "",
             to: stage.usesAddress ? stage.to.city : "",
             cargo_weight: stage.cargo,
@@ -138,7 +138,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <CardDescription>{project.description}</CardDescription>
           <img src={tree} alt="IBM Logo" className="h-40" />
         </CardHeader>
-        <CardContent>
+        <CardContent >
           {project.routes.map((route) => (
             <>
               <Table>
@@ -167,7 +167,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
 
                       {stage.usesAddress ? (
                         <>
-                          <TableCell></TableCell>
+                          <TableCell>{stage.distance_km}</TableCell>
                           <TableCell>{stage.from.city}</TableCell>
                           <TableCell>{stage.to.city}</TableCell>
                           <TableCell className="text-right">

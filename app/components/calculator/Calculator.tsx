@@ -72,6 +72,7 @@ type Stage = (
       transportMethod: T.TruckTransportMethod;
       from: Address;
       to: Address;
+      distance_km: number | undefined;
       impossible: boolean;
     }
 ) & {
@@ -107,6 +108,7 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
           impossible: false,
           key: Math.random(),
           emission: undefined,
+          distance_km: undefined,
         },
       ],
       key: Math.random(),
@@ -137,6 +139,7 @@ export const loadChain = (chain: T.Chain): Chain => ({
                 impossible: false,
                 key: index,
                 emission: undefined,
+                distance_km: undefined,
               }
             : {
                 ...stage,
@@ -557,6 +560,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
+                distance_km: undefined,
               }),
             }),
           };
@@ -617,6 +621,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                   impossible: false,
                   key: Math.random(),
                   emission: undefined,
+                  distance_km: undefined,
                 },
                 ...oldRoute.stages,
               ],
@@ -741,6 +746,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 impossible: false,
                 key: Math.random(),
                 emission: undefined,
+                distance_km: undefined,
               },
             ],
             key: Math.random(),
@@ -892,6 +898,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                 stage_kg: number;
                 transport_form: string;
                 cargo_t: number;
+                distance_km: number;
               }[];
             }[];
           }
@@ -919,6 +926,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
               city: string;
               country?: string | undefined;
             }[];
+        
           };
 
       const output: Output = await response.json();
@@ -1116,6 +1124,7 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
                     from: { ...oldStage.from, exists: true },
                     to: { ...oldStage.to, exists: true },
                     cargo: outputRoute.stages[index].cargo_t,
+                    distance_km: outputRoute.stages[index].distance_km,
                   }),
                 })
               ),
