@@ -112,7 +112,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
     /* create a project page */
     <div className="flex flex-col justify-center items-center">
 
-      <Carousel className="w-full" orientation="horizontal">
+      <Carousel className="w-full" orientation="horizontal" >
           <CarouselContent className="max-w-full">
             <CarouselItem>
               <div className="flex flex-col justify-between items-center gap-4">
@@ -124,9 +124,9 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                     <CardDescription>{project.description}</CardDescription>
                     <img src={tree} alt="IBM Logo" className="h-40" />
                   </CardHeader>
-                  <CardContent >
-                    <Carousel>
-                      <CarouselContent>
+                  <CardContent>
+                    <Carousel >
+                      <CarouselContent >
                       {project.routes.map((route) => (
                         <CarouselItem>
                           <Table>
@@ -180,7 +180,12 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                               ))}
                             </TableBody>
                           </Table>
-                          <DataVisualization stages={route.stages} />
+                          <Carousel>
+                            <CarouselContent>
+
+                           <DataVisualization stages={route.stages} />
+                           </CarouselContent>
+                          </Carousel>
                         </CarouselItem>
                       ))}
                       </CarouselContent>
