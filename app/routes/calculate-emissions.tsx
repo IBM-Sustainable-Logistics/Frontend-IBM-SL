@@ -4,13 +4,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Calculator, * as C from "../components/calculator/Calculator.tsx";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
+import { useLoaderData } from "@remix-run/react";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
     request,
   });
 
-  return json({ success: true }, { headers });
+  const userId = serverSession.user.id;
+
+  return json({ success: true, userId }, { headers });
 };
 
 const CalculateEmissionsPage = () => {
@@ -41,10 +44,13 @@ const CalculateEmissionsPage = () => {
     return true;
   };
 
+  const { userId } = useLoaderData<typeof loader>();
+
   return (
     <div className=" min-h-screen flex items-center justify-center">
       <Calculator
         isProject={false}
+        userId={userId}
         chain={chain}
         setChain={setChain}
       />

@@ -1,6 +1,5 @@
 import { useFetcher } from "@remix-run/react";
 import React, { useState } from "react";
-import { CalculatorInstance } from "../../../lib/Transport.ts";
 import {
   Dialog,
   DialogClose,
@@ -13,34 +12,18 @@ import {
 import { Button } from "../../ui/button.tsx";
 import { PlusIcon } from "../../../lib/Icons.tsx";
 import { Input } from "../../ui/input.tsx";
-import Calculator, { Chain, defaultChain } from "../../calculator/Calculator.tsx";
-import { Carousel, CarouselContent, CarouselItem, CarouselPagination } from "../../ui/carousel.tsx";
+import { Chain } from "../../calculator/Calculator.tsx";
 
 interface Props {
   UserId: string;
+  chain: Chain;
+  className?: string;
 }
 
-const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
-  const [chain, setChain] = useState<Chain>(defaultChain());
-  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
+const CreateProject: React.FC<Props> = ({ UserId, chain, className, ...props }: Props) => {
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
   const fetcher = useFetcher();
-
-  const addCalculator = () => {
-    const newCalculator = {
-      id: Date.now(), // Using the current timestamp as a unique ID
-    };
-    setCalculators([...calculators, newCalculator]);
-  };
-
-  const deleteCalculator = (id: number) => {
-    setCalculators(
-      calculators.filter(
-        (calculator: CalculatorInstance) => calculator.id !== id
-      )
-    );
-  };
 
   const handleCreateProject = () => {
     // after calculating the emissions, we can submit the form
@@ -56,7 +39,11 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant="outline" className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          className={"flex items-center justify-between " + className}
+          {...props}
+        >
           <span className="mr-2">Create a project</span>
           <PlusIcon />
         </Button>
@@ -70,38 +57,14 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
                 type="text"
                 placeholder="Title"
                 className="w-full"
-                onChange={(e: any) => setTitleProject(e.target.value)}
+                onChange={(e) => setTitleProject(e.target.value)}
               />
               <Input
                 type="text"
                 placeholder="Description"
                 className="w-full"
-                onChange={(e: any) => setDescriptionProject(e.target.value)}
+                onChange={(e) => setDescriptionProject(e.target.value)}
               />
-              <Carousel orientation="horizontal">
-                <CarouselContent>
-                  {calculators.map((calculator: CalculatorInstance) => (
-                    <CarouselItem key={calculator.id}>
-                      <div className="flex flex-col justify-center items-center gap-4">
-                        <Calculator
-                          isProject={true}
-                          chain={chain}
-                          setChain={setChain}
-                        />
-                        <Button
-                          variant="destructive"
-                          onClick={() => deleteCalculator(calculator.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-              <Button className="w-full" onClick={addCalculator}>
-                Add new calculator
-              </Button>
               <DialogClose asChild>
                 <Button
                   className="border-black border rounded"

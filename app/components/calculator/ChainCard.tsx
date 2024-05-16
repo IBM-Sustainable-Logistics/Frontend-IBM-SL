@@ -4,9 +4,11 @@ import { Button } from "../../components/ui/button.tsx";
 import * as C from "./Calculator.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card.tsx";
 import UploadPopUp from "../Upload/UploadPopUp.tsx";
+import CreateProject from "../dashboard/dialogs/createproject.tsx";
 
 type Props = {
   isProject: boolean;
+  userId: string | undefined;
   chain: C.Chain;
   selectedRoute: number;
   setChain: React.Dispatch<React.SetStateAction<C.Chain>>;
@@ -16,6 +18,7 @@ type Props = {
 
 export default ({
   isProject,
+  userId,
   chain,
   selectedRoute,
   onSelectRoute,
@@ -73,16 +76,24 @@ export default ({
         >
           Add Route
         </Button>
-        {!isProject && (<p className="text-sm w-full">
-          Need help gettings started? Check out our &nbsp;
-          <a
-            className="text-blue-500 underline"
-            href="/guide"
-          >
-            How to Guide
-          </a>
-          .
-        </p>)}
+        {!isProject && (<>
+          <p className="text-sm w-full">
+            Need help gettings started? Check out our &nbsp;
+            <a
+              className="text-blue-500 underline"
+              href="/guide"
+            >
+              How to Guide
+            </a>
+            .
+          </p>
+          {(userId !== undefined && <CreateProject
+            className="w-full"
+            UserId={userId}
+            chain={chain}
+            type="button"
+          />)}
+          </>)}
         <UploadPopUp setChainData={setChain} chain={chain} />
       </div>
     </>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button.tsx";
 import { ProjectCard } from "./ProjectCard.tsx";
 import { Input } from "../ui/input.tsx";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../ui/pagination.tsx";
 import { project } from "../../lib/Transport.ts";
 import CreateProject from "./dialogs/createproject.tsx";
+import { defaultChain } from "../calculator/Calculator.tsx";
 
 interface DashboardProps {
   Projects: project[];
@@ -75,7 +75,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             value={searchTerm}
             onChange={handleSearch}
           />
-          <CreateProject UserId={UserId} />
+          <CreateProject
+            UserId={UserId}
+            chain={defaultChain()}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 justify-self-stretch max-w-full gap-4">
