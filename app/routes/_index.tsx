@@ -63,6 +63,48 @@ export default function Index() {
           </p>
         </div>
       </Section>
+      <Section backgroundColor='white' textColor='#3D815C'>
+        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
+          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
+            EU Compliance, made easy
+          </h1>
+          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
+            Effortlessly navigate EU environmental and emissions
+            regulations with our streamlined reporting solutions.
+            Designed for logistics companies of any size, our platform
+            simplifies the complexities of environmental impact
+            disclosure and CO2 monitoring.
+          </p>
+        </div>
+      </Section>
+      <Section backgroundColor='white' textColor='#3D815C'>
+        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
+          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
+            Lead with Sustainable Logistics 
+          </h1>
+          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
+            Our CO2 emission calculator is tailor-made for everyone,
+            from industry giants to small businesses. We offer an
+            easy-to-use interface to accurately estimate and manage
+            emissions. Scale with evolving regulations and advance
+            your sustainability goals efficiently.
+          </p>
+        </div>
+      </Section>
+      <Section backgroundColor='white' textColor='#3D815C'>
+        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
+          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
+            Efficient Truck Compliance
+          </h1>
+          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
+            Adapt quickly to the EU's evolving emissions standards. Our
+            platform supports comprehensive tracking for land based cargo,
+            ensuring compliance with MRV and ETS regulations. Stay ahead
+            with annual, data-driven emissions reports and embrace the
+            shift towards zero-emission targets for 2040.
+          </p>
+        </div>
+      </Section>
     </main>
   );
 }
