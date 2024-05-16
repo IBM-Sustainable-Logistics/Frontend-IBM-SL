@@ -11,7 +11,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
     request,
   });
 
-  const userId = serverSession.user.id;
+  const userId: string | undefined = serverSession?.user?.id;
 
   return json({ success: true, userId }, { headers });
 };
