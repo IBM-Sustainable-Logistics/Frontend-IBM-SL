@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../assets/ibm-logo.svg";
+import logo from "../../assets/CALC.svg";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Database } from "../../lib/utils/types.ts";
 
@@ -35,7 +35,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
       formData.email,
       {
         redirectTo: url,
-      },
+      }
     );
     try {
       if (error) {
@@ -47,7 +47,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
       } else {
         setShowMessage(true);
         setMessage(
-          "Reset link sent to your email. If the proved email is registered in our database, then you should receive the link very soon.",
+          "Reset link sent to your email. If the proved email is registered in our database, then you should receive the link very soon."
         );
         setTimeout(() => {
           setShowMessage(false);
@@ -60,7 +60,7 @@ export const ForgotForm: React.FC<SignInFormProps> = ({
 
   // Handle input changes
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
