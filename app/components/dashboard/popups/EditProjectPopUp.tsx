@@ -5,7 +5,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../ui/accordion.tsx";
-import { CalculatorInstance, Chain, emissions } from "../../../lib/Transport.ts";
+import {
+  CalculatorInstance,
+  Chain,
+  emissions,
+} from "../../../lib/Transport.ts";
 import { Input } from "../../ui/input.tsx";
 import {
   DialogClose,
@@ -30,8 +34,8 @@ export const EditProjectPopUp: React.FC<Props> = ({
   id,
   title,
   description,
-  chain,}
- ) => {
+  chain,
+}) => {
   const [titleProject, setTitleProject] = useState(title);
   const [descriptionProject, setDescriptionProject] = useState(description);
 
@@ -39,7 +43,7 @@ export const EditProjectPopUp: React.FC<Props> = ({
 
   const handleUpdateProject = () => {
     // after calculating the emissions, we can submit the form
-    console.log(chain)
+    console.log(chain);
     const project = {
       projId: id,
       title: titleProject,
@@ -47,7 +51,6 @@ export const EditProjectPopUp: React.FC<Props> = ({
       calc: JSON.stringify(chain),
     };
     fetcher.submit(project, { method: "PATCH", action: "/api/project" });
-    
   };
 
   return (

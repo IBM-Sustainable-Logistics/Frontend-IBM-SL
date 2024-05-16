@@ -7,13 +7,15 @@ interface SectionProps {
   children?: React.ReactNode;
 }
 
-const Section: React.FC<SectionProps> = ({ backgroundColor, textColor, children }) => {
+const Section: React.FC<SectionProps> = (
+  { backgroundColor, textColor, children },
+) => {
   // Corrected the props destructuring
   const message = "Empowering the future of sustainable logistics with IBM";
   return (
     <section
-      id='hero'
-      className='w-full'
+      id="hero"
+      className="w-full"
       style={{ backgroundColor: backgroundColor, color: textColor }}
     >
       {children}

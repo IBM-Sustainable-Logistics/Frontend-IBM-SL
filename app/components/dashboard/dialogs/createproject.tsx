@@ -21,7 +21,9 @@ interface Props {
   className?: string;
 }
 
-const CreateProject: React.FC<Props> = ({ UserId, chain, className, ...props }: Props) => {
+const CreateProject: React.FC<Props> = (
+  { UserId, chain, className, ...props }: Props,
+) => {
   const [titleProject, setTitleProject] = useState("");
   const [descriptionProject, setDescriptionProject] = useState("");
   const fetcher = useFetcher();
@@ -53,7 +55,10 @@ const CreateProject: React.FC<Props> = ({ UserId, chain, className, ...props }: 
         <DialogHeader>
           <DialogTitle>Create a project</DialogTitle>
           <DialogDescription>
-            <div className="flex flex-col gap-4 max-w-md md:max-w-xl" style={{ maxHeight: "90vh" }}>
+            <div
+              className="flex flex-col gap-4 max-w-md md:max-w-xl"
+              style={{ maxHeight: "90vh" }}
+            >
               <Input
                 type="text"
                 placeholder="Title"

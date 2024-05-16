@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Calculator, * as C from "../components/calculator/Calculator.tsx";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/deno";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { useLoaderData } from "@remix-run/react";
 
@@ -17,25 +17,24 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const CalculateEmissionsPage = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const unloadHandler = (event: BeforeUnloadEvent) => {
-        event.preventDefault();
+      event.preventDefault();
     };
-    window.addEventListener('beforeunload', unloadHandler);
+    window.addEventListener("beforeunload", unloadHandler);
 
     return () => {
-      window.removeEventListener('beforeunload', unloadHandler);
+      window.removeEventListener("beforeunload", unloadHandler);
     };
   }, [location]);
 
   const initialChain: C.Chain = C.defaultChain(
     // Use these two cities as examples for the user. Maybe change later.
     { city: "", country: "" },
-    { city: "", country: "" }
+    { city: "", country: "" },
   );
 
   const [chain, setChain] = useState<C.Chain>(initialChain);

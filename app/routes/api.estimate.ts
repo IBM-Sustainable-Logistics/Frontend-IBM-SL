@@ -1,8 +1,9 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
-
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "@remix-run/deno";
 
 const backendUrl = "https://ibm-sl-api.deno.dev/";
-
 
 export const loader = async ({
   request,
@@ -23,16 +24,15 @@ export const loader = async ({
       return res;
     }
 
-    console.log(res.status)
+    console.log(res.status);
     return new Response("Error fetching articles", { status: res.status });
   }
 
   return res;
 };
 
-
 export const action = async ({
-  request
+  request,
 }: ActionFunctionArgs) => {
   switch (request.method) {
     case "POST": {
@@ -62,6 +62,3 @@ export const action = async ({
     }
   }
 };
-
-
-

@@ -48,7 +48,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
         // NOTE: Users can currently just refresh the page to reset the counter.
         if (counter === 5) {
           setErrorMessage(
-            "You have tried to login too many times. Please try again later."
+            "You have tried to login too many times. Please try again later.",
           );
           setShowError(true);
 
@@ -58,7 +58,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
             formData.email,
             {
               redirectTo: url,
-            }
+            },
           );
 
           if (error) {
@@ -73,7 +73,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
           setTimeout(() => {
             setShowError(false);
             setMessage(
-              "We have sent you an email to reset your password. Please check your email including any spam or junk folders."
+              "We have sent you an email to reset your password. Please check your email including any spam or junk folders.",
             );
             setShowMessage(true);
             setCounter(0);
@@ -102,7 +102,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
 
   // Handle input changes
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 

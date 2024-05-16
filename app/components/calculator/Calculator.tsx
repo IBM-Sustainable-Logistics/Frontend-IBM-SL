@@ -59,13 +59,14 @@ const emptySuggestions = (): Suggestions => ({
   time: Date.now(),
 });
 
-type Stage = (
-  | {
+type Stage =
+  & (
+    | {
       usesAddress: false;
       transportMethod: T.TransportMethod;
       distance: number | undefined;
     }
-  | {
+    | {
       usesAddress: true;
       transportMethod: T.TruckTransportMethod;
       from: Address;
@@ -73,16 +74,20 @@ type Stage = (
       distance_km: number | undefined;
       impossible: boolean;
     }
-) & {
-  cargo: number | undefined;
-} & Keyed &
-  T.Estimated;
+  )
+  & {
+    cargo: number | undefined;
+  }
+  & Keyed
+  & T.Estimated;
 
-type Route = {
-  name: string;
-  stages: Stage[];
-} & Keyed &
-  T.Estimated;
+type Route =
+  & {
+    name: string;
+    stages: Stage[];
+  }
+  & Keyed
+  & T.Estimated;
 
 export type Chain = {
   routes: Route[];
@@ -116,8 +121,8 @@ export const defaultChain = (from?: T.Address, to?: T.Address): Chain => ({
   emission: undefined,
 });
 
-export const transportMethodOptions: ComboboxOption<T.TransportMethod>[] =
-  T.truckTransportMethods.map((method: T.TransportMethod) => ({
+export const transportMethodOptions: ComboboxOption<T.TransportMethod>[] = T
+  .truckTransportMethods.map((method: T.TransportMethod) => ({
     value: method,
     label: T.getTransportMethodLabel(method),
   }));
@@ -131,23 +136,23 @@ export const loadChain = (chain: T.Chain): Chain => ({
         (stage, index): Stage =>
           stage.usesAddress
             ? {
-                ...stage,
-                from: { ...stage.from, exists: true },
-                to: { ...stage.to, exists: true },
-                impossible: false,
-                key: index,
-                emission: undefined,
-                distance_km: undefined,
-              }
+              ...stage,
+              from: { ...stage.from, exists: true },
+              to: { ...stage.to, exists: true },
+              impossible: false,
+              key: index,
+              emission: undefined,
+              distance_km: undefined,
+            }
             : {
-                ...stage,
-                key: index,
-                emission: undefined,
-              }
+              ...stage,
+              key: index,
+              emission: undefined,
+            },
       ),
       key: index,
       emission: undefined,
-    })
+    }),
   ),
   emission: undefined,
 });
@@ -159,7 +164,9 @@ type CalculatorProps = {
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) => {
+const Calculator = (
+  { isProject, userId, chain, setChain }: CalculatorProps,
+) => {
   const [error, setError] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();
   const [suggestions, setSuggestions] = useState(emptySuggestions());
@@ -254,40 +261,41 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
   /**
    * TODO
    */
-  const onCargoChanged =
-    (routeIndex: number, stageIndex: number) =>
-    ({ target: { value: inputValue }}: React.ChangeEvent<HTMLInputElement>) => {
-      let inputNumber: number | undefined;
+  const onCargoChanged = (routeIndex: number, stageIndex: number) =>
+  (
+    { target: { value: inputValue } }: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    let inputNumber: number | undefined;
 
-      if (inputValue === "") {
+    if (inputValue === "") {
+      inputNumber = undefined;
+    } else {
+      inputNumber = Number(inputValue);
+      if (isNaN(inputNumber) || inputNumber < 0) {
         inputNumber = undefined;
-      } else {
-        inputNumber = Number(inputValue);
-        if (isNaN(inputNumber) || inputNumber < 0) {
-          inputNumber = undefined;
-        }
       }
+    }
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+      const oldStage = oldRoute.stages[stageIndex];
 
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, {
-              ...oldStage,
-              cargo: inputNumber,
-            }),
+      return {
+        ...oldChain,
+        routes: oldChain.routes.with(routeIndex, {
+          ...oldRoute,
+          stages: oldRoute.stages.with(stageIndex, {
+            ...oldStage,
+            cargo: inputNumber,
           }),
-        };
-      });
-    };
+        }),
+      };
+    });
+  };
 
   const onSuggestionsClear = () => {
     setSuggestions(emptySuggestions());
-  }
+  };
 
   /**
    * Given an index of a stage and whether it should use
@@ -298,7 +306,6 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
   const onSuggestionsRequested =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
     async ({ value }: { value: string }) => {
-
       const timeOfRequest = Date.now();
 
       const route = chain.routes[routeIndex];
@@ -337,7 +344,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text())
+            (await response.text()),
         );
         onSuggestionsClear();
         return;
@@ -352,7 +359,6 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
       const output: Output = await response.json();
 
       setSuggestions((oldSuggestions: Suggestions): Suggestions => {
-
         // We don't want to keep old suggestions that might have taken longer
         // to fetch than the newest ones.
         if (timeOfRequest <= oldSuggestions.time) return oldSuggestions;
@@ -418,7 +424,10 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
    */
   const onSuggestionSelected =
     (routeIndex: number, stageIndex: number, fromOrTo: "from" | "to") =>
-    (_: React.FormEvent<HTMLElement>, { suggestion }: { suggestion: Address }) => {
+    (
+      _: React.FormEvent<HTMLElement>,
+      { suggestion }: { suggestion: Address },
+    ) => {
       setChain((oldChain: Chain): Chain => {
         const oldRoute = oldChain.routes[routeIndex];
         const oldStage = oldRoute.stages[stageIndex];
@@ -447,82 +456,83 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
    * The place parameter determines whether the city or
    * country input field of the address should be updated.
    */
-  const onAddressChange =
-    (
-      routeIndex: number,
-      stageIndex: number,
-      fromOrTo: "from" | "to",
-      place: "city" | "country"
-    ) =>
-    (_: React.FormEvent<HTMLElement>, data: AutoSuggest.ChangeEvent): void => {
-      const inputValue = data.newValue;
+  const onAddressChange = (
+    routeIndex: number,
+    stageIndex: number,
+    fromOrTo: "from" | "to",
+    place: "city" | "country",
+  ) =>
+  (_: React.FormEvent<HTMLElement>, data: AutoSuggest.ChangeEvent): void => {
+    const inputValue = data.newValue;
 
-      if (inputValue === undefined) return;
+    if (inputValue === undefined) return;
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+      const oldStage = oldRoute.stages[stageIndex];
 
-        if (!oldStage.usesAddress) throw Error("Stage uses distance");
+      if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-        if (inputValue !== undefined) {
-          // check which address to update
-          const addressToUpdate =
-            fromOrTo === "from" ? oldStage.from : oldStage.to;
-          // addressToUpdate.exists = true;
+      if (inputValue !== undefined) {
+        // check which address to update
+        const addressToUpdate = fromOrTo === "from"
+          ? oldStage.from
+          : oldStage.to;
+        // addressToUpdate.exists = true;
 
-          // either update the city or country
-          if (place === "city") addressToUpdate.city = inputValue;
-          else addressToUpdate.country = inputValue;
-        }
-        oldStage.impossible = false;
+        // either update the city or country
+        if (place === "city") addressToUpdate.city = inputValue;
+        else addressToUpdate.country = inputValue;
+      }
+      oldStage.impossible = false;
 
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, oldStage),
-          }),
-        };
-      });
-    };
+      return {
+        ...oldChain,
+        routes: oldChain.routes.with(routeIndex, {
+          ...oldRoute,
+          stages: oldRoute.stages.with(stageIndex, oldStage),
+        }),
+      };
+    });
+  };
 
   /**
    * Given an index of a route and stage, returns an input onChange
    * function that updates the stage's distance.
    */
-  const onDistanceChange =
-    (routeIndex: number, stageIndex: number) =>
-    ({ target: { value: inputValue }}: React.ChangeEvent<HTMLInputElement>) => {
-      let inputNumber: number | undefined = Number(inputValue);
+  const onDistanceChange = (routeIndex: number, stageIndex: number) =>
+  (
+    { target: { value: inputValue } }: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    let inputNumber: number | undefined = Number(inputValue);
 
-      if (inputValue === "") {
+    if (inputValue === "") {
+      inputNumber = undefined;
+    } else {
+      inputNumber = Number(inputValue);
+      if (isNaN(inputNumber) || inputNumber < 0) {
         inputNumber = undefined;
-      } else {
-        inputNumber = Number(inputValue);
-        if (isNaN(inputNumber) || inputNumber < 0) {
-          inputNumber = undefined;
-        }
       }
+    }
 
-      setChain((oldChain: Chain): Chain => {
-        const oldRoute = oldChain.routes[routeIndex];
-        const oldStage = oldRoute.stages[stageIndex];
+    setChain((oldChain: Chain): Chain => {
+      const oldRoute = oldChain.routes[routeIndex];
+      const oldStage = oldRoute.stages[stageIndex];
 
-        if (oldStage.usesAddress) throw Error("Stage uses addresses");
+      if (oldStage.usesAddress) throw Error("Stage uses addresses");
 
-        return {
-          ...oldChain,
-          routes: oldChain.routes.with(routeIndex, {
-            ...oldRoute,
-            stages: oldRoute.stages.with(stageIndex, {
-              ...oldStage,
-              distance: inputNumber,
-            }),
+      return {
+        ...oldChain,
+        routes: oldChain.routes.with(routeIndex, {
+          ...oldRoute,
+          stages: oldRoute.stages.with(stageIndex, {
+            ...oldStage,
+            distance: inputNumber,
           }),
-        };
-      });
-    };
+        }),
+      };
+    });
+  };
 
   /**
    * Given an index of a route and stage, returns a button onClick
@@ -553,8 +563,8 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
               stages: oldRoute.stages.with(stageIndex, {
                 ...oldStage,
                 usesAddress: true,
-                transportMethod:
-                  oldStage.transportMethod as T.TruckTransportMethod,
+                transportMethod: oldStage
+                  .transportMethod as T.TruckTransportMethod,
                 from: { ...T.emptyAddress, exists: true },
                 to: { ...T.emptyAddress, exists: true },
                 impossible: false,
@@ -631,26 +641,26 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
         const newStage: Stage = beforeStage.usesAddress
           ? {
-              usesAddress: true,
-              transportMethod: beforeStage.transportMethod,
-              cargo: undefined,
-              from: {
-                ...beforeStage.to,
-                exists: true,
-              },
-              to: { ...T.emptyAddress, exists: true },
-              impossible: false,
-              key: Math.random(),
-              emission: undefined,
-            }
+            usesAddress: true,
+            transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
+            from: {
+              ...beforeStage.to,
+              exists: true,
+            },
+            to: { ...T.emptyAddress, exists: true },
+            impossible: false,
+            key: Math.random(),
+            emission: undefined,
+          }
           : {
-              usesAddress: false,
-              transportMethod: beforeStage.transportMethod,
-              cargo: undefined,
-              distance: 0,
-              key: Math.random(),
-              emission: undefined,
-            };
+            usesAddress: false,
+            transportMethod: beforeStage.transportMethod,
+            cargo: undefined,
+            distance: 0,
+            key: Math.random(),
+            emission: undefined,
+          };
 
         return {
           ...oldChain,
@@ -674,11 +684,17 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
     setChain((oldChain: Chain): Chain => {
       const oldRoute = oldChain.routes[routeIndex];
 
-      if (stageIndex < 0 || stageIndex >= oldRoute.stages.length || oldRoute.stages.length <= 1) {
+      if (
+        stageIndex < 0 || stageIndex >= oldRoute.stages.length ||
+        oldRoute.stages.length <= 1
+      ) {
         throw Error("Cannot remove stage index: " + stageIndex);
       }
 
-      console.log("routeIndex = " + routeIndex + ", stageIndex = " + stageIndex + ", oldRoute.stages.length = " + oldRoute.stages.length);
+      console.log(
+        "routeIndex = " + routeIndex + ", stageIndex = " + stageIndex +
+          ", oldRoute.stages.length = " + oldRoute.stages.length,
+      );
 
       // If you are viewing the last stage and it is the one that is removed,
       // then select another stage
@@ -757,7 +773,10 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
   const onRemoveRoute = (routeIndex: number) => () => {
     setChain((oldChain: Chain): Chain => {
-      if (routeIndex < 0 || routeIndex >= oldChain.routes.length || oldChain.routes.length <= 1) {
+      if (
+        routeIndex < 0 || routeIndex >= oldChain.routes.length ||
+        oldChain.routes.length <= 1
+      ) {
         throw Error("Cannot remove route index: " + routeIndex);
       }
 
@@ -772,7 +791,10 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
       return {
         ...oldChain,
-        routes: [...oldChain.routes.slice(0, routeIndex), ...oldChain.routes.slice(routeIndex + 1)],
+        routes: [
+          ...oldChain.routes.slice(0, routeIndex),
+          ...oldChain.routes.slice(routeIndex + 1),
+        ],
       };
     });
   };
@@ -791,12 +813,11 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           const noTo = !stage.to.city;
 
           if (noFrom || noTo) {
-            const label =
-              noFrom && noTo
-                ? "origin and destination"
-                : noFrom
-                ? "origin"
-                : "destination";
+            const label = noFrom && noTo
+              ? "origin and destination"
+              : noFrom
+              ? "origin"
+              : "destination";
 
             setError(
               "Error! Missing " +
@@ -805,7 +826,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                 (stageIndex + 1) +
                 ' of route "' +
                 route.name +
-                '".'
+                '".',
             );
             setOpenError(true);
             setMessage(undefined);
@@ -840,19 +861,22 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
       /** The json schema that the back-end uses for the input. */
       type Input = {
         id: string;
-        stages: ((
-          | {
+        stages: (
+          & (
+            | {
               transport_form: T.TransportMethod;
               distance_km: number;
             }
-          | {
+            | {
               transport_form: T.TruckTransportMethod;
               from: { city: string; country?: string };
               to: { city: string; country?: string };
             }
-        ) & {
-          cargo_t?: number;
-        })[];
+          )
+          & {
+            cargo_t?: number;
+          }
+        )[];
       }[];
 
       const input: Input = chain.routes.map((route: Route) => ({
@@ -861,18 +885,18 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           cargo_t: stage.cargo,
           ...(stage.usesAddress
             ? {
-                transport_form: stage.transportMethod,
-                from: { city: stage.from.city, country: stage.from.country },
-                to: { city: stage.to.city, country: stage.to.country },
-              }
+              transport_form: stage.transportMethod,
+              from: { city: stage.from.city, country: stage.from.country },
+              to: { city: stage.to.city, country: stage.to.country },
+            }
             : {
-                transport_form: stage.transportMethod,
-                distance_km: stage.distance || 0,
-              }),
+              transport_form: stage.transportMethod,
+              distance_km: stage.distance || 0,
+            }),
         })),
       }));
 
-      setProgress(50)
+      setProgress(50);
 
       const response = await fetch("/api/estimate", {
         method: "POST",
@@ -882,50 +906,46 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
       setProgress(80);
 
-  
-
-
       /** The json schema that the back-end uses for the output. */
       type Output =
         | {
-            chain_kg: number;
-            routes: {
-              id: string;
-              route_kg: number;
-              stages: {
-                stage_kg: number;
-                transport_form: string;
-                cargo_t: number;
-                distance_km: number;
-              }[];
+          chain_kg: number;
+          routes: {
+            id: string;
+            route_kg: number;
+            stages: {
+              stage_kg: number;
+              transport_form: string;
+              cargo_t: number;
+              distance_km: number;
             }[];
-          }
+          }[];
+        }
         | {
-            error: string;
-          }
+          error: string;
+        }
         | {
-            // TODO: Should error also contains full address?
-            error: "Could not connect locations";
-            route_id: string;
-            stage_index: number;
-          }
+          // TODO: Should error also contains full address?
+          error: "Could not connect locations";
+          route_id: string;
+          stage_index: number;
+        }
         | {
-            error: "No such address";
-            route_id: string;
-            stage_index: number;
-            fromOrTo: "from" | "to";
-          }
+          error: "No such address";
+          route_id: string;
+          stage_index: number;
+          fromOrTo: "from" | "to";
+        }
         | {
-            error: "Ambiguous address";
-            route_id: string;
-            stage_index: number;
-            fromOrTo: "from" | "to";
-            addresses: {
-              city: string;
-              country?: string | undefined;
-            }[];
-        
-          };
+          error: "Ambiguous address";
+          route_id: string;
+          stage_index: number;
+          fromOrTo: "from" | "to";
+          addresses: {
+            city: string;
+            country?: string | undefined;
+          }[];
+        };
 
       const output: Output = await response.json();
 
@@ -937,7 +957,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
               setChain((oldChain: Chain): Chain => {
                 const routeIndex = oldChain.routes.findIndex(
-                  (route) => route.name === output.route_id
+                  (route) => route.name === output.route_id,
                 );
                 const oldRoute = oldChain.routes[routeIndex];
                 const oldStage = oldRoute.stages[output.stage_index];
@@ -966,7 +986,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                     " to " +
                     toAddress +
                     ". " +
-                    "Please make sure the stage is connected by roads."
+                    "Please make sure the stage is connected by roads.",
                 );
                 setOpenError(true);
                 setMessage(undefined);
@@ -991,15 +1011,16 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
 
               setChain((oldChain: Chain): Chain => {
                 const routeIndex = oldChain.routes.findIndex(
-                  (route) => route.name === output.route_id
+                  (route) => route.name === output.route_id,
                 );
                 const oldRoute = oldChain.routes[routeIndex];
                 const oldStage = oldRoute.stages[output.stage_index];
 
                 if (!oldStage.usesAddress) throw Error("Stage uses distance");
 
-                const address =
-                  output.fromOrTo === "from" ? oldStage.from : oldStage.to;
+                const address = output.fromOrTo === "from"
+                  ? oldStage.from
+                  : oldStage.to;
 
                 if (output.error === "No such address") {
                   if (!address.country) {
@@ -1009,7 +1030,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                         '"' +
                         address.city +
                         '". ' +
-                        "Please make sure the address is correct."
+                        "Please make sure the address is correct.",
                     );
                     setOpenError(true);
                   } else {
@@ -1021,7 +1042,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                         '" in "' +
                         address.country +
                         '". ' +
-                        "Please make sure the address is correct."
+                        "Please make sure the address is correct.",
                     );
                     setOpenError(true);
                   }
@@ -1033,7 +1054,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                         '"' +
                         address.city +
                         '". ' +
-                        "Please specify the country."
+                        "Please specify the country.",
                     );
                     setOpenError(true);
                   } else {
@@ -1045,7 +1066,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                         '" in "' +
                         address.country +
                         '". ' +
-                        "Please make sure the address is correct."
+                        "Please make sure the address is correct.",
                     );
                     setOpenError(true);
                   }
@@ -1070,7 +1091,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           default:
             {
               setError(
-                "Error! Failed to calculate emissions. Please try again."
+                "Error! Failed to calculate emissions. Please try again.",
               );
               setOpenError(true);
               setMessage(undefined);
@@ -1078,14 +1099,13 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                 "Error! Got response code: " +
                   response.status +
                   " " +
-                  (await response.text())
+                  (await response.text()),
               );
             }
             break;
         }
         return;
       }
-
 
       if (!response.ok) {
         setError("Error! Failed to calculate emissions. Please try again.");
@@ -1096,10 +1116,9 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           "Error! Got response code: " +
             response.status +
             " " +
-            (await response.text())
+            (await response.text()),
         );
       }
-
 
       setChain((oldChain: Chain): Chain => {
         return {
@@ -1107,7 +1126,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
           emission: output.chain_kg,
           routes: oldChain.routes.map((oldRoute): Route => {
             const outputRoute = output.routes.find(
-              (route) => route.id === oldRoute.name
+              (route) => route.id === oldRoute.name,
             );
             if (outputRoute === undefined) throw Error("Route not found");
 
@@ -1124,7 +1143,7 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
                     cargo: outputRoute.stages[index].cargo_t,
                     distance_km: outputRoute.stages[index].distance_km,
                   }),
-                })
+                }),
               ),
             };
           }),
@@ -1148,11 +1167,13 @@ const Calculator = ({ isProject, userId, chain, setChain, }: CalculatorProps) =>
         <div
           className={"flex flex-col lg:flex-row w-screen ml-4" /* lg:divide-y lg:divide-solid lg:divide-x lg:divide-black-500" */}
         >
-          {/*
+          {
+            /*
             pt-12 puts the project title ever so slightly above the route and
             stage titles. This is to mitigate the "optical illusion" that make
             it look like the project title lower than it actually is.
-          */}
+          */
+          }
           <div className={"px-16 flex-0 pt-12" /* border-t border-black-500"*/}>
             <ChainCard
               isProject={isProject}

@@ -1,7 +1,7 @@
 import React from "react";
 
 import ProjectOverview from "../components/projectoverview.tsx";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/deno";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/deno";
 import { getProjects, getSingleProject } from "../lib/supabase-client.ts";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import { useLoaderData, useParams } from "@remix-run/react";

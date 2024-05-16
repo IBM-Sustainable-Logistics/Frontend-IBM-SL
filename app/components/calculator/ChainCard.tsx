@@ -36,12 +36,10 @@ export default ({
             <div key={route.key} className="pt-1 basis-1/4 mt-4">
               <Card
                 onClick={onSelectRoute(routeIndex)}
-                className={
-                  "backdrop-blur-md mx-[3px]" +
+                className={"backdrop-blur-md mx-[3px]" +
                   (routeIndex === selectedRoute
                     ? " outline outline-offset-0 outline-blue-500"
-                    : " outline-none")
-                }
+                    : " outline-none")}
               >
                 <CardHeader>
                   <CardTitle>
@@ -49,12 +47,14 @@ export default ({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {route.emission !== undefined && (<>
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Emission: {route.emission} kg
-                    </Label>
-                    <br />
-                  </>)}
+                  {route.emission !== undefined && (
+                    <>
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Emission: {route.emission} kg
+                      </Label>
+                      <br />
+                    </>
+                  )}
                   <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Stages: {route.stages.length}
                   </Label>
@@ -76,24 +76,28 @@ export default ({
         >
           Add Route
         </Button>
-        {!isProject && (<>
-          <p className="text-sm w-full">
-            Need help gettings started? Check out our &nbsp;
-            <a
-              className="text-blue-500 underline"
-              href="/guide"
-            >
-              How to Guide
-            </a>
-            .
-          </p>
-          {(userId !== undefined && <CreateProject
-            className="w-full"
-            UserId={userId}
-            chain={chain}
-            type="button"
-          />)}
-          </>)}
+        {!isProject && (
+          <>
+            <p className="text-sm w-full">
+              Need help gettings started? Check out our &nbsp;
+              <a
+                className="text-blue-500 underline"
+                href="/guide"
+              >
+                How to Guide
+              </a>
+              .
+            </p>
+            {userId !== undefined && (
+              <CreateProject
+                className="w-full"
+                UserId={userId}
+                chain={chain}
+                type="button"
+              />
+            )}
+          </>
+        )}
         <UploadPopUp setChainData={setChain} chain={chain} />
       </div>
     </>

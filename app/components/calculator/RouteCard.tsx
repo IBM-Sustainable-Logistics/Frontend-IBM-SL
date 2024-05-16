@@ -15,7 +15,7 @@ type Props = {
   onSelectStage: (stageIndex: number) => () => void;
   onInsertStageAfter: (
     routeIndex: number,
-    stageIndex: number | -1
+    stageIndex: number | -1,
   ) => () => void;
   onRemoveRoute: (routeIndex: number) => () => void;
 };
@@ -53,8 +53,7 @@ export default ({
                 className={"mx-[3px]" +
                   (stageIndex === selectedStage
                     ? " outline outline-offset-0 outline-blue-500"
-                    : " outline-none"
-                  )}
+                    : " outline-none")}
               >
                 <AspectRatio ratio={16 / 7}>
                   <img src={truck} />
@@ -66,20 +65,25 @@ export default ({
                 </CardHeader>
                 <CardContent>
                   <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Transport Method: {T.getTransportMethodLabel(stage.transportMethod)}
+                    Transport Method:{" "}
+                    {T.getTransportMethodLabel(stage.transportMethod)}
                   </Label>
-                  {stage.cargo !== undefined && (<>
-                    <br />
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Cargo: {stage.cargo} t
-                    </Label>
-                  </>)}
-                  {stage.emission !== undefined && (<>
-                    <br />
-                    <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      Emission: {stage.emission} kg
-                    </Label>
-                  </>)}
+                  {stage.cargo !== undefined && (
+                    <>
+                      <br />
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Cargo: {stage.cargo} t
+                      </Label>
+                    </>
+                  )}
+                  {stage.emission !== undefined && (
+                    <>
+                      <br />
+                      <Label className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Emission: {stage.emission} kg
+                      </Label>
+                    </>
+                  )}
                 </CardContent>
               </Card>
               <Button
@@ -101,7 +105,7 @@ export default ({
             onClick={onRemoveRoute(selectedRoute)}
           >
             Remove {chain.routes[selectedRoute].name} &nbsp;
-            <TrashIcon fill="white"/>
+            <TrashIcon fill="white" />
           </Button>
         )}
       </div>

@@ -1,30 +1,32 @@
-import { createServerClient, parse, serialize } from "https://esm.sh/@supabase/ssr@0.1.0";
+import {
+  createServerClient,
+  parse,
+  serialize,
+} from "https://esm.sh/@supabase/ssr@0.1.0";
 import { load } from "https://deno.land/std@0.218.0/dotenv/mod.ts";
 
 const env = await load();
 
 export const getDomainEnv = () => (
-    {
-        DOMAIN_URL: Deno.env.get("DOMAIN_URL") || env["DOMAIN_URL"],
-    }
+  {
+    DOMAIN_URL: Deno.env.get("DOMAIN_URL") || env["DOMAIN_URL"],
+  }
 );
 
-
-export const getSupabaseEnv =  () => (
-    {
-        SUPABASE_URL: Deno.env.get("SUPABASE_URL") || env["SUPABASE_URL"],
-        SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY") || env["SUPABASE_ANON_KEY"],
-      }
-  );
+export const getSupabaseEnv = () => (
+  {
+    SUPABASE_URL: Deno.env.get("SUPABASE_URL") || env["SUPABASE_URL"],
+    SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY") ||
+      env["SUPABASE_ANON_KEY"],
+  }
+);
 
 export const getLoginForTestingEnv = () => (
-    {
-        EMAIL_TEST: Deno.env.get("EMAIL") || env["EMAIL"],
-        PASSWORD_TEST: Deno.env.get("PASSWORD") || env["PASSWORD"],
-      }
-  );
-
-
+  {
+    EMAIL_TEST: Deno.env.get("EMAIL") || env["EMAIL"],
+    PASSWORD_TEST: Deno.env.get("PASSWORD") || env["PASSWORD"],
+  }
+);
 
 export function getSupabaseWithHeaders({ request }: { request: Request }) {
   const cookies = parse(request.headers.get("Cookie") ?? "");
@@ -45,7 +47,7 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
           headers.append("Set-Cookie", serialize(key, "", options));
         },
       },
-    }
+    },
   );
 
   return { supabase, headers };

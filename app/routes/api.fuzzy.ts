@@ -1,5 +1,7 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/deno"; 
-
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "@remix-run/deno";
 
 const backendUrl = "https://ibm-sl-api.deno.dev/";
 
@@ -32,7 +34,7 @@ export const loader = async ({
  * this is an action function that runs server-side and sends data to the backend
  */
 export const action = async ({
-  request
+  request,
 }: ActionFunctionArgs) => {
   switch (request.method) {
     // if the request method is POST
@@ -40,7 +42,6 @@ export const action = async ({
       const body = await request.json();
 
       const url = new URL(`${backendUrl}api/fuzzy`);
-
 
       const res = await fetch(url, {
         method: "POST",
@@ -56,6 +57,3 @@ export const action = async ({
     }
   }
 };
-
-
-

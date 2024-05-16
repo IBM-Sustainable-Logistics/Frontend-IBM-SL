@@ -20,7 +20,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         ibm_blue:
           "bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]/90 shadow-md fold-bold px-3 py-1",
-        ibm_green: "bg-[#198038] text-primary-foreground hover:bg-[#6fdc8c]/95 hover:text-black shadow-lg",
+        ibm_green:
+          "bg-[#198038] text-primary-foreground hover:bg-[#6fdc8c]/95 hover:text-black shadow-lg",
         ibm_teal:
           "bg-[#007d79] text-primary-foreground hover:bg-[#9ef0f0]/90 shadow-md",
         submit_button:
@@ -39,11 +40,12 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
@@ -58,7 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

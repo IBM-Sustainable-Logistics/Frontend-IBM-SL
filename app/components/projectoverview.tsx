@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, getTransportMethodLabel, project } from "../lib/Transport.ts";
+import { getTransportMethodLabel, project, Stage } from "../lib/Transport.ts";
 import {
   Card,
   CardContent,
@@ -42,11 +42,13 @@ interface Props {
 }
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
-  const [calcChain, setCalcChain] = useState<C.Chain>(C.loadChain(project.chain));
+  const [calcChain, setCalcChain] = useState<C.Chain>(
+    C.loadChain(project.chain),
+  );
   const [titleProject, setTitleProject] = useState(project.title);
   const [message, setMessage] = useState("");
   const [descriptionProject, setDescriptionProject] = useState(
-    project.description
+    project.description,
   );
 
   const fetcher = useFetcher();
@@ -111,31 +113,34 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   return (
     /* create a project page */
     <div className="flex flex-col justify-center items-center">
-
-      <Carousel className="w-full" orientation="horizontal" >
-          <CarouselContent className="max-w-full">
-            <CarouselItem>
-              <div className="flex flex-col justify-between items-center gap-4">
-                <Card className="w-full max-w-md md:max-w-2xl">
-                  <CardHeader>
-                    <CardTitle>
-                      <h1>{project.title}</h1>
-                    </CardTitle>
-                    <CardDescription>{project.description}</CardDescription>
-                    <img src={tree} alt="IBM Logo" className="h-40" />
-                  </CardHeader>
-                  <CardContent>
-                    <Carousel >
-                      <CarouselContent >
+      <Carousel className="w-full" orientation="horizontal">
+        <CarouselContent className="max-w-full">
+          <CarouselItem>
+            <div className="flex flex-col justify-between items-center gap-4">
+              <Card className="w-full max-w-md md:max-w-2xl">
+                <CardHeader>
+                  <CardTitle>
+                    <h1>{project.title}</h1>
+                  </CardTitle>
+                  <CardDescription>{project.description}</CardDescription>
+                  <img src={tree} alt="IBM Logo" className="h-40" />
+                </CardHeader>
+                <CardContent>
+                  <Carousel>
+                    <CarouselContent>
                       {project.routes.map((route) => (
                         <CarouselItem>
                           <Table>
                             <TableCaption>
-                              Emissions in total: {project.emissions} for route {route.name}
+                              Emissions in total: {project.emissions} for route
+                              {" "}
+                              {route.name}
                             </TableCaption>
                             <TableHeader>
                               <TableRow>
-                                <TableHead className="w-[100px]">Transport Form</TableHead>
+                                <TableHead className="w-[100px]">
+                                  Transport Form
+                                </TableHead>
                                 <TableHead>Distance (km)</TableHead>
                                 <TableHead>From</TableHead>
                                 <TableHead>To</TableHead>
@@ -147,31 +152,40 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                             </TableHeader>
 
                             <TableBody>
-                              {route.stages.map((stage: Stage, index: number) => (
+                              {route.stages.map((
+                                stage: Stage,
+                                index: number,
+                              ) => (
                                 <TableRow key={index}>
                                   <TableCell>
-                                    {getTransportMethodLabel(stage.transportMethod)}
+                                    {getTransportMethodLabel(
+                                      stage.transportMethod,
+                                    )}
                                   </TableCell>
 
-                                  {stage.usesAddress ? (
-                                    <>
-                                      <TableCell>{stage.distance_km}</TableCell>
-                                      <TableCell>{stage.from.city}</TableCell>
-                                      <TableCell>{stage.to.city}</TableCell>
-                                      <TableCell className="text-right">
-                                        {stage.cargo}
-                                      </TableCell>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <TableCell>{stage.distance}</TableCell>
-                                      <TableCell></TableCell>
-                                      <TableCell></TableCell>
-                                      <TableCell className="text-right">
-                                        {stage.cargo}
-                                      </TableCell>
-                                    </>
-                                  )}
+                                  {stage.usesAddress
+                                    ? (
+                                      <>
+                                        <TableCell>
+                                          {stage.distance_km}
+                                        </TableCell>
+                                        <TableCell>{stage.from.city}</TableCell>
+                                        <TableCell>{stage.to.city}</TableCell>
+                                        <TableCell className="text-right">
+                                          {stage.cargo}
+                                        </TableCell>
+                                      </>
+                                    )
+                                    : (
+                                      <>
+                                        <TableCell>{stage.distance}</TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell className="text-right">
+                                          {stage.cargo}
+                                        </TableCell>
+                                      </>
+                                    )}
 
                                   <TableCell className="text-right">
                                     {stage.emission ? stage.emission : 0}
@@ -182,37 +196,35 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                           </Table>
                           <Carousel>
                             <CarouselContent>
-
-                           <DataVisualization stages={route.stages} />
-                           </CarouselContent>
+                              <DataVisualization stages={route.stages} />
+                            </CarouselContent>
                           </Carousel>
                         </CarouselItem>
                       ))}
-                      </CarouselContent>
-                      <CarouselPagination />
-                    </Carousel>
-                    
-                  </CardContent>
-                </Card>
-                <CarouselNext>
-                  Edit Chain
-                </CarouselNext>
-              </div>
-            </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPagination />
+                  </Carousel>
+                </CardContent>
+              </Card>
+              <CarouselNext>
+                Edit Chain
+              </CarouselNext>
+            </div>
+          </CarouselItem>
 
-            <CarouselItem>
-              <div className="flex flex-col justify-between items-center gap-4 h-full">
-                <Calculator
-                  isProject={true}
-                  chain={calcChain}
-                  setChain={setCalcChain}
-                />
-                <CarouselPrevious>
-                  View Graphs
-                </CarouselPrevious>
-              </div>
-            </CarouselItem>
-          </CarouselContent>
+          <CarouselItem>
+            <div className="flex flex-col justify-between items-center gap-4 h-full">
+              <Calculator
+                isProject={true}
+                chain={calcChain}
+                setChain={setCalcChain}
+              />
+              <CarouselPrevious>
+                View Graphs
+              </CarouselPrevious>
+            </div>
+          </CarouselItem>
+        </CarouselContent>
       </Carousel>
 
       <CardFooter className="pt-4">
