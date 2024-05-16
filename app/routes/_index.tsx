@@ -41,7 +41,7 @@ export default function Index() {
         jsx={
           <>
             <h1 className="text-4xl lg:text-[3vw] leading-[3rem] font-bold min-[1800px]:leading-[4.25rem]">
-              Calculate your footprint emissions for
+              Calculate your footprint emissions for&nbsp;
               <span style={{ color: "#3d815c" }}>FREE</span>
             </h1>
             <p className="text-2xl lg:text-[1.5vw] min-[1800px]:leading-[3.5rem]">
