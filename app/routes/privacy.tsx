@@ -1,6 +1,10 @@
 import React from "react";
 import Hero from "../components/hero.tsx";
 
+
+/**
+ * This is the privacy policy page 
+ */
 const privacy = () => {
     return (
         <main
