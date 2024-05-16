@@ -67,7 +67,7 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
         className="flex h-20 w-full shrink-0 items-center px-4 md:px-6"
       >
         <Link className="mr-6 flex items-center" to="/">
-          <img src={calc} alt="IBM Logo" className=" h-14 ml-5" />
+          <img src={calc} alt="Calc IBM Logo" className=" h-14 ml-5" />
         </Link>
         <MessageDialog message={message} open={open} setopen={setOpen} />
 

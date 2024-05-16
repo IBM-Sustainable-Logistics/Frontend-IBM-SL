@@ -10,6 +10,9 @@ import { Link } from "@remix-run/react";
 import { Button } from "../components/ui/button.tsx";
 import Section from "../components/section.tsx";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
+import logoImage from '../assets/CALC.svg';
+import greenTruckImage from 'public/Images/greenTruck.png';
+import { AspectRatio } from "../components/ui/aspect-ratio.tsx";
 
 export const meta: MetaFunction = () => {
   return [
@@ -31,7 +34,7 @@ export default function Index() {
     <main
       className='flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-16 
     md:mt-20
-    md:gap-32'
+    md:gap-15'
     >
       <Hero
         jsx={(<>
@@ -64,26 +67,33 @@ export default function Index() {
         </div>
       </Section>
       <Section backgroundColor='white' textColor='#3D815C'>
-      <div className='flex flex-row'>
-        <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-1/2'>
-          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
-            EU Compliance, made easy
-          </h1>
-          <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
-            Effortlessly navigate EU environmental and emissions
-            regulations with our streamlined reporting solutions.
-            Designed for logistics companies of any size, our platform
-            simplifies the complexities of environmental impact
-            disclosure and CO2 monitoring.
-          </p>
+        <div className='flex flex-col md:flex-row justify-center items-center'>
+          <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-1/2'>
+            <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
+              EU Compliance, made easy
+            </h1>
+            <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
+              Effortlessly navigate EU environmental and emissions
+              regulations with our streamlined reporting solutions.
+              Designed for logistics companies of any size, our platform
+              simplifies the complexities of environmental impact
+              disclosure and CO2 monitoring.
+            </p>
+            
+          </div>
+          <AspectRatio ratio="16:9" className="w-1/2">
+                <img  src={greenTruckImage}className="rounded-md object-cover"/>
+            </AspectRatio>
+        
         </div>
-        <img className='basis-1/2' src=''></img>
-      </div>
       </Section>
+
       <Section backgroundColor='white' textColor='#3D815C'>
         <div className='flex flex-row'>
-          <img className='basis-1/3' src=''></img>
-          <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-2/3'>
+          <div className='basis-1/3'>
+            <img src={logoImage} alt="Calc IBM Logo" className="h-52 m-auto" />
+          </div>
+          <div className='text-left basis-2/3 h-auto'>
               <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
                 Lead with Sustainable Logistics 
               </h1>
@@ -105,16 +115,21 @@ export default function Index() {
             </h1>
             <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
               Adapt quickly to the EU's evolving emissions standards. Our
-              platform supports comprehensive tracking for land based cargo,
-              ensuring compliance with MRV and ETS regulations. Stay ahead
-              with annual, data-driven emissions reports and embrace the
-              shift towards zero-emission targets for 2040.
-            </p>
-          </div>
+                platform supports comprehensive tracking for land based cargo,
+                ensuring compliance with MRV and ETS regulations. Stay ahead
+                with annual, data-driven emissions reports and embrace the
+                shift towards zero-emission targets for 2040.
+              </p>
+            </div>
           <img className='basis-1/2' src=''></img>
         </div>
-
       </Section>
+
+      <Link to='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2464'>
+        <button type="button" className="bg-emerald-600 font-bold text-white w-fit  md:w-88 text-2xl py-7 px-10">
+          READ MORE HERE
+        </button>
+      </Link>
     </main>
   );
 }
