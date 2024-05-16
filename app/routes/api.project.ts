@@ -48,7 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
           );
       }
   
-      return json({ ok: true, error: null }, { headers });
+      return redirect("/projects");
     }
     case "DELETE": {
       const { supabase, headers, serverSession } =
