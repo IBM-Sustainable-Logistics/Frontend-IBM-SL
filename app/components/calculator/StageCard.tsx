@@ -318,6 +318,7 @@ export default ({
                   Distance (km):
                 </Label>
                 <Input
+                  value={stage.distance}
                   type="number"
                   id="distance"
                   name="distance"
