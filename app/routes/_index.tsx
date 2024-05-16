@@ -11,8 +11,8 @@ import { Button } from "../components/ui/button.tsx";
 import Section from "../components/section.tsx";
 import { getSupabaseWithSessionAndHeaders } from "../lib/supabase-server.ts";
 import logoImage from '../assets/CALC.svg';
-import greenTruckImage from '../assets/greenTruck.png';
-import power from '../assets/PowerTruck.webp';
+import greenTruckImage from '../assets/greenTruck.jpg';
+import power from '../assets/powertruck.jpg';
 import { AspectRatio } from "../components/ui/aspect-ratio.tsx";
 
 export const meta: MetaFunction = () => {
@@ -33,7 +33,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
   return (
     <main
-      className='flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-16 
+      className='flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-4 md:gap-10 
     md:mt-20
     md:gap-15'
     >
@@ -70,7 +70,7 @@ export default function Index() {
 
       <Section backgroundColor="white" textColor='#3D815C'>
           <div className="px-4 md:px-6 space-y-10 xl:space-y-16">
-            <div className="grid max-w-full mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-3 md:gap-4">
+            <div className="grid max-w-full grid-cols-2 grid-rows-2 md:grid-rows-1 mx-auto gap-2 px-4 sm:px-6 md:px-10 md:grid-cols-3 md:gap-4">
             <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] col-span-2'>
                   <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
                     EU Compliance, made easy
@@ -84,7 +84,7 @@ export default function Index() {
                   </p>
                   
              </div>
-             <div>
+             <div  className="col-span-2 md:col-span-1 ">
                 <img
                   alt="cool pic"
                   className=" overflow-hidden rounded-xl object-cover"
@@ -120,7 +120,7 @@ export default function Index() {
 
       <Section backgroundColor="white" textColor='#3D815C'>
           <div className="px-4 md:px-6 space-y-10 xl:space-y-16">
-            <div className="grid max-w-full mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-3 md:gap-4">
+            <div className="grid max-w-full grid-rows-2 grid-cols-2 md:grid-rows-1 mx-auto gap-2 px-4 sm:px-6 md:px-10 md:grid-cols-3 md:gap-4">
             <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-1/2 col-span-2'>
                 <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
                   Efficient Truck Compliance
@@ -133,31 +133,24 @@ export default function Index() {
                     shift towards zero-emission targets for 2040.
                   </p>
             </div>
-             <div>
+             <div className="col-span-2 md:col-span-1 ">
                 <img
                   alt="cool pic"
-                  className=" overflow-hidden rounded-xl object-cover"
-                  height="50"
+                  className=" h-52 w-52  m-auto overflow-hidden rounded-xl object-cover"
                   src={power}
-                  width="600"
                 />
               </div>
             </div>
           </div>
       </Section>
       
-      <Section backgroundColor='white' textColor='#3D815C'>
-        <div className='flex flex-row'>
-          
-          <img className='basis-1/2' src=''></img>
-        </div>
-      </Section>
-
       <Link to='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2464'>
         <button type="button" className="bg-emerald-600 font-bold text-white w-fit  md:w-88 text-2xl py-7 px-10">
           READ MORE HERE
         </button>
       </Link>
+
+      
     </main>
   );
 }
