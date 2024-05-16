@@ -50,7 +50,7 @@ export default function Index() {
           </Link>
         </>)}
       />
-      <Section backgroundColor='#d6d6d6' textColor='black'>
+      <Section backgroundColor='#A9E3C1' textColor='black'>
         <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
           <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
             Our vision
