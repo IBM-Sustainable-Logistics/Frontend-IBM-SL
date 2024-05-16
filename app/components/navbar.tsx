@@ -92,23 +92,22 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
         <div className="ml-auto">
           <div className="lg:block hidden mt-10">
             <div className="flex gap-4">
-              {serverSession
-                ? <Button onClick={handleSignOut}>Sign out</Button>
-                : (
-                  <>
-                    <Link to={"/signin"}>
-                      <Button className="lg:block" variant="default">
-                        Sign In
-                      </Button>
-                      {" "}
-                    </Link>
-                    <Link to={"/signup"}>
-                      <Button className="lg:block" variant="default">
-                        Sign Up
-                      </Button>
-                    </Link>
-                  </>
-                )}
+              {serverSession ? (
+                <Button onClick={handleSignOut}>Sign out</Button>
+              ) : (
+                <>
+                  <Link to={"/signin"}>
+                    <Button className="lg:block" variant="default">
+                      Sign In
+                    </Button>{" "}
+                  </Link>
+                  <Link to={"/signup"}>
+                    <Button className="lg:block" variant="default">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <Button
@@ -131,7 +130,9 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
 
         {isOpen && (
           <div
-            className={"fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-bottom-80 lg:hidden"}
+            className={
+              "fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-bottom-80 lg:hidden"
+            }
           >
             <ScrollArea className="h-[300px] px-1 ">
               <div className="space-y-1 p-2 ">
@@ -147,27 +148,26 @@ export const NavBar = ({ serverSession, supabase }: NavBar) => {
                   </Link>
                 ))}
                 <div className="flex gap-4 justify-center items-center">
-                  {serverSession
-                    ? <Button onClick={handleSignOut}>Sign out</Button>
-                    : (
-                      <>
-                        <Link to={"/signin"}>
-                          <Button
-                            className="lg:block"
-                            variant="default"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            Sign In
-                          </Button>
-                          {" "}
-                        </Link>
-                        <Link to={"/signup"} onClick={() => setIsOpen(false)}>
-                          <Button className="lg:block" variant="default">
-                            Sign Up
-                          </Button>
-                        </Link>
-                      </>
-                    )}
+                  {serverSession ? (
+                    <Button onClick={handleSignOut}>Sign out</Button>
+                  ) : (
+                    <>
+                      <Link to={"/signin"}>
+                        <Button
+                          className="lg:block"
+                          variant="default"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Sign In
+                        </Button>{" "}
+                      </Link>
+                      <Link to={"/signup"} onClick={() => setIsOpen(false)}>
+                        <Button className="lg:block" variant="default">
+                          Sign Up
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </ScrollArea>
