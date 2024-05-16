@@ -1,6 +1,10 @@
 import React from "react";
 import Hero from "../components/hero.tsx";
 
+
+/**
+ * This is the terms and conditions page 
+ */
 const Terms = () => {
   return (
     <main
