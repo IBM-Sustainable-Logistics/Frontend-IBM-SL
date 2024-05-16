@@ -103,7 +103,7 @@ const ProjectCard = ({
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="border-black border rounded">
-              View
+              Overview
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -159,7 +159,7 @@ const ProjectCard = ({
             </Accordion>
 
             <Link to={id}>
-              <Button>Open project</Button>
+              <Button>View Graphs</Button>
             </Link>
             {/* You can add inputs and state handling as needed */}
           </DialogContent>

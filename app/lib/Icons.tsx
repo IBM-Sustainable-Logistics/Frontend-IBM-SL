@@ -14,13 +14,13 @@ export function GitHub() {
   );
 }
 
-export function TrashIcon() {
+export function TrashIcon({ fill = "black" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
-      fill="black"
+      fill={fill}
       viewBox="0 0 16 16"
     >
       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />

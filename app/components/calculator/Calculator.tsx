@@ -154,12 +154,11 @@ export const loadChain = (chain: T.Chain): Chain => ({
 
 type CalculatorProps = {
   isProject: boolean;
-  projectTitle: string | undefined;
   chain: Chain;
   setChain: React.Dispatch<React.SetStateAction<Chain>>;
 };
 
-const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorProps) => {
+const Calculator = ({ isProject, chain, setChain, }: CalculatorProps) => {
   const [error, setError] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();
   const [suggestions, setSuggestions] = useState(emptySuggestions());
@@ -1156,7 +1155,6 @@ const Calculator = ({ isProject, projectTitle, chain, setChain, }: CalculatorPro
           <div className={"px-16 flex-0 pt-12" /* border-t border-black-500"*/}>
             <ChainCard
               isProject={isProject}
-              projectTitle={projectTitle}
               chain={chain}
               selectedRoute={selectedRoute}
               onSelectRoute={onSelectRoute}

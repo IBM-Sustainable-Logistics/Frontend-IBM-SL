@@ -204,7 +204,6 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
               <div className="flex flex-col justify-between items-center gap-4 h-full">
                 <Calculator
                   isProject={true}
-                  projectTitle={titleProject}
                   chain={calcChain}
                   setChain={setCalcChain}
                 />

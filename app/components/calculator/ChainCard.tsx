@@ -7,7 +7,6 @@ import UploadPopUp from "../Upload/UploadPopUp.tsx";
 
 type Props = {
   isProject: boolean;
-  projectTitle: string | undefined;
   chain: C.Chain;
   selectedRoute: number;
   setChain: React.Dispatch<React.SetStateAction<C.Chain>>;
@@ -17,7 +16,6 @@ type Props = {
 
 export default ({
   isProject,
-  projectTitle,
   chain,
   selectedRoute,
   onSelectRoute,

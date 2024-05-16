@@ -6,6 +6,7 @@ import * as T from "../../lib/Transport.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card.tsx";
 import { AspectRatio } from "../ui/aspect-ratio.tsx";
 import truck from "../../assets/truck-green.svg";
+import { TrashIcon } from "../../lib/Icons.tsx";
 
 type Props = {
   chain: C.Chain;
@@ -45,11 +46,11 @@ export default ({
           {chain.routes[selectedRoute].stages.map((stage, stageIndex) => (
             <div
               key={stage.key}
-              className="flex flex-col gap-4 pt-1 basis-1/3"
+              className="flex flex-col gap-4 basis-1/3"
             >
               <Card
                 onClick={onSelectStage(stageIndex)}
-                className={"mx-[3px] mt-4" +
+                className={"mx-[3px]" +
                   (stageIndex === selectedStage
                     ? " outline outline-offset-0 outline-blue-500"
                     : " outline-none"
@@ -99,7 +100,8 @@ export default ({
             type="button"
             onClick={onRemoveRoute(selectedRoute)}
           >
-            Remove {chain.routes[selectedRoute].name}
+            Remove {chain.routes[selectedRoute].name} &nbsp;
+            <TrashIcon fill="white"/>
           </Button>
         )}
       </div>

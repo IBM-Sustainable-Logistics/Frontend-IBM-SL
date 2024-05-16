@@ -45,7 +45,6 @@ const CalculateEmissionsPage = () => {
     <div className=" min-h-screen flex items-center justify-center">
       <Calculator
         isProject={false}
-        projectTitle={undefined}
         chain={chain}
         setChain={setChain}
       />

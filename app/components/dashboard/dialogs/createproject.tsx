@@ -85,7 +85,6 @@ const CreateProject: React.FC<Props> = ({ UserId }: { UserId: any }) => {
                       <div className="flex flex-col justify-center items-center gap-4">
                         <Calculator
                           isProject={true}
-                          projectTitle={titleProject}
                           chain={chain}
                           setChain={setChain}
                         />

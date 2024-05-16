@@ -64,13 +64,12 @@ export const EditProjectPopUp: React.FC<Props> = ({
             onChange={(e: any) => setDescriptionProject(e.target.value)}
           />
 
-          <Label>To edit calculations open project</Label>
           <DialogClose asChild>
             <Link
               className="h-10 inline-flex items-center justify-center whitespace-nowrap  text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#0043ce] text-primary-foreground hover:bg-[#002d9c]"
               to={id}
             >
-              Open project
+              Edit Calculations
             </Link>
           </DialogClose>
 
@@ -80,7 +79,7 @@ export const EditProjectPopUp: React.FC<Props> = ({
               variant="default"
               onClick={handleUpdateProject}
             >
-              Update
+              Save Description Changes
             </Button>
           </DialogClose>
 

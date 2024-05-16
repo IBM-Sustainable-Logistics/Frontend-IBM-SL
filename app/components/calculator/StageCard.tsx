@@ -7,6 +7,7 @@ import AutoSuggest from "react-autosuggest";
 import * as C from "./Calculator.tsx";
 import * as T from "../../lib/Transport.ts";
 import { Progress } from "../ui/progress.tsx";
+import { TrashIcon } from "../../lib/Icons.tsx";
 
 type F<T> = (routeIndex: number, stageIndex: number) => T;
 type G<T> = (
@@ -347,7 +348,8 @@ export default ({
               variant={"destructive"}
               type="button"
             >
-              Remove Stage
+              Remove Stage &nbsp;
+              <TrashIcon fill="white"/>
             </Button>
           )}
           <Button
