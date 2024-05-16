@@ -79,9 +79,6 @@ const Template = () => {
           <li>
             - Excel, of file extension <b>.xls / .xlsx</b>
           </li>
-          <li>
-            - Comma Separated Values, of file extension <b>.csv</b>
-          </li>
         </ul>
         <p className="mb-6">
           If the file extension is NOT one of the above, then our application

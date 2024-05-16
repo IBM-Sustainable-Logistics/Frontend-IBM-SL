@@ -123,7 +123,6 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
           setFile(file);
           if (file) {
             if (
-              file.name.endsWith(".csv") ||
               file.name.endsWith(".xls") ||
               file.name.endsWith(".xlsx")
             ) {
@@ -131,7 +130,7 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
               setHasUploaded(true);
             } else {
               console.log(`file rejected: ${file.name}`);
-              alert("Not in a valid .csv/.xls/.xlsx format!");
+              alert("Not in a valid .xls/.xlsx format!");
               setHasUploaded(false);
             }
           }
@@ -161,12 +160,11 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
           console.log("Chosen file: " + file.name);
 
           if (
-            !file.name.toLowerCase().endsWith(".csv") &&
             !file.name.toLowerCase().endsWith(".xls") &&
             !file.name.endsWith(".xlsx")
           ) {
             console.log(`file rejected: ${file.name}`);
-            alert("Not in a valid .csv/.xls/.xlsx format!");
+            alert("Not in a valid .xls/.xlsx format!");
             setHasUploaded(false);
             setFile(null);
             fileInput.value = "";
@@ -217,106 +215,7 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
 
     ev.preventDefault();
   }
-
-  /**
-   * Read the CSV-file uploaded by the user.
-   * @param file the file, of type CSV, to be read.
-   */
-  async function ReadCSV(file: File) {
-    const filereader = new FileReader();
-
-    filereader.onload = async function (_ev) {
-      const readfilecont = filereader.result as string;
-      const csvData = d3.dsvFormat(";").parse(readfilecont);
-      const csvDataAsJSON = JSON.stringify(csvData);
-
-      // Structure the data into readable array
-      const jsonObj = JSON.parse(csvDataAsJSON.slice(1, -1));
-
-      const newStages: Stage[] = [];
-
-      // Iterate over each data in csv and save to a local map
-      for (const entry in jsonObj) {
-        if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
-          dataMap.set(entry, jsonObj[entry]);
-          console.log("Received key: ", entry, ", value:", jsonObj[entry]);
-        }
-      }
-
-      for (let i = 1; i < dataMap.size; i++) {
-        var from;
-        var to;
-        var getDistance;
-
-        try {
-          from = {
-            city: dataMap.get("Origin city ").toString(),
-            country: dataMap.get("Origin country ").toString(),
-            exists: true,
-          };
-
-          to = {
-            city: dataMap.get("Destination city ").toString(),
-            country: dataMap.get("Destination country ").toString(),
-            exists: true,
-          };
-          console.log(
-            i + " -> " + from.city,
-            ", ",
-            from.country,
-            ", ",
-            to.city,
-            ", ",
-            to.country,
-          );
-        } catch (error) {
-          getDistance = dataMap.get("Distance") as number;
-          console.log(i + " -> " + "Distance: ", getDistance);
-        }
-
-        const stage = isDistanceMode
-          ? {
-            usesAddress: false,
-            transportMethod: "truck",
-            distance: getDistance,
-            key: Math.random(),
-            emission: undefined,
-          }
-          : {
-            usesAddress: true,
-            transportMethod: "truck",
-            from: from,
-            to: to,
-            key: Math.random(),
-            emission: undefined,
-            impossible: false,
-          };
-
-        newStages.push(stage as Stage);
-      }
-
-      setStage((oldStages: Stage[]): Stage[] => [...oldStages, ...newStages]);
-
-      console.log("newStages: " + newStages);
-
-      setChainData((oldChain: Chain): Chain => {
-        return {
-          ...oldChain,
-          routes: [
-            {
-              name: "Route " + (oldChain.routes.length - 1 + 1),
-              stages: newStages,
-              key: Math.random(),
-              emission: undefined,
-            },
-          ],
-        };
-      });
-    };
-
-    filereader.readAsText(file);
-  }
-
+  
   /**
    * Read the Excel-file uploaded by the user.
    * @param file the file, of type xls, to be read.
@@ -398,13 +297,11 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
   }
 
   /**
-   * Read the user-provided file, of type .csv and .xls
+   * Read the user-provided file, of type .xls / .xlsx
    */
   async function readFile(): Promise<void> {
     if (file) {
-      if (file.name.endsWith(".csv")) {
-        await ReadCSV(file);
-      } else if (file.name.endsWith(".xls") || file.name.endsWith(".xlsx")) {
+      if (file.name.endsWith(".xls") || file.name.endsWith(".xlsx")) {
         await ReadExcel(file);
       }
     } else {
