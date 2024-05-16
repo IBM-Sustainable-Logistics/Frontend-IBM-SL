@@ -36,7 +36,7 @@ export default ({
         <div className="flex flex-col gap-4 overflow-scroll scrollbar-hide h-[500px] lg:h-auto">
           <Button
             className="w-full"
-            variant="ibm_blue"
+            variant="ibm_green"
             type="button"
             onClick={onInsertStageAfter(selectedRoute, -1)}
           >
@@ -83,7 +83,7 @@ export default ({
               </Card>
               <Button
                 className="w-full"
-                variant="ibm_blue"
+                variant="ibm_green"
                 type="button"
                 onClick={onInsertStageAfter(selectedRoute, stageIndex)}
               >

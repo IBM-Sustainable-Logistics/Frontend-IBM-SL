@@ -69,7 +69,7 @@ export default ({
         )}
         <Button
           className="w-full"
-          variant={"ibm_blue"}
+          variant={"ibm_green"}
           type="button"
           onClick={onAddRoute}
         >

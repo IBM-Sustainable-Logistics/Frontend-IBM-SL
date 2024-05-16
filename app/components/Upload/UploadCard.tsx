@@ -449,12 +449,12 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
               </Button>
             )}
             {hasUploaded && (
-              <Button variant="ibm_blue" disabled>
+              <Button variant="ibm_green" disabled>
                 Choose file
               </Button>
             )}
             {!hasUploaded && (
-              <Button variant="ibm_blue" onClick={handleUploadClick}>
+              <Button variant="ibm_green" onClick={handleUploadClick}>
                 Choose file
               </Button>
             )}

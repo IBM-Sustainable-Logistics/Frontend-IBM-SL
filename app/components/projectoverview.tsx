@@ -221,7 +221,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
           <Button onClick={handleDownload}>Download as Spreadsheet</Button>
           <Button
             className="border-black border rounded"
-            variant="ibm_blue"
+            variant="ibm_green"
             onClick={handleUpdateProject}
           >
             Save Project Changes
