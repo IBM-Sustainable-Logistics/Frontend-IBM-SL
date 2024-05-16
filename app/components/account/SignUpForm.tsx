@@ -27,10 +27,12 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission
+
     const { data, error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
     });
+
     try {
       if (error) {
         setErrorMessage(error.message);
@@ -40,7 +42,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ supabase }) => {
         }, 5000);
       } else {
         setShowMessage(true);
-        setMessage("confirmation sent to your email " + data.user?.email + ".");
+        if (data?.user?.email !== undefined) {
+          setMessage("Confirmation email sent to " + data.user.email + ".");
+        } else {
+          setMessage("Confirmation email sent.");
+        }
         setTimeout(() => {
           setShowMessage(false);
         }, 5000);
