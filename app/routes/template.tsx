@@ -1,3 +1,6 @@
+import React, { useState } from 'react'
+import { Button } from '../components/ui/button.tsx'
+
 import goodexample1 from 'public/Images/goodexample1.png'
 import goodexample2 from 'public/Images/goodexample2.png'
 import badexample1 from 'public/Images/badexample1.png'
@@ -6,9 +9,6 @@ import badexample3 from 'public/Images/badexample3.png'
 import checkdistance from 'public/Images/checkdistance.png'
 import goodexample3 from 'public/Images/goodexample3.png'
 import templateZIP from 'public/Images/IBM_SL_Upload_Template_v1.zip'
-
-import { Button } from 'app/components/ui/button'
-import { useState } from 'react'
 
 const Template = () => {
 
@@ -100,9 +100,9 @@ const Template = () => {
             </div>
             <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">In order to use addresses, you need to atleast use four cells. These four cells should have the titles:
-                    <b>Origin city</b>, <b>Origin country</b>, <b>Destination city</b>, and <b>Destination country</b>. Under each of these cells,
+                    &nbsp;<b>Origin city</b>, <b>Origin country</b>, <b>Destination city</b>, and <b>Destination country</b>. Under each of these cells,
                     you should write the information they describe. Remember: the data has to be BELOW the descriptive cells! For example, if cell <b>A1</b>
-                    has the title <b>Origin city</b>, then the origin city name should be in the cell <b>A2</b>. </p>
+                    &nbsp;has the title <b>Origin city</b>, then the origin city name should be in the cell <b>A2</b>. </p>
             </div>
 
             <div style={{ maxWidth: '800px' }}>
@@ -133,7 +133,7 @@ const Template = () => {
 
             <div style={{ maxWidth: '800px' }}>
                 <p className="mb-6">In order to give the distance (which is in kilometer), you need to atleast use two cells. One of the cells should have the title:
-                    <b>Distance</b>. Under each of these cells, you should write the distance length. Remember: the data has to be BELOW the descriptive cell! For example,
+                    &nbsp;<b>Distance</b>. Under each of these cells, you should write the distance length. Remember: the data has to be BELOW the descriptive cell! For example,
                     if cell <b>A1</b> has the title <b>Distance</b>, then the distance length should be in the cell <b>A2</b>. </p>
 
 

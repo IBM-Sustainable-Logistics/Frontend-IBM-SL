@@ -297,7 +297,7 @@ export default ({
                 id={String(stage.key) + "to country"}
               />
               {stage.impossible && (
-                <Label className="text-base font-medium text-red-500 dark:text-gray-100 w-[400px]">
+                <Label className="text-base font-medium text-red-500 dark:text-gray-100">
                   Error: Could not connect these addresses
                 </Label>
               )}
