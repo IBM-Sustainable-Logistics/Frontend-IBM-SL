@@ -55,7 +55,7 @@ export default function Index() {
           <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
             Our vision
           </h1>
-          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
+          <p className='text-[1.1rem] text-left lg:text-[1.2rem]'>
             Our goal is to make it easy and quick for companies and other groups
             to measure their CO2 emissions. This will help companies report
             their environmental impact more accurately, and together we can work
@@ -64,11 +64,12 @@ export default function Index() {
         </div>
       </Section>
       <Section backgroundColor='white' textColor='#3D815C'>
-        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
-          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
+      <div className='flex flex-row'>
+        <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-1/2'>
+          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
             EU Compliance, made easy
           </h1>
-          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
+          <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
             Effortlessly navigate EU environmental and emissions
             regulations with our streamlined reporting solutions.
             Designed for logistics companies of any size, our platform
@@ -76,34 +77,43 @@ export default function Index() {
             disclosure and CO2 monitoring.
           </p>
         </div>
+        <img className='basis-1/2' src=''></img>
+      </div>
       </Section>
       <Section backgroundColor='white' textColor='#3D815C'>
-        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
-          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
-            Lead with Sustainable Logistics 
-          </h1>
-          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
-            Our CO2 emission calculator is tailor-made for everyone,
-            from industry giants to small businesses. We offer an
-            easy-to-use interface to accurately estimate and manage
-            emissions. Scale with evolving regulations and advance
-            your sustainability goals efficiently.
-          </p>
+        <div className='flex flex-row'>
+          <img className='basis-1/3' src=''></img>
+          <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-2/3'>
+              <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
+                Lead with Sustainable Logistics 
+              </h1>
+              <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
+                Our CO2 emission calculator is tailor-made for everyone,
+                from industry giants to small businesses. We offer an
+                easy-to-use interface to accurately estimate and manage
+                emissions. Scale with evolving regulations and advance
+                your sustainability goals efficiently.
+              </p>
+          </div>
         </div>
       </Section>
       <Section backgroundColor='white' textColor='#3D815C'>
-        <div className='text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2'>
-          <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold'>
-            Efficient Truck Compliance
-          </h1>
-          <p className='text-[1.1rem] md:px-[5rem] lg:px-[2rem] text-left lg:text-[1.2rem]'>
-            Adapt quickly to the EU's evolving emissions standards. Our
-            platform supports comprehensive tracking for land based cargo,
-            ensuring compliance with MRV and ETS regulations. Stay ahead
-            with annual, data-driven emissions reports and embrace the
-            shift towards zero-emission targets for 2040.
-          </p>
+        <div className='flex flex-row'>
+          <div className='text-left mx-[2rem] lg:mx-[12rem] my-[2.5rem] basis-1/2'>
+            <h1 className='text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5'>
+              Efficient Truck Compliance
+            </h1>
+            <p className='text-[1.1rem] text-justify lg:text-[1.2rem]'>
+              Adapt quickly to the EU's evolving emissions standards. Our
+              platform supports comprehensive tracking for land based cargo,
+              ensuring compliance with MRV and ETS regulations. Stay ahead
+              with annual, data-driven emissions reports and embrace the
+              shift towards zero-emission targets for 2040.
+            </p>
+          </div>
+          <img className='basis-1/2' src=''></img>
         </div>
+
       </Section>
     </main>
   );
