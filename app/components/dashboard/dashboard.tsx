@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button.tsx";
 import { ProjectCard } from "./ProjectCard.tsx";
 import { Input } from "../ui/input.tsx";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../ui/pagination.tsx";
 import { project } from "../../lib/Transport.ts";
 import CreateProject from "./dialogs/createproject.tsx";
+import { defaultChain } from "../calculator/Calculator.tsx";
 
 interface DashboardProps {
   Projects: project[];
@@ -32,7 +32,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   >([]);
 
   useEffect(() => {
-    console.log(UserId);
     const filtered = Projects.filter((project) => project.user_id === UserId);
     setFilteredProjectsByUser(filtered);
   }, [Projects, UserId]);
@@ -49,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const projectsOnPage = filteredProjects.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handlePreviousPage = () => {
@@ -76,7 +75,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             value={searchTerm}
             onChange={handleSearch}
           />
-          <CreateProject UserId={UserId} />
+          <CreateProject
+            UserId={UserId}
+            chain={defaultChain()}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 justify-self-stretch max-w-full gap-4">
@@ -89,6 +91,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 description={p.description}
                 routes={p.routes}
                 emission={p.emissions}
+                chain={p.chain}
               />
             );
           })}

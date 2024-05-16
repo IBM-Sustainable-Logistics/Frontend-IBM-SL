@@ -66,7 +66,7 @@ export function Combobox<T>({
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === option.value ? "opacity-100" : "opacity-0"
+                    value === option.value ? "opacity-100" : "opacity-0",
                   )}
                 />
                 {option.label}
@@ -77,4 +77,4 @@ export function Combobox<T>({
       </PopoverContent>
     </Popover>
   );
-};
+}

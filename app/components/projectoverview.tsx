@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, getTransportMethodLabel, project } from "../lib/Transport.ts";
+import { getTransportMethodLabel, project, Stage } from "../lib/Transport.ts";
 import {
   Card,
   CardContent,
@@ -35,53 +35,34 @@ import {
   CarouselPagination,
   CarouselPrevious,
 } from "./ui/carousel.tsx";
+import { Car } from "npm:lucide-react@^0.312.0";
 
 interface Props {
   project: project;
 }
 
 const ProjectOverview: React.FC<Props> = ({ project }) => {
-  const initialFormState: C.Chain = project.chain as C.Chain;
-
-  const [calculators, setCalculators] = useState<CalculatorInstance[]>([]);
-  const [chain, setChain] = useState<C.Chain>(initialFormState);
+  const [calcChain, setCalcChain] = useState<C.Chain>(
+    C.loadChain(project.chain),
+  );
   const [titleProject, setTitleProject] = useState(project.title);
   const [message, setMessage] = useState("");
   const [descriptionProject, setDescriptionProject] = useState(
-    project.description
+    project.description,
   );
 
   const fetcher = useFetcher();
 
-  const addCalculator = () => {
-    const newCalculator = {
-      id: Date.now(), // Using the current timestamp as a unique ID
-    };
-
-    console.log();
-
-    setCalculators([...calculators, newCalculator]);
-  };
-
-  const deleteCalculator = (id: number) => {
-    setCalculators(
-      calculators.filter(
-        (calculator: CalculatorInstance) => calculator.id !== id
-      )
-    );
-  };
-
   const handleUpdateProject = () => {
-    console.log(chain, project.chain);
     if (
-      chain.emission != project.chain.emission ||
-      chain.routes.length != project.chain.routes.length
+      calcChain.emission != project.chain.emission ||
+      calcChain.routes.length != project.chain.routes.length
     ) {
       const project_ = {
         projId: project.id,
         title: titleProject,
         descriptionProject: descriptionProject as string,
-        calc: JSON.stringify(chain),
+        calc: JSON.stringify(calcChain),
       };
       fetcher.submit(project_, { method: "PATCH", action: "/api/project" });
 
@@ -95,14 +76,14 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
   };
 
   const handleDownload = () => {
-    let settings = {
+    const settings = {
       fileName: project.title, // Name of the resulting spreadsheet
       extraLength: 3, // A bigger number means that columns will be wider
       writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
       writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
     };
 
-    let data = project.chain.routes.map((route) => {
+    const data = project.chain.routes.map((route) => {
       return {
         sheet: route.name,
         columns: [
@@ -116,7 +97,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
         content: route.stages.map((stage: Stage) => {
           return {
             transport_form: getTransportMethodLabel(stage.transportMethod),
-            distance_km: stage.usesAddress ? "" : stage.distance,
+            distance_km: stage.usesAddress ? stage.distance_km : stage.distance,
             from: stage.usesAddress ? stage.from.city : "",
             to: stage.usesAddress ? stage.to.city : "",
             cargo_weight: stage.cargo,
@@ -131,119 +112,138 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
 
   return (
     /* create a project page */
-    <div className="flex flex-col justify-center items-center  ">
-      <Card className="w-full max-w-md md:max-w-2xl ">
-        <CardHeader>
-          <CardTitle>{project.title}</CardTitle>
-          <CardDescription>{project.description}</CardDescription>
-          <img src={tree} alt="IBM Logo" className="h-40" />
-        </CardHeader>
-        <CardContent>
-          {project.routes.map((route) => (
-            <>
-              <Table>
-                <TableCaption>
-                  Emissions in total: {project.emissions} for route {route.name}
-                </TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Transport Form</TableHead>
-                    <TableHead>Distance KM</TableHead>
-                    <TableHead>From</TableHead>
-                    <TableHead>To</TableHead>
-                    <TableHead>Cargo Weight</TableHead>
-                    <TableHead className="text-right">
-                      Amount of co2 in kg
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
+    <div className="flex flex-col justify-center items-center">
+      <Carousel className="w-full" orientation="horizontal">
+        <CarouselContent className="max-w-full">
+          <CarouselItem>
+            <div className="flex flex-col justify-between items-center gap-4">
+              <Card className="w-full max-w-md md:max-w-2xl">
+                <CardHeader>
+                  <CardTitle>
+                    <h1>{project.title}</h1>
+                  </CardTitle>
+                  <CardDescription>{project.description}</CardDescription>
+                  <img src={tree} alt="IBM Logo" className="h-40" />
+                </CardHeader>
+                <CardContent>
+                  <Carousel>
+                    <CarouselContent>
+                      {project.routes.map((route) => (
+                        <CarouselItem>
+                          <Table>
+                            <TableCaption>
+                              Emissions in total: {project.emissions} for route
+                              {" "}
+                              {route.name}
+                            </TableCaption>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="w-[100px]">
+                                  Transport Form
+                                </TableHead>
+                                <TableHead>Distance (km)</TableHead>
+                                <TableHead>From</TableHead>
+                                <TableHead>To</TableHead>
+                                <TableHead>Cargo Weight</TableHead>
+                                <TableHead className="text-right">
+                                  Amount of CO2 (kg)
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
 
-                <TableBody>
-                  {route.stages.map((stage: Stage, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        {getTransportMethodLabel(stage.transportMethod)}
-                      </TableCell>
+                            <TableBody>
+                              {route.stages.map((
+                                stage: Stage,
+                                index: number,
+                              ) => (
+                                <TableRow key={index}>
+                                  <TableCell>
+                                    {getTransportMethodLabel(
+                                      stage.transportMethod,
+                                    )}
+                                  </TableCell>
 
-                      {stage.usesAddress ? (
-                        <>
-                          <TableCell></TableCell>
-                          <TableCell>{stage.from.city}</TableCell>
-                          <TableCell>{stage.to.city}</TableCell>
-                          <TableCell className="text-right">
-                            {stage.cargo}
-                          </TableCell>
-                        </>
-                      ) : (
-                        <>
-                          <TableCell>{stage.distance}</TableCell>
-                          <TableCell></TableCell>
-                          <TableCell></TableCell>
-                          <TableCell className="text-right">
-                            {stage.cargo}
-                          </TableCell>
-                        </>
-                      )}
+                                  {stage.usesAddress
+                                    ? (
+                                      <>
+                                        <TableCell>
+                                          {stage.distance_km}
+                                        </TableCell>
+                                        <TableCell>{stage.from.city}</TableCell>
+                                        <TableCell>{stage.to.city}</TableCell>
+                                        <TableCell className="text-right">
+                                          {stage.cargo}
+                                        </TableCell>
+                                      </>
+                                    )
+                                    : (
+                                      <>
+                                        <TableCell>{stage.distance}</TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell className="text-right">
+                                          {stage.cargo}
+                                        </TableCell>
+                                      </>
+                                    )}
 
-                      <TableCell className="text-right">
-                        {stage.emission ? stage.emission : 0}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Carousel>
-                <CarouselContent>
-                  <DataVisualization stages={route.stages} />
-                </CarouselContent>
-              </Carousel>
-            </>
-          ))}
+                                  <TableCell className="text-right">
+                                    {stage.emission ? stage.emission : 0}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <Carousel>
+                            <CarouselContent>
+                              <DataVisualization stages={route.stages} />
+                            </CarouselContent>
+                          </Carousel>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPagination />
+                  </Carousel>
+                </CardContent>
+              </Card>
+              <CarouselNext>
+                Edit Chain
+              </CarouselNext>
+            </div>
+          </CarouselItem>
 
-          <Carousel orientation="horizontal">
-            <CarouselContent>
-              {calculators.map((calculator: CalculatorInstance) => (
-                <CarouselItem key={calculator.id}>
-                  <div className="flex flex-col justify-center items-center gap-4">
-                    <Calculator
-                      isProject={true}
-                      projectTitle={titleProject}
-                      chain={chain}
-                      setChain={setChain}
-                    />
-                    <Button
-                      variant="destructive"
-                      onClick={() => deleteCalculator(calculator.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </CardContent>
-        <CardFooter>
-          <div className=" flex gap-4 flex-col w-full">
-            <Button onClick={handleDownload}>Download as spreadsheet</Button>
-            <Button onClick={addCalculator} className="w-full">
-                Update calculator
-            </Button>
-            <Button
-              className="border-black border rounded"
-              variant="ibm_blue"
-              onClick={handleUpdateProject}
-            >
-              update
-            </Button>
-            {message != "" && (
-              <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
-                {message}
-              </div>
-            )}
-          </div>
-        </CardFooter>
-      </Card>
+          <CarouselItem>
+            <div className="flex flex-col justify-between items-center gap-4 h-full">
+              <Calculator
+                isProject={true}
+                chain={calcChain}
+                setChain={setCalcChain}
+              />
+              <CarouselPrevious>
+                View Graphs
+              </CarouselPrevious>
+            </div>
+          </CarouselItem>
+        </CarouselContent>
+      </Carousel>
+
+      <CardFooter className="pt-4">
+        <div className="flex gap-4 flex-col w-full">
+          <Button onClick={handleDownload}>Download as Spreadsheet</Button>
+          <Button
+            className="border-black border rounded"
+            variant="ibm_green"
+            onClick={handleUpdateProject}
+          >
+            Save Project Changes
+          </Button>
+          {message != "" && (
+            <div className="bg-green-200 p-3 mb-3 rounded-md text-green-800">
+              {message}
+            </div>
+          )}
+        </div>
+      </CardFooter>
     </div>
   );
 };

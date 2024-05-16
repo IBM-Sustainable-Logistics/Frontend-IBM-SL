@@ -53,28 +53,31 @@ type Address = T.Address & {
   exists: boolean;
 };
 
-type Stage = (
-  | {
-    usesAddress: false;
-    transportMethod: T.TransportMethod;
-    distance: number | undefined;
-  }
-  | {
-    usesAddress: true;
-    transportMethod: T.TruckTransportMethod;
-    from: Address;
-    to: Address;
-    impossible: boolean;
-  }
-) &
-  Keyed &
-  T.Estimated;
+type Stage =
+  & (
+    | {
+      usesAddress: false;
+      transportMethod: T.TransportMethod;
+      distance: number | undefined;
+    }
+    | {
+      usesAddress: true;
+      transportMethod: T.TruckTransportMethod;
+      from: Address;
+      to: Address;
+      impossible: boolean;
+    }
+  )
+  & Keyed
+  & T.Estimated;
 
-export type Route = {
-  name: string;
-  stages: Stage[];
-} & Keyed &
-  T.Estimated;
+export type Route =
+  & {
+    name: string;
+    stages: Stage[];
+  }
+  & Keyed
+  & T.Estimated;
 
 export type Chain = {
   routes: Route[];
@@ -87,11 +90,11 @@ type Props = {
 
 export const isValidFileSize = (method: File): boolean => {
   if (method.size <= 1048576) {
-    return true
+    return true;
   } else {
     return false;
   }
-}
+};
 
 const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
   const [_stages, setStage] = useState<Stage[]>([]);
@@ -181,7 +184,6 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
    */
   async function readUploadedFile() {
     if (file != null) {
-
       // File size limit is 15MB
       if (isValidFileSize(file)) {
         await readFile();
@@ -237,13 +239,11 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
       for (const entry in jsonObj) {
         if (Object.prototype.hasOwnProperty.call(jsonObj, entry)) {
           dataMap.set(entry, jsonObj[entry]);
-          console.log("Received key: ", entry, ", value:", jsonObj[entry])
+          console.log("Received key: ", entry, ", value:", jsonObj[entry]);
         }
       }
 
-
       for (let i = 1; i < dataMap.size; i++) {
-
         var from;
         var to;
         var getDistance;
@@ -260,10 +260,18 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
             country: dataMap.get("Destination country ").toString(),
             exists: true,
           };
-          console.log(i + " -> " + from.city, ", ", from.country, ", ", to.city, ", ", to.country)
+          console.log(
+            i + " -> " + from.city,
+            ", ",
+            from.country,
+            ", ",
+            to.city,
+            ", ",
+            to.country,
+          );
         } catch (error) {
           getDistance = dataMap.get("Distance") as number;
-          console.log(i + " -> " + "Distance: ", getDistance)
+          console.log(i + " -> " + "Distance: ", getDistance);
         }
 
         const stage = isDistanceMode
@@ -336,10 +344,18 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
           exists: true,
         };
 
-        console.log(from.city, ", ", from.country, ", ", to.city, ", ", to.country)
+        console.log(
+          from.city,
+          ", ",
+          from.country,
+          ", ",
+          to.city,
+          ", ",
+          to.country,
+        );
       } catch (error) {
         getDistance = rows[i][0] as number;
-        console.log(i + " -> " + "Distance: ", getDistance)
+        console.log(i + " -> " + "Distance: ", getDistance);
       }
       const stage = isDistanceMode
         ? {
@@ -412,7 +428,9 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
         }}
       >
         <CardHeader>
-          <CardTitle>Upload your file here</CardTitle>
+          <CardTitle>
+            <h1>Upload your file here</h1>
+          </CardTitle>
           <CardDescription>
             You can drag and drop your file here. Alternatively, you can click
             the 'Choose file' button below:
@@ -422,11 +440,9 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
           <form>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                {file?.name === null || !hasUploaded ? (
-                  <Label htmlFor="name">File name:</Label>
-                ) : (
-                  <Label htmlFor="name">File name: {file?.name}</Label>
-                )}
+                {file?.name === null || !hasUploaded
+                  ? <Label htmlFor="name">File name:</Label>
+                  : <Label htmlFor="name">File name: {file?.name}</Label>}
                 <input type="file" id="fileInput" style={{ display: "none" }} />
               </div>
             </div>
@@ -447,12 +463,12 @@ const UploadCard: React.FC<Props> = ({ setChainData, chain }) => {
               </Button>
             )}
             {hasUploaded && (
-              <Button variant="ibm_blue" disabled>
+              <Button variant="ibm_green" disabled>
                 Choose file
               </Button>
             )}
             {!hasUploaded && (
-              <Button variant="ibm_blue" onClick={handleUploadClick}>
+              <Button variant="ibm_green" onClick={handleUploadClick}>
                 Choose file
               </Button>
             )}

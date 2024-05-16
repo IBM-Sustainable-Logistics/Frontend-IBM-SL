@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
-import { Stage, project } from "../lib/Transport.ts";
+import { project, Stage } from "../lib/Transport.ts";
 
 type DataProps = {
   stages: Stage[];
@@ -73,7 +73,8 @@ const DataVisualization: React.FC<DataProps> = ({ stages }) => {
       className=" m-auto block"
       width="400"
       height="200"
-    ></canvas>
+    >
+    </canvas>
   );
 };
 

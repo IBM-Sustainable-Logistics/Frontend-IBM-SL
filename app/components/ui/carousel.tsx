@@ -59,14 +59,14 @@ const Carousel = React.forwardRef<
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
       },
-      plugins
+      plugins,
     );
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
@@ -78,7 +78,7 @@ const Carousel = React.forwardRef<
         if (!api) return;
         api.scrollTo(index);
       },
-      [api]
+      [api],
     );
 
     const onInit = React.useCallback((api: CarouselApi) => {
@@ -117,7 +117,7 @@ const Carousel = React.forwardRef<
           scrollNext();
         }
       },
-      [scrollPrev, scrollNext]
+      [scrollPrev, scrollNext],
     );
 
     React.useEffect(() => {
@@ -150,8 +150,8 @@ const Carousel = React.forwardRef<
           carouselRef,
           api: api,
           opts,
-          orientation:
-            orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+          orientation: orientation ||
+            (opts?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,
           scrollNext,
           canScrollPrev,
@@ -173,7 +173,7 @@ const Carousel = React.forwardRef<
         </div>
       </CarouselContext.Provider>
     );
-  }
+  },
 );
 Carousel.displayName = "Carousel";
 
@@ -190,7 +190,7 @@ const CarouselContent = React.forwardRef<
         className={cn(
           "flex",
           orientation === "horizontal" ? "" : "flex-col",
-          className
+          className,
         )}
         {...props}
       />
@@ -213,7 +213,7 @@ const CarouselItem = React.forwardRef<
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
         orientation === "horizontal" ? "pl-4" : "pt-4",
-        className
+        className,
       )}
       {...props}
     />
@@ -224,27 +224,20 @@ CarouselItem.displayName = "CarouselItem";
 const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+>(({ className, variant, size, children, ...props }, ref) => {
+  const { scrollPrev, canScrollPrev } = useCarousel();
 
   return (
     <Button
       ref={ref}
       variant={variant}
       size={size}
-      className={cn(
-        "absolute  h-8 w-8 rounded-full",
-        orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
-          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
-        className
-      )}
+      className={className}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="h-4 w-4" />
-      <span className="sr-only">Previous slide</span>
+      {children}
     </Button>
   );
 });
@@ -253,27 +246,20 @@ CarouselPrevious.displayName = "CarouselPrevious";
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+>(({ className, variant, size, children, ...props }, ref) => {
+  const { scrollNext, canScrollNext } = useCarousel();
 
   return (
     <Button
       ref={ref}
       variant={variant}
       size={size}
-      className={cn(
-        "absolute h-8 w-8 rounded-full",
-        orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
-          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
-        className
-      )}
+      className={className}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="h-4 w-4" />
-      <span className="sr-only">Next slide</span>
+      {children}
     </Button>
   );
 });
@@ -298,15 +284,17 @@ const CarouselPagination = React.forwardRef<
 
   return (
     <div className="flex flex-wrap justify-start items-center mr-[calc((2.6rem-1.4rem)/2*-1)] gap-4">
+      <h4>Select Route:</h4>
       {scrollSnaps.map((_, index) => (
         <DotButton
           key={index}
           onClick={() => onDotButtonClick(index)}
-          className={"p-0 w-5 h-5 flex text-sm items-center justify-center rounded-full cursor-pointer button-2 outline-dashed ".concat(
-            index === selectedIndex
-              ? " outline-green-500  "
-              : "outline-slate-800"
-          )}
+          className={"p-0 w-5 h-5 flex text-sm items-center justify-center rounded-full cursor-pointer button-2 outline-dashed "
+            .concat(
+              index === selectedIndex
+                ? " outline-green-500  "
+                : "outline-slate-800",
+            )}
         >
           {index + 1}
         </DotButton>
@@ -317,11 +305,11 @@ const CarouselPagination = React.forwardRef<
 CarouselPagination.displayName = "CarouselPagination";
 
 export {
-  type CarouselApi,
   Carousel,
+  type CarouselApi,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
   CarouselNext,
   CarouselPagination,
+  CarouselPrevious,
 };

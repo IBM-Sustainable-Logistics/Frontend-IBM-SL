@@ -44,9 +44,11 @@ export const SignInForm: React.FC<SignInFormProps> = ({
       if (error) {
         setCounter(counter + 1);
 
+        // Stops users from trying more than 5 times.
+        // NOTE: Users can currently just refresh the page to reset the counter.
         if (counter === 5) {
           setErrorMessage(
-            "You have tried to login too many times. Please try again later."
+            "You have tried to login too many times. Please try again later.",
           );
           setShowError(true);
 
@@ -56,8 +58,9 @@ export const SignInForm: React.FC<SignInFormProps> = ({
             formData.email,
             {
               redirectTo: url,
-            }
+            },
           );
+
           if (error) {
             setErrorMessage(error.message);
             setShowError(true);
@@ -65,15 +68,18 @@ export const SignInForm: React.FC<SignInFormProps> = ({
               setShowError(false);
             }, 5000);
           }
+
+          // If we hit the counter limit, we send a password reset email after 4 seconds
           setTimeout(() => {
             setShowError(false);
             setMessage(
-              "We have sent you a password reset mail to your email. Please check your email and reset your password."
+              "We have sent you an email to reset your password. Please check your email including any spam or junk folders.",
             );
             setShowMessage(true);
             setCounter(0);
           }, 4000);
 
+          // We currently hide the message 10 seconds later
           setTimeout(() => {
             setShowMessage(false);
           }, 10000);
@@ -96,7 +102,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
 
   // Handle input changes
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
