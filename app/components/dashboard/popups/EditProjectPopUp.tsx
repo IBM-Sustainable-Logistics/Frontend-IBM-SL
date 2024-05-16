@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../ui/accordion.tsx";
-import { CalculatorInstance, emissions } from "../../../lib/Transport.ts";
+import { CalculatorInstance, Chain, emissions } from "../../../lib/Transport.ts";
 import { Input } from "../../ui/input.tsx";
 import {
   DialogClose,
@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "../../ui/dialog.tsx";
 import { Button } from "../../ui/button.tsx";
-import Calculator, { defaultChain, Chain } from "../../calculator.tsx";
+import * as C from "../../calculator/Calculator.tsx";
 import { Link, useFetcher } from "@remix-run/react";
 import { Label } from "../../ui/label.tsx";
 
@@ -23,14 +23,15 @@ interface Props {
   id: string;
   title: string;
   description: string | null;
-  emissions: emissions | null;
+  chain: Chain;
 }
 
 export const EditProjectPopUp: React.FC<Props> = ({
   id,
   title,
   description,
-}: { id: any, title: any, description: any }) => {
+  chain,}
+ ) => {
   const [titleProject, setTitleProject] = useState(title);
   const [descriptionProject, setDescriptionProject] = useState(description);
 
@@ -38,12 +39,15 @@ export const EditProjectPopUp: React.FC<Props> = ({
 
   const handleUpdateProject = () => {
     // after calculating the emissions, we can submit the form
+    console.log(chain)
     const project = {
       projId: id,
       title: titleProject,
       descriptionProject: descriptionProject as string,
+      calc: JSON.stringify(chain),
     };
     fetcher.submit(project, { method: "PATCH", action: "/api/project" });
+    
   };
 
   return (

@@ -91,6 +91,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 description={p.description}
                 routes={p.routes}
                 emission={p.emissions}
+                chain={p.chain}
               />
             );
           })}

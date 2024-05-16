@@ -27,9 +27,11 @@ import {
 } from "../ui/accordion.tsx";
 
 import { TrashIcon } from "../../lib/Icons.tsx";
-import { Route, Stage, getTransportMethodLabel } from "../../lib/Transport.ts";
+import { Chain, Route, Stage, getTransportMethodLabel } from "../../lib/Transport.ts";
 import { emissions } from "../../lib/Transport.ts";
 import { routes } from "../../../remix.config.js";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table.tsx";
+import * as C from "../calculator/Calculator.tsx";
 
 const ProjectCard = ({
   id,
@@ -37,12 +39,14 @@ const ProjectCard = ({
   description,
   emission,
   routes,
+  chain,
 }: {
   id: string;
   title: string;
   description: string | null;
   emission: number;
   routes: Route[];
+  chain: Chain;
 }) => {
   const fetcher = useFetcher();
 
@@ -52,6 +56,8 @@ const ProjectCard = ({
     };
     fetcher.submit(formData, { method: "DELETE", action: "/api/project" });
   };
+
+  const [calcChain, setCalcChain] = useState<Chain>(C.loadChain(chain));
 
   return (
     <Card className="min-h-32 bg-white shadow-md rounded-lg ">
@@ -67,7 +73,7 @@ const ProjectCard = ({
         <p>Estimation amount: {emission ? emission : 0} kg</p>
       </CardContent>
       <CardFooter className="flex justify-between gap-4">
-        <Dialog>
+        <Dialog >
           <DialogTrigger>
             <Button variant="destructive">
               <TrashIcon />
@@ -106,7 +112,7 @@ const ProjectCard = ({
               Overview
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="flex flex-col gap-4 max-w-md md:max-w-xl" >
             <DialogHeader>
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>
@@ -121,38 +127,57 @@ const ProjectCard = ({
                     <h2>{route.name}</h2>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Transport Form</th>
-                          <th>From</th>
-                          <th>To</th>
-                          <th className="text-right">Amount of co2 in kg</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {route.stages.map((stage, index) => (
-                          <tr key={index}>
-                            <td>
-                              {getTransportMethodLabel(stage.transportMethod)}
-                            </td>
-                            <td>
-                              {stage.usesAddress
-                                ? `${stage.from.city}, ${stage.from.country}`
-                                : "N/A"}
-                            </td>
-                            <td>
-                              {stage.usesAddress
-                                ? `${stage.to.city}, ${stage.to.country}`
-                                : "N/A"}
-                            </td>
-                            <td className="text-right">
-                              {route.emission ? route.emission : 0}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <Table>
+                            <TableCaption>
+                              Emissions in total: {route.emission} for route {route.name}
+                            </TableCaption>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="w-[100px]">Transport Form</TableHead>
+                                <TableHead>Distance (km)</TableHead>
+                                <TableHead>From</TableHead>
+                                <TableHead>To</TableHead>
+                                <TableHead>Cargo Weight</TableHead>
+                                <TableHead className="text-right">
+                                  Amount of CO2 (kg)
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                              {route.stages.map((stage: Stage, index: number) => (
+                                <TableRow key={index}>
+                                  <TableCell>
+                                    {getTransportMethodLabel(stage.transportMethod)}
+                                  </TableCell>
+
+                                  {stage.usesAddress ? (
+                                    <>
+                                      <TableCell>{stage.distance_km}</TableCell>
+                                      <TableCell>{stage.from.city}</TableCell>
+                                      <TableCell>{stage.to.city}</TableCell>
+                                      <TableCell className="text-right">
+                                        {stage.cargo}
+                                      </TableCell>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <TableCell>{stage.distance}</TableCell>
+                                      <TableCell></TableCell>
+                                      <TableCell></TableCell>
+                                      <TableCell className="text-right">
+                                        {stage.cargo}
+                                      </TableCell>
+                                    </>
+                                  )}
+
+                                  <TableCell className="text-right">
+                                    {stage.emission ? stage.emission : 0}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -189,7 +214,7 @@ const ProjectCard = ({
             id={id}
             title={title}
             description={description}
-            emissions={emission}
+            chain={chain}
           />
         </Dialog>
       </CardFooter>
