@@ -32,9 +32,11 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Index() {
   return (
-    <main className="flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-4 md:gap-10 
+    <main
+      className="flex flex-col justify-center items-center mb-16 mt-10 bg-background gap-4 md:gap-10 
     md:mt-20
-    md:gap-15">
+    md:gap-15"
+    >
       <Hero
         jsx={
           <>
@@ -55,7 +57,7 @@ export default function Index() {
         }
       />
       <Section backgroundColor="#A9E3C1" textColor="black">
-        <div className="text-center mx-[2rem] lg:mx-[12rem] my-[2.5rem] flex flex-col gap-2">
+        <div className="text-center mx-[2rem] lg:mx-[12rem] my-[4rem] md:my-[10rem] flex flex-col gap-2">
           <h1 className="text-4xl lg:text-[2.5rem] leading-10 font-bold">
             Our vision
           </h1>
@@ -96,7 +98,7 @@ export default function Index() {
       </Section>
 
       <Section backgroundColor="white" textColor="#3D815C">
-        <div className="flex flex-row">
+        <div className="flex flex-row mr-4 lg:mr-10">
           <div className="basis-1/3">
             <img src={logoImage} alt="Calc IBM Logo" className="h-52 m-auto" />
           </div>
@@ -104,7 +106,7 @@ export default function Index() {
             <h1 className="text-4xl lg:text-[2.5rem] leading-10 font-bold mb-5">
               Lead with Sustainable Logistics
             </h1>
-            <p className="text-[1.1rem] text-justify lg:text-[1.2rem]">
+            <p className="text-[1rem] text-justify lg:text-[1.2rem]">
               Our CO2 emission calculator is tailor-made for everyone, from
               industry giants to small businesses. We offer an easy-to-use
               interface to accurately estimate and manage emissions. Scale with
