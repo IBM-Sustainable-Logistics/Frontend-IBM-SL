@@ -60,8 +60,8 @@ const pluginConfig: CookieConsentConfig = {
           showPreferencesBtn: "Manage preferences",
           //closeIconLabel: 'Close',
           footer: `
-            <a href="#link">Privacy Policy</a>
-            <a href="#link">Impressum</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">terms of service</a>
           `,
         },
         preferencesModal: {
@@ -74,7 +74,7 @@ const pluginConfig: CookieConsentConfig = {
             {
               title: "Cookie Usage",
               description:
-                'We use cookies to ensure the basic functionalities of our website and to enhance your online experience. You can choose to opt-in or opt-out of each category at any time. For more details about cookies and how we handle your sensitive data, please read our full <a href="#" class="cc__link">privacy policy</a>.',
+                'We use cookies to ensure the basic functionalities of our website and to enhance your online experience. You can choose to opt-in or opt-out of each category at any time. For more details about cookies and how we handle your sensitive data, please read our full <a href="/privacy" class="cc__link">privacy policy</a>.',
             },
             {
               title: "Strictly necessary cookies",
