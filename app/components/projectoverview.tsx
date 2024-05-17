@@ -132,7 +132,7 @@ const ProjectOverview: React.FC<Props> = ({ project }) => {
                         <CarouselItem>
                           <Table>
                             <TableCaption>
-                              Emissions in total: {project.emissions} for route
+                              Emissions in total: {route.emission} for route
                               {" "}
                               {route.name}
                             </TableCaption>
