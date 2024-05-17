@@ -139,7 +139,7 @@ const Template = () => {
 
       <div style={{ maxWidth: "800px" }}>
         <img
-          src={goodexample1}
+          src={goodexample3}
           alt="Example 2 of a valid excel file structure."
         />
         <p className="mb-6">
